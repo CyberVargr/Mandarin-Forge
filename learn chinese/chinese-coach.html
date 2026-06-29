@@ -1890,6 +1890,23 @@ bankAll().forEach(x=>rows.push([x.h,T(x.h),x.p,x.e,x.c,x.d,x.mine?"yes":""]));
 dl("zh-sentence-bank-"+today()+".csv",csv(rows),"text/csv");
 }
 function clearMistakes(){if(confirm("Clear the whole mistake log?")){st.mistakes={};save();rArchive()}}
+/* ===== File System Sync ===== */
+function openSyncDB(){return new Promise((res,rej)=>{const req=indexedDB.open("zhCoachSync",1);req.onupgradeneeded=e=>e.target.result.createObjectStore("handles");req.onsuccess=e=>res(e.target.result);req.onerror=()=>rej()})}
+function getSyncHandle(){return openSyncDB().then(db=>new Promise(res=>{const req=db.transaction("handles","readonly").objectStore("handles").get("syncDir");req.onsuccess=e=>res(e.target.result||null);req.onerror=()=>res(null)})).catch(()=>null)}
+function setSyncHandle(h){return openSyncDB().then(db=>new Promise(res=>{const tx=db.transaction("handles","readwrite");tx.objectStore("handles").put(h,"syncDir");tx.oncomplete=res;tx.onerror=res})).catch(()=>{})}
+async function syncProgress(){
+const btn=document.getElementById("syncBtn");
+const rst=()=>{if(btn){btn.textContent="☁ Sync progress";btn.className="btn sm"}};
+if(!window.showDirectoryPicker){if(btn){btn.textContent="⚠ Not supported — use JSON export";setTimeout(rst,3500)}return}
+try{
+let handle=await getSyncHandle();
+if(handle){const perm=await handle.queryPermission({mode:"readwrite"});if(perm==="prompt"){const g=await handle.requestPermission({mode:"readwrite"});if(g!=="granted")handle=null}else if(perm!=="granted")handle=null}
+if(!handle){handle=await window.showDirectoryPicker({mode:"readwrite"});await setSyncHandle(handle)}
+const fh=await handle.getFileHandle("progress-export.json",{create:true});
+const wr=await fh.createWritable();await wr.write(JSON.stringify(st,null,1));await wr.close();
+if(btn){btn.textContent="Synced ✓";btn.className="btn sm grn";setTimeout(rst,2500)}
+}catch(e){if(e&&e.name==="AbortError")return;if(btn){btn.textContent="Sync failed ✗";btn.className="btn sm red";setTimeout(rst,3000)}}
+}
 function rArchive(){
 const log=st.lessonLog||[];
 const misses=Object.values(st.mistakes).sort((a,b)=>b.n-a.n).slice(0,30);
@@ -1898,6 +1915,7 @@ $("#main").innerHTML=
 '<p class="mut" style="font-size:13px;margin-top:4px">Lesson log · mistake log · backups. The record of the work.</p>'+
 '<div class="row" style="margin-top:10px">'+
 '<button class="btn sm acc" onclick="reviewWeak()">🎯 Review weak points</button>'+
+'<button class="btn sm" id="syncBtn" onclick="syncProgress()">☁ Sync progress</button>'+
 '<button class="btn sm" onclick="exportJSON()">⬇ Export progress (JSON)</button>'+
 '<label class="btn sm" style="cursor:pointer">⬆ Import JSON<input type="file" accept=".json" style="display:none" onchange="importJSON(event)"></label>'+
 '<button class="btn sm" onclick="exportVocabCSV()">⬇ Vocab CSV</button>'+
