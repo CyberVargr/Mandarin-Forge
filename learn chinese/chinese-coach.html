@@ -937,6 +937,9 @@ m.n++;m.kinds[kind]=(m.kinds[kind]||0)+1;m.last=today();save();
 if(sess&&sess.miss)sess.miss.push(word?T(wHanzi(W[wi])):(label||kind));
 }
 function weakIds(){return Object.values(st.mistakes).filter(m=>m.wi!=null).sort((a,b)=>b.n-a.n).map(m=>m.wi)}
+function missMap(){const m={};Object.values(st.mistakes).forEach(e=>{if(e.wi!=null)m[e.wi]=e.n});return m}
+function weakDueFirst(ids){const mm=missMap();const weak=ids.filter(i=>mm[i]).sort((a,b)=>mm[b]-mm[a]);return weak.concat(shuffle(ids.filter(i=>!mm[i])))}
+function weightedLPick(pool){const mm=missMap();const exp=[];pool.forEach(i=>{const n=1+(mm[i]||0);for(let k=0;k<n;k++)exp.push(i)});return exp[Math.floor(Math.random()*exp.length)]}
 let weakQueue=null;
 function reviewWeak(){const ids=weakIds().slice(0,20);if(!ids.length){alert("No weak words logged yet — go make some mistakes first!");return}weakQueue=ids;go("cards")}
 function level(){return Math.floor(Math.sqrt((st.xp||0)/50))+1}
@@ -1124,6 +1127,22 @@ $("#main").innerHTML='<div class="box center">'+
 '</div>';
 }
 /* ================= HOME ================= */
+function weakPanelHTML(){
+const ids=weakIds().slice(0,5);if(!ids.length)return "";
+const mm=missMap();
+return '<div class="box" style="border-color:var(--red)">'+
+'<div class="row"><b>🎯 Weak points</b>'+
+'<span class="mut" style="font-size:12px;margin-left:8px">auto-boosted in flashcards &amp; listening</span>'+
+'<button class="btn sm red" style="margin-left:auto" onclick="reviewWeak()">Drill all →</button></div>'+
+'<div class="row" style="flex-wrap:wrap;gap:10px;margin-top:10px">'+
+ids.map(i=>'<button class="btn" style="flex:0 0 auto;text-align:center;min-width:80px;padding:8px 12px" onclick="speak(wHanzi(W['+i+']))">'+
+'<div class="hanzi" style="font-size:24px">'+T(wHanzi(W[i]))+'</div>'+
+'<div style="font-size:11px" class="mut">'+esc(wPin(W[i]))+'</div>'+
+'<div style="font-size:11px">'+esc(W[i][2])+'</div>'+
+'<span class="tag" style="font-size:10px;margin-top:4px;display:inline-block;background:var(--red);color:#fff">\xd7'+(mm[i]||0)+' misses</span>'+
+'</button>').join("")+
+'</div></div>';
+}
 /* ===== Self-expression daily prompt (v6) ===== */
 const SELFEXPR=[
 {h:"我今天有點累，但是我還是想練一下。",p:"wǒ jīntiān yǒudiǎn lèi, dànshì wǒ háishì xiǎng liàn yíxià",e:"I'm a bit tired today, but I still want to practice a little."},
@@ -1188,6 +1207,7 @@ $("#main").innerHTML=
 '</div>'+
 '<h3 style="margin-top:14px;font-size:15px">Last 12 weeks</h3>'+heatHTML()+
 '</div>'+
+weakPanelHTML()+
 seCardHTML()+
 '<div class="box"><h3 style="margin-bottom:10px">Settings</h3>'+
 '<div class="row" style="gap:16px">'+
@@ -1221,7 +1241,7 @@ function rCards(){
 if(weakQueue){queue=weakQueue.slice();weakQueue=null}
 else{
 const inSess=sess&&sess.blocks[sess.bi].id==="new";
-queue=inSess?newIds():shuffle(dueIds()).concat(newIds());
+queue=inSess?newIds():weakDueFirst(dueIds()).concat(newIds());
 }
 nextCard();
 }
@@ -1302,7 +1322,7 @@ newListen();
 function newListen(){
 $("#lfb").textContent="";$("#lnext").style.display="none";
 if(lMode==="word"){
-const pool=lPool();const qi=rnd(pool);
+const pool=lPool();const qi=weightedLPick(pool);
 const dis=shuffle(pool.filter(i=>i!==qi&&W[i][2]!==W[qi][2])).slice(0,3);
 const opts=shuffle([{e:W[qi][2],ok:1},...dis.map(i=>({e:W[i][2],ok:0}))]);
 lq={text:wHanzi(W[qi]),pin:wPin(W[qi]),opts,wi:qi};
