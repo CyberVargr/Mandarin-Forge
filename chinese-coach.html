@@ -1480,12 +1480,12 @@ return '<div class="box" style="border-color:var(--teal)">'+
 '<span style="margin-left:auto;font-weight:700;font-size:12px;color:'+trendColor+'">'+trendArrow+' FORGE STATUS: '+esc(brain.trend.toUpperCase())+'</span>'+
 '</div>'+
 '<div class="row" style="gap:8px;flex-wrap:wrap;margin-bottom:10px">'+
-'<div class="stat" style="background:#0d1522;border:1px solid var(--teal)">'+
+'<div class="stat" style="background:var(--c-iron);border:1px solid var(--c-frost)">'+
 '<b style="font-size:13px;color:var(--teal)">'+esc(focusSkill)+'</b>'+
 '<span>priority drill</span>'+
 '<div style="font-size:10px;color:var(--mut);margin-top:2px">'+esc(focusReason)+'</div>'+
 '</div>'+
-'<div class="stat" style="background:#0d1522;border:1px solid #2a3248">'+
+'<div class="stat" style="background:var(--c-iron);border:1px solid var(--c-steel)">'+
 '<b>'+(brain.weakTones.length?brain.weakTones.map(t=>'<span class="t'+t+'">'+t+'</span>').join(' '):'—')+'</b>'+
 '<span>weak signals</span>'+
 '<div style="font-size:10px;color:var(--mut);margin-top:2px">'+(brain.weakTones.length?'tone'+(brain.weakTones.length>1?"s":"")+" need reforging":"tone read nominal")+'</div>'+
@@ -1494,7 +1494,7 @@ return '<div class="box" style="border-color:var(--teal)">'+
 (top3.length?
 '<div style="font-size:10px;color:var(--mut);letter-spacing:2px;margin-bottom:6px;text-transform:uppercase">Reforge targets</div>'+
 '<div class="row" style="gap:8px;flex-wrap:wrap">'+
-top3.map(i=>'<div class="stat" style="background:#0d1522;border:1px solid var(--teal)">'+
+top3.map(i=>'<div class="stat" style="background:var(--c-iron);border:1px solid var(--c-frost)">'+
 '<b class="hanzi" style="font-size:22px;color:var(--teal)">'+T(wHanzi(W[i]))+'</b>'+
 '<b style="font-size:13px;color:var(--red)">'+(mm[i]||0)+'\xd7</b>'+
 '<span>'+esc(W[i][2].split(";")[0].trim().slice(0,14))+'</span>'+
@@ -1538,7 +1538,7 @@ function seCardHTML(){const i=seIdxToday(),s=SELFEXPR[i];return '<div class="box
 '<div class="eng mut">'+esc(s.e)+'</div>'+
 '<div class="row" style="justify-content:center;margin-top:10px">'+
 '<button class="btn" onclick="speak(SELFEXPR['+i+'].h)">🔊 Listen</button>'+
-'<button class="btn acc" onclick="sePractice('+i+')">🎤 Practice aloud</button>'+
+'<button class="btn" style="border-color:var(--c-frost);color:var(--c-frost)" onclick="sePractice('+i+')">🎤 Practice aloud</button>'+
 '</div></div>';}
 function heatHTML(){
 let cells="";
@@ -1681,7 +1681,7 @@ seCardHTML()+
 '<option value="reveal"'+(st.pinyinShow==="reveal"?" selected":"")+'>After reveal</option>'+
 '<option value="always"'+(st.pinyinShow==="always"?" selected":"")+'>Always</option></select></span>'+
 '<label class="set"><input type="checkbox"'+(st.toneColors?" checked":"")+' onchange="st.toneColors=this.checked;save();rForge()"> Tone colors</label>'+
-'<label class="set"><input type="checkbox"'+(st.proIncluded?" checked":"")+' onchange="st.proIncluded=this.checked;save();rForge()"> <span style="color:#9a6fe0">Work vocab</span></label>'+
+'<label class="set"><input type="checkbox"'+(st.proIncluded?" checked":"")+' onchange="st.proIncluded=this.checked;save();rForge()"> <span style="color:var(--purple)">Work vocab</span></label>'+
 '<label class="set"><input type="checkbox"'+(st.bopomofo?" checked":"")+' onchange="st.bopomofo=this.checked;save();rForge()" style="accent-color:var(--c-frost)"> <span style="color:var(--c-frost)">注音 Bopomofo</span></label>'+
 '</div>'+
 '<div class="row" style="gap:14px;margin-top:10px;align-items:center;flex-wrap:wrap">'+
