@@ -191,6 +191,24 @@ tr.wrow:hover td{background:var(--c-iron)}
 .misstab td{font-size:14px}
 .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
 @media(max-width:640px){.bigh{font-size:52px}.opts{grid-template-columns:1fr}.mode-alts{grid-template-columns:1fr}}
+/* ── CODEX / CARD CHAMBER (Stage 2) ─────────────────────── */
+.card-chamber{background:var(--c-ash);border:1px solid var(--c-steel);border-radius:var(--r-md);padding:36px 28px 28px;margin-bottom:12px;box-shadow:var(--shadow-card);text-align:center}
+.card-hz{font-family:'Noto Serif TC','Microsoft JhengHei','PingFang TC',serif;font-size:96px;line-height:1.05;color:var(--c-bone);margin:8px 0 4px;letter-spacing:-0.01em}
+.card-hz-sm{font-size:52px;letter-spacing:0}
+.card-meta{display:flex;gap:6px;justify-content:center;margin-bottom:16px;flex-wrap:wrap}
+.card-pin-lg{font-size:20px;text-align:center;color:var(--c-smoke);letter-spacing:0.05em;margin:6px 0 2px}
+.card-eng-sm{font-size:13px;text-align:center;color:var(--c-rune);margin:2px 0}
+.grade-row{display:flex;gap:8px;justify-content:center;margin-top:20px;flex-wrap:wrap}
+.grade-row .btn{min-width:88px}
+/* Lexicon word list */
+.lex-row{display:flex;align-items:center;gap:12px;padding:10px 4px;border-bottom:1px solid var(--c-steel);cursor:pointer;transition:background var(--t-fast)}
+.lex-row:hover{background:var(--c-iron)}
+.lex-hz{font-family:'Noto Serif TC','Microsoft JhengHei',serif;font-size:24px;color:var(--c-bone);min-width:44px;text-align:center;flex-shrink:0}
+.lex-body{flex:1;min-width:0}
+.lex-pin{font-size:12px;color:var(--c-smoke);letter-spacing:0.03em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.lex-eng{font-size:12px;color:var(--c-rune);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.lex-aside{display:flex;gap:5px;align-items:center;flex-shrink:0}
+@media(max-width:640px){.card-hz{font-size:72px}.card-hz-sm{font-size:40px}}
 </style>
 </head>
 <body>
@@ -1696,9 +1714,10 @@ if(settingsOpen)populateVoiceSelect();
 }
 /* ===== sub-mode wrappers ===== */
 function rCodex(){
-const bar='<div class="row" style="margin-bottom:8px"><b style="font-size:12px;color:var(--mut);letter-spacing:1px;margin-right:8px">CODEX</b>'+
-'<button class="btn sm '+(codexMode==="train"?"acc":"")+'" onclick="codexMode=\'train\';rCodex()">Train cards</button>'+
-'<button class="btn sm '+(codexMode==="ref"?"acc":"")+'" onclick="codexMode=\'ref\';rCodex()">Reference</button>'+
+const bar='<div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;padding-bottom:10px;border-bottom:1px solid var(--c-steel)">'+
+'<span style="font-size:10px;letter-spacing:0.15em;text-transform:uppercase;color:var(--c-rune);font-weight:600;white-space:nowrap">CODEX</span>'+
+'<span class="chip'+(codexMode==="train"?" on":"")+'" onclick="codexMode=\'train\';rCodex()">Train</span>'+
+'<span class="chip'+(codexMode==="ref"?" on":"")+'" onclick="codexMode=\'ref\';rCodex()">Reference</span>'+
 '</div>';
 if(codexMode==="train")rCards();else rWords();
 const m=$("#main");m.innerHTML=bar+m.innerHTML;
@@ -1741,16 +1760,16 @@ nextCard();
 }
 function frontHTML(w,isNew){
 if(isNew||st.frontMode==="hanzi")
-return '<div class="bigh hanzi">'+T(wHanzi(w))+'</div>'+((st.pinyinShow==="always"&&!isNew)?'<div class="pin">'+pinHTML(wPin(w))+'</div>':"");
-if(st.frontMode==="audio")return '<div class="bigh">🔊</div><div class="center"><button class="btn" onclick="speak(wHanzi(W[cur]))">Play again</button> <button class="btn" onclick="speak(wHanzi(W[cur]),0.6)">🐢</button></div>';
-return '<div class="bigh" style="font-size:32px">“'+esc(w[2])+'”</div>';
+return '<div class="card-hz hanzi">'+T(wHanzi(w))+'</div>'+((st.pinyinShow==="always"&&!isNew)?'<div class="card-pin-lg">'+pinHTML(wPin(w))+'</div>':"");
+if(st.frontMode==="audio")return '<div class="bigh" style="opacity:0.55">🔊</div><div class="center" style="margin-top:8px"><button class="btn" onclick="speak(wHanzi(W[cur]))">Play again</button> <button class="btn" onclick="speak(wHanzi(W[cur]),0.6)">🐢</button></div>';
+return '<div class="card-hz card-hz-sm" style="font-family:\'Inter\',system-ui,sans-serif;font-weight:500">"'+esc(w[2])+'"</div>';
 }
 function answerHTML(w){
 let h="";
-if(st.frontMode!=="hanzi")h+='<div class="center hanzi" style="font-size:40px">'+T(wHanzi(w))+'</div>';
-h+='<div class="pin">'+pinHTML(wPin(w))+'</div>'+bopoHTML(wPin(w));
-if(st.frontMode!=="english")h+='<div class="eng">'+esc(w[2])+'</div>';
-h+='<button class="btn sm" onclick="speak(wHanzi(W[cur]))">🔊</button> <button class="btn sm" onclick="speak(wHanzi(W[cur]),0.6)">🐢</button>';
+if(st.frontMode!=="hanzi")h+='<div class="card-hz card-hz-sm hanzi">'+T(wHanzi(w))+'</div>';
+h+='<div class="card-pin-lg">'+pinHTML(wPin(w))+'</div>'+bopoHTML(wPin(w));
+if(st.frontMode!=="english")h+='<div class="card-eng-sm">'+esc(w[2])+'</div>';
+h+='<div style="margin-top:10px"><button class="btn sm" onclick="speak(wHanzi(W[cur]))">🔊</button> <button class="btn sm" onclick="speak(wHanzi(W[cur]),0.6)">🐢</button></div>';
 h+=noteHTML(w)+breakHTML(wHanzi(w));
 return h;
 }
@@ -1763,13 +1782,13 @@ cur=null;return;
 cur=queue[0];
 const w=W[cur],isNew=!isLearned(cur);
 const lvlTag=w[3]==="P"?'<span class="tag p">WORK</span>':(w[3]==="T"?'<span class="tag tw">TAIWAN</span>':'<span class="tag">HSK '+w[3]+'</span>');
-$("#main").innerHTML='<div class="box">'+
-'<div class="row"><span class="tag">'+queue.length+' left</span>'+(isNew?'<span class="tag" style="color:var(--gold)">NEW</span>':"")+lvlTag+'</div>'+
+$("#main").innerHTML='<div class="card-chamber">'+
+'<div class="card-meta"><span class="tag">'+queue.length+' left</span>'+(isNew?'<span class="tag" style="color:var(--c-gold)">NEW</span>':"")+lvlTag+'</div>'+
 frontHTML(w,isNew)+
-'<div id="ans" class="center" style="min-height:110px">'+
-(isNew?'<div class="pin">'+pinHTML(wPin(w))+'</div>'+bopoHTML(wPin(w))+'<div class="eng">'+esc(w[2])+'</div><button class="btn sm" onclick="speak(wHanzi(W[cur]))">🔊</button>'+noteHTML(w)+breakHTML(wHanzi(w)):'<button class="btn" style="margin-top:18px" onclick="reveal()">Show answer (Space)</button>')+
+'<div id="ans" style="min-height:100px;margin-top:6px">'+
+(isNew?'<div class="card-pin-lg">'+pinHTML(wPin(w))+'</div>'+bopoHTML(wPin(w))+'<div class="card-eng-sm">'+esc(w[2])+'</div><div style="margin-top:8px"><button class="btn sm" onclick="speak(wHanzi(W[cur]))">🔊</button></div>'+noteHTML(w)+breakHTML(wHanzi(w)):'<div style="margin-top:20px"><button class="btn" style="min-width:160px" onclick="reveal()">Reveal (Space)</button></div>')+
 '</div>'+
-'<div id="grades" class="row" style="justify-content:center;margin-top:16px;visibility:'+(isNew?"visible":"hidden")+'">'+
+'<div id="grades" class="grade-row" style="visibility:'+(isNew?"visible":"hidden")+'">'+
 '<button class="btn red" onclick="grade(0)">Again (1)</button>'+
 '<button class="btn" onclick="grade(1)">Hard (2)</button>'+
 '<button class="btn grn" onclick="grade(2)">Good (3)</button>'+
@@ -1791,7 +1810,7 @@ bumpDone("review");touchStreak();save();
 queue.shift();nextCard();
 }
 document.addEventListener("keydown",e=>{
-if(tab!=="cards"||cur===null)return;
+if(tab!=="codex"||codexMode!=="train"||cur===null)return;
 if(e.code==="Space"){e.preventDefault();reveal()}
 if(revealed&&["1","2","3","4"].includes(e.key))grade(+e.key-1)
 });
@@ -1969,7 +1988,7 @@ function drawSb(){
 const q=sb.q;
 $("#game").innerHTML='<div class="box">'+
 '<div class="row"><span class="tag">Arrange the sentence</span><span class="tag" style="margin-left:auto">Score: '+sbScore.ok+'/'+sbScore.n+'</span></div>'+
-'<p class="eng" style="margin-top:12px">“'+esc(q.e)+'”</p>'+
+'<p class="eng" style="margin-top:12px">“'+esc(q.e)+'"</p>'+
 '<div class="slotline" id="sbline">'+sb.placed.map((ti,k)=>'<span class="tile hanzi" onclick="sbRemove('+k+')">'+T(q.s[ti])+'</span>').join("")+'</div>'+
 '<div class="tiles">'+sb.order.map(ti=>'<span class="tile hanzi'+(sb.used[ti]?" ghost":"")+'" onclick="sbTap('+ti+')">'+T(q.s[ti])+'</span>').join("")+'</div>'+
 '<div class="row" style="justify-content:center">'+
@@ -2098,7 +2117,7 @@ $("#tfb").textContent="";$("#tnext").style.display="none";
 const i=rnd(lPool());
 const w=W[i];
 tq={h:wHanzi(w),p:wPin(w),hAlt:w[0],pAlt:w[1],e:w[2],wi:i};
-$("#tprompt").innerHTML='<div class="eng" style="font-size:24px">“'+esc(tq.e)+'”</div>';
+$("#tprompt").innerHTML='<div class="eng" style="font-size:24px">“'+esc(tq.e)+'"</div>';
 const inp=$("#tinput");inp.value="";inp.placeholder=tMode==="pinyin"?"type pinyin (tones optional)":"輸入漢字…";inp.focus();
 speak(tq.h);
 }
@@ -2238,7 +2257,7 @@ const confused2=sessionConfusedIds().filter(i=>i!==qi&&wHanzi(W[i])!==wHanzi(W[q
 const fallback2=shuffle(pool.filter(i=>i!==qi&&wHanzi(W[i])!==wHanzi(W[qi])&&!confused2.includes(i)));
 const dis=shuffle(confused2.concat(fallback2)).slice(0,3);
 const opts=shuffle([{l:wHanzi(W[qi]),ok:1,hz:1},...dis.map(i=>({l:wHanzi(W[i]),ok:0,hz:1}))]);
-qs.push({ty,prompt:'Which is “'+W[qi][2]+'”?',audio:null,hz:wHanzi(W[qi]),pin:wPin(W[qi]),opts,qi});}
+qs.push({ty,prompt:'Which is “'+W[qi][2]+'"?',audio:null,hz:wHanzi(W[qi]),pin:wPin(W[qi]),opts,qi});}
 else if(ty==="tn"){const qi=rnd(pool);const t=tone(syls(wPin(W[qi]))[0]||"");
 const opts=[1,2,3,4,5].map(x=>({l:x===5?"neutral":"tone "+x,ok:x===t?1:0}));
 qs.push({ty,prompt:"🔊 Tone of the first syllable?",audio:wHanzi(W[qi]),hz:wHanzi(W[qi]),pin:wPin(W[qi]),opts,qi});}
@@ -2284,26 +2303,35 @@ $("#main").innerHTML='<div class="box">'+
 '<div class="row"><input type="text" id="wsearch" placeholder="Search hanzi / pinyin / english…" oninput="wSel=null;filterWords()" style="flex:1">'+
 '<select id="wfilt" onchange="wSel=null;filterWords()"><option value="">All</option><option value="1">HSK 1</option><option value="2">HSK 2</option><option value="P">Work pack</option><option value="T">Taiwan pack</option></select></div>'+
 '<div id="wdetail"></div>'+
-'<div style="max-height:58vh;overflow:auto;margin-top:12px">'+
-'<table><thead><tr><th></th><th>'+(st.script==="t"?"漢字":"汉字")+'</th><th>Pinyin</th><th>English</th><th>Set</th><th></th></tr></thead><tbody id="wtbody"></tbody></table>'+
-'</div><p class="mut" style="font-size:12px;margin-top:6px">Click a row for radical breakdown &amp; cultural notes.</p></div>';
+'<p style="font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:var(--c-rune);margin:12px 0 2px">'+W.length+' entries — tap for breakdown &amp; notes</p>'+
+'<div style="max-height:58vh;overflow-y:auto" id="wtbody"></div>'+
+'</div>';
 filterWords();
 }
 function wInfo(i){wSel=i;
 const w=W[i];
-$("#wdetail").innerHTML='<div class="box" style="margin:10px 0 0;background:#141927">'+
-'<div class="row"><span class="hanzi" style="font-size:30px">'+T(wHanzi(w))+'</span><span style="font-size:18px">'+pinHTML(wPin(w))+'</span><span class="mut">'+esc(w[2])+'</span>'+
+$("#wdetail").innerHTML='<div class="box" style="margin:10px 0 0;background:var(--c-iron);border-color:var(--c-forge)">'+
+'<div class="row" style="align-items:flex-start"><span class="hanzi" style="font-size:38px;line-height:1;color:var(--c-bone)">'+T(wHanzi(w))+'</span>'+
+'<div style="flex:1;min-width:0"><div style="font-size:17px;margin-bottom:2px">'+pinHTML(wPin(w))+'</div><div class="mut" style="font-size:13px">'+esc(w[2])+'</div></div>'+
 '<button class="btn sm" onclick="speak(wHanzi(W['+i+']))">🔊</button>'+
-'<button class="btn sm" style="margin-left:auto" onclick="wSel=null;$(\'#wdetail\').innerHTML=\'\'">✕</button></div>'+
+'<button class="btn sm" onclick="wSel=null;$(\'#wdetail\').innerHTML=\'\'">✕</button></div>'+
 bopoHTML(wPin(w))+noteHTML(w)+breakHTML(wHanzi(w))+
 '</div>';
 }
 function filterWords(){
 const q=($("#wsearch").value||"").toLowerCase();
 const f=$("#wfilt").value;
-$("#wtbody").innerHTML=W.map((w,i)=>({w,i}))
-.filter(({w})=>(!f||String(w[3])===f)&&(!q||wHanzi(w).includes(q)||T(wHanzi(w)).includes(q)||w[0].includes(q)||wPin(w).toLowerCase().includes(q)||plainPinyin(wPin(w)).includes(q)||w[2].toLowerCase().includes(q)))
-.map(({w,i})=>'<tr class="wrow" onclick="wInfo('+i+')"><td>'+(isLearned(i)?"✅":"")+(w[4]&&(w[4].n||w[4].tw)?" 💡":"")+'</td><td class="hanzi" style="font-size:20px">'+T(wHanzi(w))+'</td><td>'+pinHTML(wPin(w))+'</td><td>'+esc(w[2])+'</td><td>'+(w[3]==="P"?'<span class="tag p">WORK</span>':(w[3]==="T"?'<span class="tag tw">TW</span>':'<span class="mut">'+w[3]+'</span>'))+'</td><td><button class="btn sm" onclick="event.stopPropagation();speak(wHanzi(W['+i+']))">🔊</button></td></tr>').join("");
+const rows=W.map((w,i)=>({w,i}))
+.filter(({w})=>(!f||String(w[3])===f)&&(!q||wHanzi(w).includes(q)||T(wHanzi(w)).includes(q)||w[0].includes(q)||wPin(w).toLowerCase().includes(q)||plainPinyin(wPin(w)).includes(q)||w[2].toLowerCase().includes(q)));
+$("#wtbody").innerHTML=rows.map(({w,i})=>'<div class="lex-row" onclick="wInfo('+i+')">'+
+'<div class="lex-hz hanzi">'+T(wHanzi(w))+'</div>'+
+'<div class="lex-body"><div class="lex-pin">'+pinHTML(wPin(w))+'</div><div class="lex-eng">'+esc(w[2])+'</div></div>'+
+'<div class="lex-aside">'+
+(w[3]==="P"?'<span class="tag p">WORK</span>':(w[3]==="T"?'<span class="tag tw">TW</span>':''))+
+(isLearned(i)?'<span style="font-size:13px" title="Learned">✅</span>':'')+
+(w[4]&&(w[4].n||w[4].tw)?'<span style="font-size:12px" title="Has notes">💡</span>':'')+
+'<button class="btn sm" onclick="event.stopPropagation();speak(wHanzi(W['+i+']))">🔊</button>'+
+'</div></div>').join("");
 }
 /* ================= HUNT — CAREER MANDARIN ================= */
 let huntOpen=0;
