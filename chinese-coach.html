@@ -209,6 +209,41 @@ tr.wrow:hover td{background:var(--c-iron)}
 .lex-eng{font-size:12px;color:var(--c-rune);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .lex-aside{display:flex;gap:5px;align-items:center;flex-shrink:0}
 @media(max-width:640px){.card-hz{font-size:72px}.card-hz-sm{font-size:40px}}
+/* ── VOICE CHAMBER (Stage 3) ─────────────────────────── */
+/* Frost chip variant — used in Voice section only */
+.chip.on-f{background:var(--c-frost);border-color:var(--c-frost);color:var(--c-void)}
+/* Container — matches .chamber-card but with frost top border */
+.voice-chamber{background:var(--c-ash);border:1px solid var(--c-steel);border-top:2px solid rgba(61,188,184,0.3);border-radius:var(--r-md);padding:28px 24px 24px;margin-bottom:12px;box-shadow:var(--shadow-card)}
+/* Target sentence display in Speak mode */
+.voice-hz{font-family:'Noto Serif TC','Microsoft JhengHei','PingFang TC',serif;font-size:48px;line-height:1.1;color:var(--c-bone);text-align:center;margin:12px 0 6px}
+.voice-pin{font-size:17px;text-align:center;color:var(--c-smoke);letter-spacing:0.04em;margin:4px 0}
+.voice-eng{font-size:13px;text-align:center;color:var(--c-rune);margin:2px 0 12px}
+/* Controls row in Speak mode */
+.voice-controls{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:18px}
+/* Frost mic button — primary CTA in Voice */
+.btn-mic{background:var(--c-frost);border:none;color:var(--c-void);font-weight:700;font-size:14px;font-family:'Inter',system-ui,sans-serif;letter-spacing:0.05em;padding:14px 28px;border-radius:var(--r-md);cursor:pointer;box-shadow:var(--glow-frost);transition:background var(--t-fast)}
+.btn-mic:hover{background:var(--c-frost-lo)}
+.btn-mic:active{transform:scale(0.97)}
+/* Active listening state — restrained pulse, not playful */
+.btn-mic.listening{animation:frost-pulse 1.5s ease-in-out infinite;background:rgba(61,188,184,0.12);color:var(--c-frost);box-shadow:none}
+@keyframes frost-pulse{0%,100%{opacity:1}50%{opacity:.6}}
+/* Score result layout in Speak mode */
+.score-result{text-align:center;padding:16px 0;min-height:60px}
+.score-hz{font-family:'Noto Serif TC','Microsoft JhengHei',serif;font-size:30px;letter-spacing:2px;margin-bottom:8px}
+.score-pct{font-size:24px;font-weight:700;margin-bottom:2px}
+.score-msg{font-size:13px;color:var(--c-smoke);margin-bottom:4px}
+.score-heard{font-size:12px;color:var(--c-rune)}
+/* Tone demo grid — five-tone cards */
+.tone-demo{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin:12px 0}
+.tone-demo .btn{display:flex;flex-direction:column;align-items:center;gap:3px;padding:12px 6px}
+/* Tone trainer answer grid */
+.tone-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:12px 0}
+.tone-grid .btn{padding:13px;text-align:center}
+/* Taiwan notes list */
+.tone-tips{list-style:none;padding:0;margin:0;font-size:14px;line-height:1.8;color:var(--c-bone)}
+.tone-tips li{padding:3px 0;border-bottom:1px solid var(--c-steel)}
+.tone-tips li:last-child{border-bottom:none}
+@media(max-width:600px){.tone-demo{grid-template-columns:repeat(3,1fr)}.tone-grid{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
@@ -1723,10 +1758,11 @@ if(codexMode==="train")rCards();else rWords();
 const m=$("#main");m.innerHTML=bar+m.innerHTML;
 }
 function rVoice(){
-const bar='<div class="row" style="margin-bottom:8px"><b style="font-size:12px;color:var(--mut);letter-spacing:1px;margin-right:8px">VOICE</b>'+
-'<button class="btn sm '+(voiceMode==="speak"?"acc":"")+'" onclick="voiceMode=\'speak\';rVoice()">Speak</button>'+
-'<button class="btn sm '+(voiceMode==="echo"?"acc":"")+'" onclick="voiceMode=\'echo\';rVoice()">Echo</button>'+
-'<button class="btn sm '+(voiceMode==="tones"?"acc":"")+'" onclick="voiceMode=\'tones\';rVoice()">Tones</button>'+
+const bar='<div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;padding-bottom:10px;border-bottom:1px solid var(--c-steel)">'+
+'<span style="font-size:10px;letter-spacing:0.15em;text-transform:uppercase;color:var(--c-frost);font-weight:600;white-space:nowrap">VOICE</span>'+
+'<span class="chip'+(voiceMode==="speak"?" on-f":"")+'" onclick="voiceMode=\'speak\';rVoice()">Speak</span>'+
+'<span class="chip'+(voiceMode==="echo"?" on-f":"")+'" onclick="voiceMode=\'echo\';rVoice()">Echo</span>'+
+'<span class="chip'+(voiceMode==="tones"?" on-f":"")+'" onclick="voiceMode=\'tones\';rVoice()">Tones</span>'+
 '</div>';
 if(voiceMode==="speak")rSpeak();else if(voiceMode==="echo")rListen();else rPinyin();
 const m=$("#main");m.innerHTML=bar+m.innerHTML;
@@ -1818,18 +1854,22 @@ if(revealed&&["1","2","3","4"].includes(e.key))grade(+e.key-1)
 let lq=null,lScore={ok:0,n:0},lMode="word";
 function lPool(){const learned=W.map((w,i)=>i).filter(isLearned);return learned.length>=8?learned:W.map((w,i)=>i).filter(i=>W[i][3]===1)}
 function rListen(){
-$("#main").innerHTML='<div class="box">'+
-'<div class="row">'+
-'<button class="btn sm '+(lMode==="word"?"acc":"")+'" onclick="lMode=\'word\';newListen()">Words</button>'+
-'<button class="btn sm '+(lMode==="sent"?"acc":"")+'" onclick="lMode=\'sent\';newListen()">Sentences</button>'+
-'<span class="tag" style="margin-left:auto">Score: <span id="lsc">'+lScore.ok+'/'+lScore.n+'</span></span></div>'+
-'<div class="center" style="margin:22px 0">'+
-'<button class="btn acc big" onclick="playL()">🔊 Play</button> '+
-'<button class="btn" onclick="playL(0.6)">🐢 Slow</button></div>'+
+$("#main").innerHTML=
+'<div class="voice-chamber">'+
+'<div style="display:flex;align-items:center;gap:10px;margin-bottom:16px">'+
+'<span class="chip'+(lMode==="word"?" on-f":"")+'" onclick="lMode=\'word\';newListen()">Words</span>'+
+'<span class="chip'+(lMode==="sent"?" on-f":"")+'" onclick="lMode=\'sent\';newListen()">Sentences</span>'+
+'<span class="tag" style="margin-left:auto">Score: <span id="lsc">'+lScore.ok+'/'+lScore.n+'</span></span>'+
+'</div>'+
+'<div style="text-align:center;margin:24px 0 20px">'+
+'<button class="btn-mic" onclick="playL()">🔊 Play</button>'+
+'<div style="margin-top:10px"><button class="btn sm" onclick="playL(0.6)">🐢 Slow</button></div>'+
+'</div>'+
 '<div id="lopts" class="opts"></div>'+
 '<div id="lfb" class="fb"></div>'+
-'<div class="center" style="margin-top:10px"><button class="btn" id="lnext" style="display:none" onclick="newListen()">Next →</button></div>'+
-'<p class="mut center" style="margin-top:8px;font-size:13px">After answering: replay and repeat aloud (shadowing).</p></div>';
+'<div style="text-align:center;margin-top:10px"><button class="btn" id="lnext" style="display:none" onclick="newListen()">Next →</button></div>'+
+'<p class="mut" style="text-align:center;margin-top:12px;font-size:12px">After answering: replay and repeat aloud.</p>'+
+'</div>';
 newListen();
 }
 function newListen(){
@@ -1870,27 +1910,30 @@ return items;
 }
 function rSpeak(){
 const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
-$("#main").innerHTML='<div class="box">'+
-'<h3>🎤 Speaking studio</h3>'+
-'<p class="mut" style="font-size:13px;margin-top:4px">Listen, then say the sentence. The app transcribes you and scores how close you got. '+(SR?"":"<b class='red-t'>Speech recognition not available in this browser — use Edge or Chrome (online).</b>")+'</p>'+
-'<div id="sptgt" style="margin-top:14px"></div>'+
-'<div class="row" style="justify-content:center;margin-top:14px">'+
+$("#main").innerHTML=
+'<div class="voice-chamber">'+
+(!SR?'<p style="text-align:center;font-size:13px;color:var(--c-fail);margin-bottom:16px">Speech recognition requires Chrome or Edge (online).</p>':"")+
+'<div id="sptgt" style="margin-bottom:4px"></div>'+
+'<div class="voice-controls">'+
 '<button class="btn" onclick="spPlay(0.85)">🔊 Listen</button>'+
 '<button class="btn" onclick="spPlay(0.6)">🐢 Slow</button>'+
-(SR?'<button class="btn acc big" id="spmic" onclick="spListen()">🎤 Speak</button>':"")+
-'<button class="btn" onclick="spToggle()">'+(spHide?"Show text":"Hide text")+'</button>'+
-'<button class="btn" onclick="newSp()">Next →</button>'+
+(SR?'<button class="btn-mic" id="spmic" onclick="spListen()">🎤 Speak</button>':"")+
 '</div>'+
-'<div id="spres" class="center" style="margin-top:16px;min-height:60px"></div>'+
+'<div style="display:flex;gap:10px;justify-content:center;margin-top:10px">'+
+'<button class="btn-ghost" onclick="spToggle()">'+(spHide?"Show text":"Hide text")+'</button>'+
+'<button class="btn-ghost" onclick="newSp()">Next →</button>'+
+'</div>'+
+'<div id="spres" class="score-result"></div>'+
 '</div>';
 if(spKeep&&spT){spKeep=false;spRender()}else newSp();
 }
 function newSp(){spT=rnd(spItems());spRender();const r=$("#spres");if(r)r.innerHTML=""}
 function spRender(){
 const el=$("#sptgt");if(!el||!spT)return;
-el.innerHTML='<div class="center hanzi" style="font-size:30px;'+(spHide?"filter:blur(9px);":"")+'">'+T(spT.h)+'</div>'+
-'<div class="pin" style="'+(spHide?"filter:blur(9px);":"")+'">'+pinHTML(spT.p)+'</div>'+
-'<div class="eng mut">'+esc(spT.e)+'</div>';
+el.innerHTML=
+'<div class="voice-hz hanzi" style="'+(spHide?"filter:blur(9px);":"")+'">'+T(spT.h)+'</div>'+
+'<div class="voice-pin" style="'+(spHide?"filter:blur(9px);":"")+'">'+pinHTML(spT.p)+'</div>'+
+'<div class="voice-eng">'+esc(spT.e)+'</div>';
 }
 function spToggle(){spHide=!spHide;rSpeak()}
 function spPlay(r){if(spT)speak(spT.h,r)}
@@ -1902,10 +1945,10 @@ stopAudio();
 const r=new SR();
 r.lang=st.script==="t"?"zh-TW":"zh-CN";
 r.interimResults=false;r.maxAlternatives=1;
-spBusy=true;$("#spmic").textContent="🎙 Listening…";
+spBusy=true;const sm=$("#spmic");if(sm){sm.textContent="🎙 Listening…";sm.classList.add("listening")}
 r.onresult=ev=>{spScore(ev.results[0][0].transcript||"")};
 r.onerror=ev=>{$("#spres").innerHTML='<span class="red-t">Mic error: '+esc(ev.error)+'</span>'};
-r.onend=()=>{spBusy=false;const m=$("#spmic");if(m)m.textContent="🎤 Speak"};
+r.onend=()=>{spBusy=false;const m=$("#spmic");if(m){m.textContent="🎤 Speak";m.classList.remove("listening")}};
 r.start();
 }
 function spScore(heard){
@@ -1914,10 +1957,13 @@ const l=lcs([...tgt],[...got]);
 const pct=tgt.length?Math.round(l/tgt.length*100):0;
 const gset=new Set([...got]);
 const marked=[...tgt].map(c=>'<span class="'+(gset.has(c)?"ok":"bad")+'">'+c+'</span>').join("");
-const msg=pct>=85?"🌟 Excellent!":pct>=60?"👍 Good — almost there.":"💪 Keep trying — listen again and copy the rhythm.";
-$("#spres").innerHTML='<div class="spk-ch hanzi">'+marked+'</div>'+
-'<div style="margin-top:6px">Heard: <span class="hanzi">'+esc(heard||"–")+'</span></div>'+
-'<div style="margin-top:6px;font-size:20px"><b>'+pct+'%</b> — '+msg+'</div>';
+const msg=pct>=85?"Excellent":pct>=60?"Almost there":"Listen again — copy the rhythm";
+const scoreColor=pct>=85?"var(--c-ok)":pct>=60?"var(--c-gold)":"var(--c-smoke)";
+$("#spres").innerHTML=
+'<div class="spk-ch score-hz hanzi">'+marked+'</div>'+
+'<div class="score-pct" style="color:'+scoreColor+'">'+pct+'%</div>'+
+'<div class="score-msg">'+esc(msg)+'</div>'+
+'<div class="score-heard">Heard: <span class="hanzi">'+esc(heard||"–")+'</span></div>';
 if(pct>=60){bumpDone("speak");touchStreak()}
 }
 /* ================= DIALOGUES ================= */
@@ -2151,26 +2197,41 @@ bumpDone("type");touchStreak();
 const TONE_DEMO=[["妈","mā","tone 1: high &amp; flat",1],["麻","má","tone 2: rising ↗",2],["马","mǎ","tone 3: dip ↘↗",3],["骂","mà","tone 4: falling ↘",4],["吗","ma","neutral: light",5]];
 let pq=null,pScore={ok:0,n:0},pAns=false;
 function rPinyin(){
-$("#main").innerHTML='<div class="box"><h3 style="margin-bottom:10px">The four tones</h3><div class="row" style="gap:8px">'+
-TONE_DEMO.map(d=>'<button class="btn" style="flex:1;min-width:105px" onclick="speak(\''+d[0]+'\')"><span class="hanzi" style="font-size:25px">'+T(d[0])+'</span><br><span class="t'+d[3]+'" style="font-size:19px">'+d[1]+'</span>'+(st.bopomofo?'<br><span class="bopo t'+d[3]+'" style="font-size:14px">'+pinToBopo(d[1])+'</span>':'')+'<br><span class="mut" style="font-size:11px">'+d[2]+'</span></button>').join("")+
+$("#main").innerHTML=
+'<div class="box" style="border-top:2px solid rgba(61,188,184,0.3)">'+
+'<span style="font-size:10px;letter-spacing:0.15em;text-transform:uppercase;color:var(--c-frost);font-weight:600;display:block;margin-bottom:10px">The four tones · 四聲</span>'+
+'<div class="tone-demo">'+
+TONE_DEMO.map(d=>'<button class="btn" onclick="speak(\''+d[0]+'\')"><span class="hanzi" style="font-size:26px">'+T(d[0])+'</span><span class="t'+d[3]+'" style="font-size:16px">'+d[1]+'</span>'+(st.bopomofo?'<span class="bopo t'+d[3]+'" style="font-size:12px">'+pinToBopo(d[1])+'</span>':'')+'<span class="mut" style="font-size:10px">'+d[2]+'</span></button>').join("")+
 '</div></div>'+
-'<div class="box"><h3>Tone-ear trainer</h3>'+
-'<p class="mut" style="font-size:14px;margin:6px 0">What is the tone of the <b>first</b> syllable? <span class="tag" style="margin-left:8px">Score: <span id="psc">'+pScore.ok+'/'+pScore.n+'</span></span></p>'+
-'<div class="center" style="margin:14px 0"><button class="btn acc big" onclick="playP()">🔊 Play</button> <button class="btn" onclick="playP(0.6)">🐢</button></div>'+
-'<div class="tonegrid">'+
-'<button class="btn" onclick="ansP(1)"><span class="t1">Tone 1 ¯</span></button>'+
-'<button class="btn" onclick="ansP(2)"><span class="t2">Tone 2 ´</span></button>'+
-'<button class="btn" onclick="ansP(3)"><span class="t3">Tone 3 ˇ</span></button>'+
-'<button class="btn" onclick="ansP(4)"><span class="t4">Tone 4 ˋ</span></button>'+
-'<button class="btn" onclick="ansP(5)"><span class="t5">Neutral</span></button>'+
-'</div><div id="pfb" class="fb"></div>'+
-'<div class="center" style="margin-top:8px"><button class="btn" id="pnext" style="display:none" onclick="newP()">Next →</button></div></div>'+
-'<div class="box"><h3 style="margin-bottom:8px">Quick tips (Taiwan flavor)</h3><p style="font-size:15px;line-height:1.7">'+
-'• <b>ü</b> after j/q/x/y is written <b>u</b> but sounds like ü (去 qù).<br>'+
-'• <b>Tone-3 sandhi</b>: 3rd + 3rd → say 2nd + 3rd: 你好 nǐ hǎo → <i>ní hǎo</i>.<br>'+
-'• <b>不 bù</b> → <i>bú</i> before 4th tone; <b>一 yī</b> → <i>yí</i> before 4th, <i>yì</i> elsewhere.<br>'+
-'• Taiwan accent: zh/ch/sh soften toward z/c/s, no -r endings (哪裡 not 哪兒), 和 often <i>hàn</i>, 誰 = <i>shuí</i>.<br>'+
-'• Taiwan schools use 注音 Bopomofo (ㄅㄆㄇㄈ) instead of pinyin — you will see it on keyboards everywhere.</p></div>';
+'<div class="voice-chamber">'+
+'<span style="font-size:10px;letter-spacing:0.15em;text-transform:uppercase;color:var(--c-smoke);font-weight:600;display:block;margin-bottom:12px">Tone trainer</span>'+
+'<div style="display:flex;align-items:center;gap:12px;margin-bottom:14px">'+
+'<p class="mut" style="font-size:13px;flex:1">What is the tone of the <b>first</b> syllable?</p>'+
+'<span class="tag">Score: <span id="psc">'+pScore.ok+'/'+pScore.n+'</span></span>'+
+'</div>'+
+'<div style="text-align:center;margin:14px 0 18px">'+
+'<button class="btn-mic" onclick="playP()">🔊 Play</button>'+
+'<div style="margin-top:10px"><button class="btn sm" onclick="playP(0.6)">🐢 Slow</button></div>'+
+'</div>'+
+'<div class="tone-grid">'+
+'<button class="btn" onclick="ansP(1)"><span class="t1">1 — flat ¯</span></button>'+
+'<button class="btn" onclick="ansP(2)"><span class="t2">2 — rise ´</span></button>'+
+'<button class="btn" onclick="ansP(3)"><span class="t3">3 — dip ˇ</span></button>'+
+'<button class="btn" onclick="ansP(4)"><span class="t4">4 — fall ˋ</span></button>'+
+'<button class="btn" style="grid-column:span 2" onclick="ansP(5)"><span class="t5">Neutral</span></button>'+
+'</div>'+
+'<div id="pfb" class="fb"></div>'+
+'<div style="text-align:center;margin-top:8px"><button class="btn" id="pnext" style="display:none" onclick="newP()">Next →</button></div>'+
+'</div>'+
+'<div class="box">'+
+'<span style="font-size:10px;letter-spacing:0.15em;text-transform:uppercase;color:var(--c-smoke);font-weight:600;display:block;margin-bottom:10px">Taiwan pronunciation notes</span>'+
+'<ul class="tone-tips">'+
+'<li><b>ü after j/q/x/y</b> is written <b>u</b> but sounds like ü — example: 去 qù.</li>'+
+'<li><b>Tone-3 sandhi</b>: third + third → say second + third. 你好 nǐ hǎo sounds like <i>ní hǎo</i>.</li>'+
+'<li><b>不 bù</b> → <i>bú</i> before 4th tone. <b>一 yī</b> → <i>yí</i> before 4th, <i>yì</i> elsewhere.</li>'+
+'<li>Taiwan accent: zh/ch/sh soften toward z/c/s, no -r endings (哪裡 not 哪兒), 和 often <i>hàn</i>, 誰 = <i>shuí</i>.</li>'+
+'<li>Taiwan schools use 注音 Bopomofo (ㄅㄆㄇㄈ) — you will see it on keyboards everywhere.</li>'+
+'</ul></div>';
 newP();
 }
 function newP(){
