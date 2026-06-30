@@ -142,15 +142,27 @@ tr.wrow:hover td{background:var(--c-iron)}
 .heat{display:grid;grid-auto-flow:column;grid-template-rows:repeat(7,11px);gap:2px;justify-content:start;margin:10px 0}
 .heat i{width:11px;height:11px;border-radius:2px;background:var(--c-steel)}
 .heat i.h1{background:rgba(61,158,106,0.22)}.heat i.h2{background:rgba(61,158,106,0.48)}.heat i.h3{background:rgba(61,158,106,0.74)}.heat i.h4{background:#3D9E6A}
-/* ── DIALOGUE ────────────────────────────────────────── */
-.bub{max-width:78%;padding:10px 14px;border-radius:var(--r-md);margin:5px 0;font-size:16px;line-height:1.6;cursor:pointer}
-.bub.a{background:var(--c-iron);border-bottom-left-radius:var(--r-sm);margin-right:auto}
-.bub.b{background:#1A2418;border-bottom-right-radius:var(--r-sm);margin-left:auto;text-align:right}
-.bub .bp{font-size:13px;display:block;color:var(--c-smoke)}
-.bub .be{font-size:12px;color:var(--c-smoke);display:block}
-.bub.cur{outline:1px solid var(--c-ember)}
-.dlgcard{cursor:pointer;transition:border-color var(--t-fast)}
-.dlgcard:hover{border-color:var(--c-ember)}
+/* ── GATE CHAMBER (Stage 4) ──────────────────────────── */
+/* Scenario list cards */
+.gate-card{background:var(--c-ash);border:1px solid var(--c-steel);border-left:3px solid rgba(61,188,184,0.25);border-radius:var(--r-md);padding:16px 18px;margin-bottom:10px;cursor:pointer;transition:background var(--t-fast),border-left-color var(--t-fast);box-shadow:var(--shadow-card)}
+.gate-card:hover{background:var(--c-iron);border-left-color:var(--c-frost)}
+.gate-card-hz{font-family:'Noto Serif TC','Microsoft JhengHei','PingFang TC',serif;font-size:22px;color:var(--c-bone);margin-bottom:5px}
+.gate-card-scene{font-size:13px;color:var(--c-smoke);margin-bottom:6px}
+.gate-card-tag{font-size:11px;color:var(--c-rune);letter-spacing:0.08em;text-transform:uppercase}
+/* Open dialogue — scene header */
+.scene-header{background:var(--c-ash);border:1px solid var(--c-steel);border-top:2px solid rgba(61,188,184,0.3);border-radius:var(--r-md);padding:18px 18px 14px;margin-bottom:10px;box-shadow:var(--shadow-card)}
+.scene-eyebrow{font-size:10px;letter-spacing:0.15em;text-transform:uppercase;color:var(--c-frost);font-weight:600;margin-bottom:6px}
+.scene-title-hz{font-family:'Noto Serif TC','Microsoft JhengHei',serif;font-size:20px;color:var(--c-bone);margin-bottom:4px}
+.scene-desc{font-size:13px;color:var(--c-smoke);margin-bottom:12px}
+/* Screenplay line style — cinematic, not chat bubbles */
+.bub{width:100%;padding:10px 14px;border-left:3px solid transparent;margin:1px 0;font-size:17px;line-height:1.5;cursor:pointer;transition:background var(--t-fast),border-left-color var(--t-fast)}
+.bub:hover{background:var(--c-iron)}
+.bub.a{border-left-color:var(--c-steel)}
+.bub.b{border-left-color:rgba(61,188,184,0.35);background:rgba(61,188,184,0.03)}
+.bub.b:hover{background:var(--c-iron)}
+.bub .bp{font-size:12px;display:block;color:var(--c-rune);margin-top:3px}
+.bub .be{font-size:11px;color:var(--c-rune);opacity:0.65;display:block;margin-top:2px}
+.bub.cur{background:rgba(61,188,184,0.07);border-left-color:var(--c-frost);outline:none}
 /* ── SENTENCE BUILDER ────────────────────────────────── */
 .tiles{display:flex;gap:6px;flex-wrap:wrap;justify-content:center;margin:10px 0;min-height:50px}
 .tile{background:var(--c-iron);border:1px solid var(--c-steel);border-radius:var(--r-sm);padding:9px 13px;font-size:20px;cursor:pointer;font-family:'Noto Serif TC','Microsoft JhengHei',serif;transition:border-color var(--t-fast)}
@@ -1973,38 +1985,62 @@ if(pct>=60){bumpDone("speak");touchStreak()}
 let dlgOpen=null,dlgPin=true,dlgEng=true,dlgStep=-1,dq=null;
 function rDlg(){
 if(dlgOpen===null){
-$("#main").innerHTML='<div class="box"><h3>📖 Dialogues</h3><p class="mut" style="font-size:13px;margin-top:4px">Real scenarios from your Taipei life — launches, the expo floor, your interview, the night market.</p></div>'+
-D.map((d,i)=>'<div class="box dlgcard" onclick="openDlg('+i+')"><b class="hanzi">'+T(d.t)+'</b><br><span class="mut" style="font-size:14px">'+esc(d.scene)+' · '+d.L.length+' lines</span></div>').join("");
+$("#main").innerHTML=
+'<div style="padding:2px 0 16px">'+
+'<span style="font-size:10px;letter-spacing:0.15em;text-transform:uppercase;color:var(--c-frost);font-weight:600">GATE · Taiwan Life</span>'+
+'<p class="mut" style="font-size:13px;margin-top:6px">Real scenarios from your Taipei life. Select a scene to practice.</p>'+
+'</div>'+
+D.map((d,i)=>'<div class="gate-card" onclick="openDlg('+i+')">'+
+'<div class="gate-card-hz">'+T(d.t)+'</div>'+
+'<div class="gate-card-scene">'+esc(d.scene)+'</div>'+
+'<span class="gate-card-tag">'+d.L.length+' lines</span>'+
+'</div>').join("");
 return;
 }
 const d=D[dlgOpen];
 dq=dq&&dq.di===dlgOpen?dq:{di:dlgOpen,qi:0,ok:0,done:false,answered:false};
-$("#main").innerHTML='<div class="box">'+
-'<div class="row"><button class="btn sm" onclick="closeDlg()">← All dialogues</button><b style="margin-left:6px" class="hanzi">'+T(d.t)+'</b></div>'+
-'<p class="mut" style="font-size:13px;margin-top:4px">'+esc(d.scene)+'</p>'+
-'<div class="row" style="margin-top:10px">'+
-'<button class="btn sm acc" onclick="playDlg()">▶ Play all</button>'+
+$("#main").innerHTML=
+'<div class="scene-header">'+
+'<div class="scene-eyebrow">Gate · Scene</div>'+
+'<div class="scene-title-hz hanzi">'+T(d.t)+'</div>'+
+'<div class="scene-desc">'+esc(d.scene)+'</div>'+
+'<div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">'+
+'<button class="btn sm" onclick="closeDlg()">← Scenes</button>'+
+'<button class="btn sm" style="color:var(--c-frost);border-color:var(--c-frost-lo)" onclick="playDlg()">▶ Play all</button>'+
 '<button class="btn sm" onclick="stopAudio()">⏹ Stop</button>'+
 '<button class="btn sm" onclick="dlgStepFwd()">Step ▸</button>'+
-'<label class="set" style="font-size:13px"><input type="checkbox"'+(dlgPin?" checked":"")+' onchange="dlgPin=this.checked;rDlg()"> pinyin</label>'+
+'<label class="set" style="font-size:13px;margin-left:auto"><input type="checkbox"'+(dlgPin?" checked":"")+' onchange="dlgPin=this.checked;rDlg()"> pinyin</label>'+
 '<label class="set" style="font-size:13px"><input type="checkbox"'+(dlgEng?" checked":"")+' onchange="dlgEng=this.checked;rDlg()"> english</label>'+
 '</div>'+
-'<div style="margin-top:14px;display:flex;flex-direction:column">'+
+'</div>'+
+'<div style="background:var(--c-ash);border:1px solid var(--c-steel);border-radius:var(--r-md);overflow:hidden;margin-bottom:10px;box-shadow:var(--shadow-card)">'+
 d.L.map((l,i)=>'<div class="bub '+(l[0]===0?"a":"b")+(dlgStep===i?" cur":"")+'" onclick="speak(D['+dlgOpen+'].L['+i+'][1]);dlgStep='+i+';rDlg()">'+
 '<span class="hanzi">'+T(l[1])+'</span>'+
 (dlgPin?'<span class="bp">'+pinHTML(l[2])+'</span>':"")+
 (dlgEng?'<span class="be">'+esc(l[3])+'</span>':"")+
 '</div>').join("")+
 '</div>'+
-'<p class="mut" style="font-size:12px;margin-top:8px">Tip: click any bubble to hear it. For role-play, hide english, play A lines and say B lines aloud before clicking them.</p>'+
-'</div>'+dlgQuizHTML(d);
+dlgQuizHTML(d);
 }
 function dlgQuizHTML(d){
-if(dq.done)return '<div class="box center"><b>Comprehension: '+dq.ok+'/'+d.Q.length+'</b> '+(dq.ok===d.Q.length?"🌟":"")+' <button class="btn sm" style="margin-left:10px" onclick="dq={di:dlgOpen,qi:0,ok:0,done:false,answered:false};rDlg()">Retry</button></div>';
+if(dq.done){
+const all=dq.ok===d.Q.length;
+return '<div class="box" style="text-align:center;padding:16px 20px">'+
+'<span style="font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:var(--c-smoke)">Comprehension</span>'+
+'<div style="font-size:28px;font-weight:700;color:'+(all?"var(--c-ok)":"var(--c-bone)")+';margin:8px 0">'+dq.ok+'/'+d.Q.length+'</div>'+
+'<button class="btn sm" onclick="dq={di:dlgOpen,qi:0,ok:0,done:false,answered:false};rDlg()">Retry</button>'+
+'</div>';
+}
 const q=d.Q[dq.qi];
-return '<div class="box"><b>Q'+(dq.qi+1)+'/'+d.Q.length+':</b> <span class="hanzi" style="font-size:19px">'+T(q[0])+'</span> <button class="btn sm" onclick="speak(D['+dlgOpen+'].Q['+dq.qi+'][0])">🔊</button>'+
+return '<div class="box">'+
+'<div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">'+
+'<span style="font-size:10px;color:var(--c-smoke);letter-spacing:0.05em;text-transform:uppercase;white-space:nowrap">Q '+(dq.qi+1)+' / '+d.Q.length+'</span>'+
+'<button class="btn sm" onclick="speak(D['+dlgOpen+'].Q['+dq.qi+'][0])">🔊</button>'+
+'</div>'+
+'<div class="hanzi" style="font-size:20px;color:var(--c-bone);line-height:1.4;margin-bottom:14px">'+T(q[0])+'</div>'+
 '<div class="opts" id="dqopts">'+q[1].map((o,i)=>'<button class="btn hanzi" onclick="ansDq('+i+')">'+T(o)+'</button>').join("")+'</div>'+
-'<div id="dqfb" class="fb"></div></div>';
+'<div id="dqfb" class="fb"></div>'+
+'</div>';
 }
 function ansDq(i){
 if(dq.answered)return;dq.answered=true;
