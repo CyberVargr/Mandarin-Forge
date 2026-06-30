@@ -1,0 +1,1990 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>中文 Coach — Taiwan Edition</title>
+<script src="https://cdn.jsdelivr.net/npm/hanzi-writer@3.5/dist/hanzi-writer.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/opencc-js@1.0.5/dist/umd/full.js"></script>
+<style>
+:root{--bg:#10141c;--card:#1a2030;--card2:#222a3e;--txt:#e8ecf4;--mut:#8a94ab;--acc:#e4593b;--green:#3fae6a;--red:#d24545;--gold:#e0a93c;--blue:#4f8fe8;--purple:#9a6fe0;--teal:#3fb8ae}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--txt);font-family:"Segoe UI",system-ui,sans-serif;min-height:100vh}
+.hanzi{font-family:"Microsoft JhengHei","Noto Sans TC","Microsoft YaHei","Noto Sans SC","PingFang TC",sans-serif}
+header{display:flex;align-items:center;gap:10px;padding:12px 18px;border-bottom:1px solid #2a3248;flex-wrap:wrap}
+header h1{font-size:19px;white-space:nowrap}
+header h1 span{color:var(--acc)}
+nav{display:flex;gap:5px;flex-wrap:wrap}
+nav button{background:none;border:1px solid #2a3248;color:var(--mut);padding:6px 10px;border-radius:8px;cursor:pointer;font-size:13px}
+nav button.on{background:var(--acc);border-color:var(--acc);color:#fff}
+#scriptBtn{background:var(--card2);border:1px solid #34405e;color:var(--gold);padding:6px 11px;border-radius:8px;cursor:pointer;font-size:13px}
+#hud{margin-left:auto;display:flex;gap:10px;align-items:center;font-size:13px;color:var(--gold);font-weight:600;white-space:nowrap}
+#sessbar{display:none;position:sticky;top:0;z-index:50;background:#23192b;border-bottom:2px solid var(--acc);padding:10px 18px}
+#sessbar b{color:var(--gold)}
+#sessleft{font-variant-numeric:tabular-nums;font-size:18px;font-weight:700}
+#sessleft.over{color:var(--red);animation:blink 1s infinite}
+@keyframes blink{50%{opacity:.4}}
+.sbar{flex:1;height:8px;background:#3a2f45;border-radius:4px;overflow:hidden;min-width:80px}
+.sbar i{display:block;height:100%;background:var(--acc)}
+main{max-width:880px;margin:0 auto;padding:20px 16px 60px}
+.box{background:var(--card);border:1px solid #2a3248;border-radius:14px;padding:20px;margin-bottom:16px}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.btn{background:var(--card2);border:1px solid #34405e;color:var(--txt);padding:10px 18px;border-radius:9px;cursor:pointer;font-size:15px}
+.btn:hover{border-color:var(--acc)}
+.btn.acc{background:var(--acc);border-color:var(--acc);color:#fff}
+.btn.grn{background:var(--green);border-color:var(--green);color:#fff}
+.btn.red{background:var(--red);border-color:var(--red);color:#fff}
+.btn.sm{padding:5px 10px;font-size:13px}
+.btn.big{font-size:20px;padding:14px 28px}
+.btn:disabled{opacity:.55;cursor:default}
+.bigh{font-size:60px;text-align:center;line-height:1.3;margin:14px 0}
+.pin{font-size:23px;text-align:center;color:var(--gold);margin:6px 0}
+.eng{font-size:18px;text-align:center;margin:6px 0}
+.mut{color:var(--mut)}.gold{color:var(--gold)}.grn-t{color:var(--green)}.red-t{color:var(--red)}
+.center{text-align:center}
+.t1{color:#ff7066}.t2{color:#5dd47a}.t3{color:#5aa8ff}.t4{color:#c98bff}.t5{color:#9aa3b5}
+.opts{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px}
+.opts .btn{padding:15px;font-size:17px}
+.opts .btn.hit{background:var(--green);border-color:var(--green);color:#fff}
+.opts .btn.miss{background:var(--red);border-color:var(--red);color:#fff}
+input[type=text],input[type=number],select{background:var(--card2);border:1px solid #34405e;color:var(--txt);padding:10px 12px;border-radius:8px;font-size:17px}
+input[type=text]{width:100%}
+.stat{display:inline-block;background:var(--card2);border-radius:10px;padding:11px 16px;margin:4px;text-align:center;min-width:92px}
+.stat b{display:block;font-size:24px}
+.stat span{font-size:11px;color:var(--mut)}
+.set{display:flex;gap:8px;align-items:center;font-size:14px}
+table{width:100%;border-collapse:collapse;font-size:16px}
+td,th{padding:8px 6px;border-bottom:1px solid #2a3248;text-align:left}
+th{color:var(--mut);font-size:13px}
+tr.wrow{cursor:pointer}
+tr.wrow:hover td{background:#1f2740}
+.wchars{display:flex;gap:14px;flex-wrap:wrap;justify-content:center;margin:16px 0}
+.wbox{background:#f7f3ec;border-radius:10px}
+.tag{font-size:11px;background:var(--card2);color:var(--mut);border-radius:6px;padding:2px 7px}
+.tag.p{color:var(--purple);border:1px solid var(--purple)}
+.tag.tw{color:var(--teal);border:1px solid var(--teal)}
+.fb{text-align:center;font-size:18px;margin-top:12px;min-height:26px}
+.tonegrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:10px;margin:14px 0}
+.heat{display:grid;grid-auto-flow:column;grid-template-rows:repeat(7,13px);gap:3px;justify-content:start;margin:10px 0}
+.heat i{width:13px;height:13px;border-radius:3px;background:#222a3e}
+.heat i.h1{background:#3a4a3f}.heat i.h2{background:#3f7a52}.heat i.h3{background:#3fae6a}.heat i.h4{background:#7ce0a3}
+.xpbar{height:10px;background:var(--card2);border-radius:5px;overflow:hidden;margin:6px 0}
+.xpbar i{display:block;height:100%;background:linear-gradient(90deg,var(--gold),var(--acc))}
+.bub{max-width:75%;padding:10px 14px;border-radius:14px;margin:6px 0;font-size:17px;line-height:1.6;cursor:pointer}
+.bub.a{background:var(--card2);border-bottom-left-radius:4px;margin-right:auto}
+.bub.b{background:#2b3a2e;border-bottom-right-radius:4px;margin-left:auto;text-align:right}
+.bub .bp{font-size:14px;display:block}
+.bub .be{font-size:13px;color:var(--mut);display:block}
+.bub.cur{outline:2px solid var(--acc)}
+.tiles{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin:12px 0;min-height:54px}
+.tile{background:var(--card2);border:1px solid #34405e;border-radius:9px;padding:10px 14px;font-size:22px;cursor:pointer}
+.tile:hover{border-color:var(--acc)}
+.tile.ghost{opacity:.25;pointer-events:none}
+.slotline{background:#141927;border:1px dashed #34405e;border-radius:10px;padding:10px;min-height:58px;display:flex;gap:8px;flex-wrap:wrap;justify-content:center}
+.dlgcard{cursor:pointer;transition:border-color .15s}
+.dlgcard:hover{border-color:var(--acc)}
+.spk-ch{font-size:26px;letter-spacing:2px}
+.spk-ch .ok{color:var(--green)}.spk-ch .bad{color:var(--red)}
+.note{font-size:13.5px;color:#c4cce0;background:#141927;border-left:3px solid var(--teal);border-radius:8px;padding:9px 12px;margin:8px auto;max-width:600px;text-align:left;line-height:1.55}
+.note.cult{border-left-color:var(--gold)}
+.brk{font-size:14px;background:#141927;border-left:3px solid var(--purple);border-radius:8px;padding:9px 12px;margin:8px auto;max-width:600px;text-align:left;line-height:1.6}
+.brk b{font-size:21px;color:var(--gold)}
+.radcard{display:flex;gap:14px;align-items:flex-start}
+.radglyph{font-size:44px;min-width:74px;text-align:center;background:#141927;border-radius:10px;padding:8px;color:var(--gold)}
+.glyph{color:var(--gold);margin-right:3px}
+.subT{font-size:10px;letter-spacing:3px;color:var(--purple);text-transform:uppercase;align-self:center}
+.modegrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px;margin-top:12px}
+.modegrid .btn{padding:14px;text-align:center}
+.modegrid small{display:block;color:var(--mut);font-size:11px;margin-top:4px;font-weight:400}
+.psbrow{border-bottom:1px solid #2a3248;padding:10px 4px}
+.psbrow .hz{font-size:20px}
+.psbrow .pp{font-size:14px}
+.psbrow .ee{font-size:13px;color:var(--mut)}
+.chip{display:inline-block;background:var(--card2);border:1px solid #34405e;color:var(--mut);border-radius:14px;padding:4px 11px;font-size:12px;cursor:pointer;margin:2px}
+.chip.on{background:var(--acc);border-color:var(--acc);color:#fff}
+.diff{color:var(--gold);font-size:12px}
+.bopo{font-size:15px;color:var(--teal);letter-spacing:2px;margin:2px 0;text-align:center}
+.career-it{border-bottom:1px solid #2a3248;padding:9px 4px}
+.logcard{border-left:3px solid var(--gold)}
+.misstab td{font-size:14px}
+@media(max-width:640px){.bigh{font-size:44px}.opts{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<header>
+<h1>中文 <span>Coach</span> <span style="font-size:12px;color:var(--teal)">TW</span></h1>
+<span class="subT">ᚠ Forgebound</span>
+<nav id="nav"></nav>
+<button id="scriptBtn" onclick="toggleScript()"></button>
+<div id="hud"></div>
+</header>
+<div id="sessbar"></div>
+<main id="main"></main>
+<script>
+/* =============================================================
+   中文 Coach v4 — TAIWAN EDITION (built from MASTER-PROMPT.md)
+   Learner: Clark — Taipei-based gaming product marketer/copywriter
+   (Acer Predator, 10 yrs). Traditional-first, Taiwan usage,
+   cultural notes, radical mnemonics.
+   Data stored in simplified codepoints; OpenCC renders 繁體.
+   ============================================================= */
+/* ============ VOCAB [hanzi, pinyin, english, level, extra?]
+   extra = {tw:[hanzi,pinyin], n:"note"} ============ */
+const W=[
+["爱","ài","to love",1,{n:"Traditional 愛 keeps 心 the heart in the middle — you cannot love without a heart. (Simplified famously removed it.)",ex:"我愛我的家人。"}],
+["八","bā","eight",1,{n:"8 is the lucky number — bā sounds like 發 fā, getting rich. Phone numbers and prices with 8 cost more!",ex:"我家有八個人。"}],
+["爸爸","bàba","dad",1,{ex:"我爸爸每天開車去上班。"}],
+["杯子","bēizi","cup; glass",1,{ex:"這個杯子是我的。"}],
+["北京","Běijīng","Beijing",1,{ex:"我還沒有去過北京。"}],
+["本","běn","(measure for books)",1,{ex:"我買了一本中文書。"}],
+["不","bù","not; no",1,{n:"Tone change: 不 becomes bú before 4th tone — 不是 bú shì.",ex:"我不喝咖啡。"}],
+["不客气","bú kèqi","you're welcome",1,{tw:["不会","bú huì"],n:"In Taiwan the everyday reply to 謝謝 is 不會 — literally won't (trouble me). 不客氣 is understood but sounds formal.",ex:"謝謝你！不會、不會！"}],
+["菜","cài","dish; vegetable",1,{ex:"這道菜非常好吃。"}],
+["茶","chá","tea",1,{ex:"我每天喝一杯茶。"}],
+["吃","chī","to eat",1,{ex:"你吃飯了嗎？"}],
+["出租车","chūzūchē","taxi",1,{tw:["计程车","jìchéngchē"],n:"Taiwan taxis are 計程車 (meter-counting cars) — all yellow, so locals say 小黃 xiǎohuáng, little yellow.",ex:"我叫了一台計程車。"}],
+["打电话","dǎ diànhuà","to make a phone call",1,{ex:"我要打電話給客戶。"}],
+["大","dà","big",1,{ex:"台北是一個很大的城市。"}],
+["的","de","(possessive 's)",1,{ex:"這是我的電腦。"}],
+["点","diǎn","o'clock; dot",1,{ex:"現在三點半了。"}],
+["电脑","diànnǎo","computer",1,{n:"Electric brain! 電 lightning + 腦 brain. Taiwan and the mainland agree on this one.",ex:"我每天用電腦工作。"}],
+["电视","diànshì","TV",1,{ex:"他喜歡看電視。"}],
+["电影","diànyǐng","movie",1,{ex:"我們今晚去看電影吧。"}],
+["东西","dōngxi","thing",1,{n:"Literally east-west — going to market meant going east and west. Calling a person a 東西 is an insult!",ex:"你桌上的東西是什麼？"}],
+["都","dōu","all; both",1,{ex:"我們都喜歡吃夜市。"}],
+["读","dú","to read",1,{ex:"我在讀一本新書。"}],
+["对不起","duìbuqǐ","sorry",1,{ex:"對不起，我來晚了。"}],
+["多","duō","many; much",1,{ex:"夜市的人很多。"}],
+["多少","duōshao","how many; how much",1,{ex:"這個多少錢？"}],
+["儿子","érzi","son",1,{ex:"他有一個兒子。"}],
+["二","èr","two",1,{n:"Two has two readings: 二 èr for counting, 兩 liǎng before measure words — 兩個人 two people.",ex:"我住在二樓。"}],
+["饭店","fàndiàn","restaurant; hotel",1,{n:"In Taiwan 飯店 usually means HOTEL; a restaurant is 餐廳 cāntīng.",ex:"我訂了一間飯店。"}],
+["飞机","fēijī","airplane",1,{ex:"我要坐飛機去日本。"}],
+["分钟","fēnzhōng","minute",1,{ex:"捷運十五分鐘就到了。"}],
+["高兴","gāoxìng","happy",1,{ex:"見到你我很高興。"}],
+["个","gè","(general measure word)",1,{ex:"我要兩個便當。"}],
+["工作","gōngzuò","work; job",1,{ex:"我的工作是行銷文案。"}],
+["狗","gǒu","dog",1,{ex:"他養了一隻狗。"}],
+["汉语","Hànyǔ","Chinese (language)",1,{tw:["中文","Zhōngwén"],n:"Taiwan says 中文 or 國語; 漢語 sounds academic/mainland. Say 我會說中文.",ex:"我在學中文。"}],
+["好","hǎo","good",1,{ex:"你今天好嗎？"}],
+["号","hào","date; number",1,{ex:"今天是幾月幾號？"}],
+["喝","hē","to drink",1,{ex:"你要喝什麼？"}],
+["和","hé","and; with",1,{n:"In Taiwan often pronounced hàn — a famous cross-strait difference. Both are understood.",ex:"我和朋友去吃夜市。"}],
+["很","hěn","very",1,{ex:"這個滷肉飯很好吃。"}],
+["后面","hòumiàn","behind",1,{ex:"廁所在後面。"}],
+["回","huí","to return",1,{ex:"我七點回家。"}],
+["会","huì","can; know how to",1,{ex:"我會說中文。"}],
+["火车站","huǒchēzhàn","train station",1,{n:"In Taiwan: 台鐵 (regular rail) vs 高鐵 gāotiě, the high-speed rail down the west coast.",ex:"台北車站在哪裡？"}],
+["几","jǐ","how many; a few",1,{ex:"你家有幾個人？"}],
+["家","jiā","home; family",1,{ex:"我家在台北東區。"}],
+["叫","jiào","to be called",1,{ex:"我叫Clark，很高興認識你。"}],
+["今天","jīntiān","today",1,{ex:"今天天氣很好。"}],
+["九","jiǔ","nine",1,{ex:"會議九點開始。"}],
+["开","kāi","to open; to drive",1,{ex:"請開門，謝謝。"}],
+["看","kàn","to look; to watch",1,{ex:"你看過這部電影嗎？"}],
+["看见","kànjiàn","to see",1,{ex:"我在便利商店看見他。"}],
+["块","kuài","dollar; piece",1,{n:"In Taiwan prices are NT$ (新台幣 xīn táibì). 塊 = one NT dollar. Lunch box ≈ 100塊, bubble tea ≈ 60塊.",ex:"這個便當五十塊。"}],
+["来","lái","to come",1,{ex:"你什麼時候來台灣的？"}],
+["老师","lǎoshī","teacher",1,{ex:"我的中文老師教得很好。"}],
+["了","le","(completed action)",1,{ex:"我吃完飯了。"}],
+["冷","lěng","cold",1,{ex:"冷氣太冷了。"}],
+["里","lǐ","inside",1,{ex:"包包裡有什麼？"}],
+["六","liù","six",1,{n:"66 = 六六大順, everything smooth — another lucky number.",ex:"今天禮拜六。"}],
+["妈妈","māma","mom",1,{ex:"我媽媽很會做菜。"}],
+["吗","ma","(yes/no question)",1,{ex:"你吃飽了嗎？"}],
+["买","mǎi","to buy",1,{ex:"我要去買新手機。"}],
+["猫","māo","cat",1,{ex:"她養了兩隻貓。"}],
+["没关系","méi guānxi","it's OK; no problem",1,{ex:"沒關係，你慢慢來。"}],
+["没有","méiyǒu","to not have",1,{ex:"我今天沒有時間。"}],
+["米饭","mǐfàn","cooked rice",1,{ex:"你要不要加米飯？"}],
+["明天","míngtiān","tomorrow",1,{ex:"明天我要去面試。"}],
+["名字","míngzi","name",1,{ex:"你的名字怎麼寫？"}],
+["哪","nǎ","which",1,{ex:"你想去哪個夜市？"}],
+["哪儿","nǎr","where",1,{tw:["哪里","nǎlǐ"],n:"Taiwan drops the Beijing 兒 (-r) endings: say 哪裡, not 哪兒. Same for 一點 (not 一點兒).",ex:"廁所在哪裡？"}],
+["那","nà","that",1,{ex:"那間咖啡廳看起來不錯。"}],
+["呢","ne","(what about...?)",1,{ex:"你呢？你喜歡什麼？"}],
+["能","néng","can; be able to",1,{ex:"你能幫我一下嗎？"}],
+["你","nǐ","you",1,{ex:"你好，我叫Clark。"}],
+["年","nián","year",1,{ex:"我在台灣住了三年了。"}],
+["女儿","nǚ'ér","daughter",1,{ex:"她有一個可愛的女兒。"}],
+["朋友","péngyou","friend",1,{ex:"他是我最好的朋友。"}],
+["漂亮","piàoliang","pretty",1,{ex:"這件衣服很漂亮。"}],
+["苹果","píngguǒ","apple",1,{ex:"我喜歡吃蘋果。"}],
+["七","qī","seven",1,{ex:"我每天七點起床。"}],
+["前面","qiánmiàn","in front",1,{ex:"捷運站在前面。"}],
+["钱","qián","money",1,{ex:"你帶錢了嗎？"}],
+["请","qǐng","please; to invite",1,{n:"請 also means to treat: 我請你 = my treat! Important word in Taiwanese politeness.",ex:"請進，請坐。"}],
+["去","qù","to go",1,{ex:"我們去吃飯吧。"}],
+["热","rè","hot",1,{ex:"台北夏天很熱。"}],
+["人","rén","person",1,{ex:"夜市的人很多。"}],
+["认识","rènshi","to know (someone)",1,{ex:"很高興認識你。"}],
+["三","sān","three",1,{ex:"我要三杯珍珠奶茶。"}],
+["商店","shāngdiàn","shop; store",1,{ex:"附近有便利商店嗎？"}],
+["上","shàng","up; on; above",1,{ex:"書在桌子上。"}],
+["上午","shàngwǔ","morning (a.m.)",1,{ex:"上午十點我有會議。"}],
+["少","shǎo","few; little",1,{ex:"今天來的人比較少。"}],
+["谁","shéi","who",1,{n:"Taiwan prefers the reading shuí; mainland says shéi. Both written 誰.",ex:"你旁邊的人是誰？"}],
+["什么","shénme","what",1,{ex:"你在想什麼？"}],
+["十","shí","ten",1,{ex:"我在這家公司工作了十年。"}],
+["时候","shíhou","time; moment",1,{ex:"你什麼時候有空？"}],
+["是","shì","to be",1,{ex:"我是行銷文案。"}],
+["书","shū","book",1,{ex:"我在讀一本中文書。"}],
+["水","shuǐ","water",1,{ex:"你要喝水嗎？"}],
+["水果","shuǐguǒ","fruit",1,{n:"Taiwan is a fruit kingdom — mango 芒果, pineapple 鳳梨 (mainland: 菠蘿), wax apple 蓮霧.",ex:"台灣的水果很甜。"}],
+["睡觉","shuìjiào","to sleep",1,{ex:"我每天十一點睡覺。"}],
+["说","shuō","to speak",1,{ex:"你會說中文嗎？"}],
+["四","sì","four",1,{n:"Unlucky — sì sounds like 死 sǐ death. Buildings skip 4th floors; never gift 4 of anything.",ex:"這棟樓沒有四樓。"}],
+["岁","suì","years old",1,{ex:"你幾歲？"}],
+["他","tā","he; him",1,{ex:"他是我的同事。"}],
+["她","tā","she; her",1,{ex:"她是我的主管。"}],
+["太","tài","too (much)",1,{ex:"今天太忙了。"}],
+["天气","tiānqì","weather",1,{ex:"台北的天氣變化很快。"}],
+["听","tīng","to listen",1,{ex:"我喜歡聽音樂。"}],
+["同学","tóngxué","classmate",1,{ex:"他是我的大學同學。"}],
+["喂","wéi","hello (on the phone)",1,{ex:"喂，你好，我是Clark。"}],
+["我","wǒ","I; me",1,{ex:"我是行銷文案。"}],
+["我们","wǒmen","we; us",1,{ex:"我們公司在台北。"}],
+["五","wǔ","five",1,{ex:"我每週工作五天。"}],
+["喜欢","xǐhuan","to like",1,{ex:"我喜歡吃台灣小吃。"}],
+["下","xià","down; under; next",1,{ex:"樓下有便利商店。"}],
+["下午","xiàwǔ","afternoon",1,{ex:"下午三點開會。"}],
+["下雨","xiàyǔ","to rain",1,{n:"Taipei rains a LOT — always carry an umbrella. 又下雨了 — it's raining AGAIN.",ex:"今天又下雨了，帶傘了嗎？"}],
+["先生","xiānsheng","Mr.; sir",1,{ex:"不好意思，先生，這是你的東西嗎？"}],
+["现在","xiànzài","now",1,{ex:"你現在在哪裡？"}],
+["想","xiǎng","to want; to think",1,{ex:"我想學更多中文。"}],
+["小","xiǎo","small",1,{ex:"這間咖啡廳很小但很舒適。"}],
+["小姐","xiǎojiě","Miss",1,{n:"Safe and polite in Taiwan (calling a waitress 小姐 is fine). On the mainland it can be a touchy word.",ex:"小姐，請問可以結帳嗎？"}],
+["些","xiē","some",1,{ex:"我有些問題想問你。"}],
+["写","xiě","to write",1,{ex:"我用電腦寫文案。"}],
+["谢谢","xièxie","thanks",1,{ex:"謝謝你的幫忙。"}],
+["星期","xīngqī","week",1,{tw:["礼拜","lǐbài"],n:"Both used in Taiwan, but 禮拜 (lit. worship) is the casual favorite: 禮拜三 = Wednesday. 星期 is fine too.",ex:"這個禮拜你有空嗎？"}],
+["学生","xuésheng","student",1,{ex:"我以前是大學生。"}],
+["学习","xuéxí","to study",1,{n:"Taiwan often just says 學 or 唸書 niànshū for studying.",ex:"我每天學習中文。"}],
+["学校","xuéxiào","school",1,{ex:"我的學校在台北。"}],
+["一","yī","one",1,{n:"Tone changes: yí before 4th tone (一個 yí ge), yì elsewhere (一天 yì tiān).",ex:"我要一杯咖啡。"}],
+["衣服","yīfu","clothes",1,{ex:"這件衣服多少錢？"}],
+["医生","yīshēng","doctor",1,{ex:"你不舒服要去看醫生。"}],
+["医院","yīyuàn","hospital",1,{ex:"最近的醫院在哪裡？"}],
+["椅子","yǐzi","chair",1,{ex:"請坐這張椅子。"}],
+["有","yǒu","to have",1,{ex:"你有名片嗎？"}],
+["月","yuè","month",1,{ex:"我七月要離職。"}],
+["再见","zàijiàn","goodbye",1,{n:"In Taiwan you will mostly hear 拜拜 bāibāi. 再見 is a bit formal.",ex:"再見！下次再聊！"}],
+["在","zài","at; in",1,{ex:"我在台北工作。"}],
+["怎么","zěnme","how",1,{ex:"這個字怎麼念？"}],
+["怎么样","zěnmeyàng","how about?",1,{ex:"新工作怎麼樣？"}],
+["这","zhè","this",1,{ex:"這是我做的行銷專案。"}],
+["中国","Zhōngguó","China",1,{ex:"台灣和中國說的中文不太一樣。"}],
+["中午","zhōngwǔ","noon",1,{ex:"中午你要吃什麼？"}],
+["住","zhù","to live (somewhere)",1,{ex:"我住在台北東區。"}],
+["桌子","zhuōzi","table",1,{ex:"會議室的桌子很大。"}],
+["字","zì","character; word",1,{ex:"這個字我不認識。"}],
+["昨天","zuótiān","yesterday",1,{ex:"昨天的會議開了兩個小時。"}],
+["坐","zuò","to sit",1,{ex:"請坐，不用客氣。"}],
+["做","zuò","to do; to make",1,{ex:"你在做什麼專案？"}],
+["吧","ba","(suggestion particle)",2,{ex:"我們去吃飯吧。"}],
+["白","bái","white",2,{ex:"她穿了一件白色上衣。"}],
+["百","bǎi","hundred",2,{ex:"這個便當一百塊。"}],
+["帮助","bāngzhù","to help",2,{ex:"謝謝你的幫助。"}],
+["比","bǐ","than; to compare",2,{ex:"今天比昨天熱。"}],
+["别","bié","don't",2,{ex:"別說話，我在開會。"}],
+["长","cháng","long",2,{ex:"台灣的夏天很長。"}],
+["唱歌","chànggē","to sing",2,{n:"KTV is Taiwan's social glue — team dinners end at 錢櫃 or 好樂迪. Have one song ready!",ex:"我們去KTV唱歌吧。"}],
+["穿","chuān","to wear",2,{ex:"你今天穿什麼去面試？"}],
+["次","cì","time (occurrence)",2,{ex:"我去過日本兩次。"}],
+["从","cóng","from",2,{ex:"我從台北搭高鐵去台南。"}],
+["错","cuò","wrong",2,{ex:"對不起，我說錯了。"}],
+["大家","dàjiā","everyone",2,{ex:"大家好，我是新來的Clark。"}],
+["到","dào","to arrive",2,{ex:"我到公司了。"}],
+["等","děng","to wait",2,{ex:"你等我一下。"}],
+["弟弟","dìdi","younger brother",2,{ex:"我弟弟比我矮。"}],
+["懂","dǒng","to understand",2,{ex:"你聽懂了嗎？"}],
+["对","duì","correct; right",2,{ex:"對，就是這樣做。"}],
+["房间","fángjiān","room",2,{ex:"這間房間很安靜。"}],
+["非常","fēicháng","very; extremely",2,{ex:"台灣的食物非常好吃。"}],
+["服务员","fúwùyuán","waiter",2,{n:"In Taiwan call out 不好意思! rather than 服務員 to get attention.",ex:"不好意思，可以幫我點餐嗎？"}],
+["高","gāo","tall; high",2,{ex:"他很高，超過一百八十公分。"}],
+["告诉","gàosu","to tell",2,{ex:"你能告訴我怎麼去嗎？"}],
+["哥哥","gēge","older brother",2,{ex:"我哥哥在科技公司上班。"}],
+["给","gěi","to give",2,{ex:"我給你我的名片。"}],
+["公司","gōngsī","company",2,{ex:"我在一家科技公司工作。"}],
+["贵","guì","expensive",2,{ex:"這家餐廳有點貴，但很好吃。"}],
+["还","hái","still; also",2,{ex:"你還沒吃飯嗎？"}],
+["孩子","háizi","child",2,{ex:"他們有兩個孩子。"}],
+["好吃","hǎochī","tasty",2,{n:"The supreme Taiwanese compliment. Night-market level: 超好吃 chāo hǎochī!",ex:"這個滷肉飯超好吃！"}],
+["黑","hēi","black",2,{ex:"我喜歡穿黑色衣服。"}],
+["红","hóng","red",2,{n:"Red = luck, joy, weddings, envelopes. Never write names in red ink — it implies death.",ex:"過年要發紅包給孩子。"}],
+["欢迎","huānyíng","welcome",2,{n:"歡迎光臨! — shouted at you in every Taiwanese convenience store.",ex:"歡迎光臨！"}],
+["机场","jīchǎng","airport",2,{n:"桃園機場 Taoyuan — your gateway. The MRT to the city takes ~35 min.",ex:"我去桃園機場接朋友。"}],
+["鸡蛋","jīdàn","egg",2,{ex:"我早餐吃蛋餅，有雞蛋。"}],
+["姐姐","jiějie","older sister",2,{ex:"我姐姐住在美國。"}],
+["介绍","jièshào","to introduce",2,{ex:"讓我自我介紹一下。"}],
+["进","jìn","to enter",2,{ex:"請進，歡迎。"}],
+["近","jìn","near",2,{ex:"公司離捷運站很近。"}],
+["咖啡","kāfēi","coffee",2,{n:"Taiwan has world-class cafés; 7-11's CITY CAFE is the daily default.",ex:"我每天早上喝一杯咖啡。"}],
+["可以","kěyǐ","may; can",2,{ex:"可以給我菜單嗎？"}],
+["课","kè","class; lesson",2,{ex:"我下午有中文課。"}],
+["快","kuài","fast",2,{ex:"捷運很快，十五分鐘就到了。"}],
+["累","lèi","tired",2,{ex:"今天加班到很晚，好累。"}],
+["离","lí","away from",2,{ex:"這裡離捷運站很近。"}],
+["路","lù","road",2,{ex:"你走哪條路去公司？"}],
+["卖","mài","to sell",2,{ex:"這家店賣很多台灣小吃。"}],
+["慢","màn","slow",2,{ex:"你說慢一點，我聽不太懂。"}],
+["忙","máng","busy",2,{ex:"最近工作很忙。"}],
+["每","měi","every",2,{ex:"我每天練習中文。"}],
+["妹妹","mèimei","younger sister",2,{ex:"我妹妹在台南念大學。"}],
+["牛奶","niúnǎi","milk",2,{ex:"我喝咖啡不加牛奶。"}],
+["旁边","pángbiān","beside",2,{ex:"7-11在捷運站旁邊。"}],
+["跑步","pǎobù","to run; jogging",2,{ex:"我每天早上去河濱公園跑步。"}],
+["便宜","piányi","cheap",2,{ex:"夜市的東西便宜又好吃。"}],
+["票","piào","ticket",2,{ex:"我買了兩張電影票。"}],
+["妻子","qīzi","wife",2,{n:"Taiwan speech: 太太 tàitai or 老婆 lǎopó are far more common.",ex:"他和太太一起來。"}],
+["起床","qǐchuáng","to get up",2,{ex:"我每天七點起床。"}],
+["晴","qíng","sunny",2,{ex:"今天晴天，很適合出去走走。"}],
+["去年","qùnián","last year",2,{ex:"我去年搬到台北。"}],
+["让","ràng","to let; to make",2,{ex:"這份工作讓我學到很多。"}],
+["上班","shàngbān","to go to work",2,{ex:"我九點上班。"}],
+["身体","shēntǐ","body; health",2,{ex:"身體健康最重要。"}],
+["生病","shēngbìng","to get sick",2,{ex:"我昨天生病了，沒有去上班。"}],
+["生日","shēngrì","birthday",2,{n:"Birthday noodles 豬腳麵線 for long life — do not cut them short!",ex:"今天是我的生日，快來吃蛋糕！"}],
+["时间","shíjiān","time",2,{ex:"我沒有時間，要加班。"}],
+["事情","shìqing","matter; affair",2,{ex:"你有什麼事情嗎？"}],
+["手机","shǒujī","mobile phone",2,{ex:"你的手機是哪個牌子的？"}],
+["送","sòng","to deliver; to give (gift)",2,{n:"Gift taboos: no clocks (送鐘 sounds like funeral rites), no umbrellas (傘 sounds like separation), no knives.",ex:"我送你一本書當生日禮物。"}],
+["它","tā","it",2,{ex:"它是我最常用的軟體。"}],
+["踢足球","tī zúqiú","to play soccer",2,{ex:"我朋友每週末都去踢足球。"}],
+["跳舞","tiàowǔ","to dance",2,{ex:"她很會跳舞。"}],
+["外","wài","outside",2,{ex:"外面在下雨。"}],
+["完","wán","to finish",2,{ex:"我報告寫完了。"}],
+["玩","wán","to play",2,{ex:"你喜歡玩什麼遊戲？"}],
+["晚上","wǎnshang","evening",2,{ex:"今天晚上要加班嗎？"}],
+["为什么","wèishénme","why",2,{ex:"你為什麼想學中文？"}],
+["问","wèn","to ask",2,{ex:"我可以問你一個問題嗎？"}],
+["问题","wèntí","question; problem",2,{ex:"你有什麼問題嗎？"}],
+["西瓜","xīguā","watermelon",2,{ex:"夏天吃西瓜最消暑。"}],
+["希望","xīwàng","to hope",2,{ex:"我希望找到一份好工作。"}],
+["洗","xǐ","to wash",2,{ex:"吃飯前要洗手。"}],
+["笑","xiào","to laugh; to smile",2,{ex:"他一直在笑。"}],
+["新","xīn","new",2,{ex:"我在找新工作。"}],
+["姓","xìng","surname",2,{ex:"你貴姓？"}],
+["休息","xiūxi","to rest",2,{ex:"週末我需要好好休息。"}],
+["雪","xuě","snow",2,{n:"Snow is exotic in Taiwan — it only dusts 玉山 and 合歡山. Taipei has never had real snow streets.",ex:"台北幾乎不下雪。"}],
+["颜色","yánsè","color",2,{ex:"你喜歡什麼顏色？"}],
+["眼睛","yǎnjing","eye",2,{ex:"看太多螢幕眼睛會痠。"}],
+["药","yào","medicine",2,{ex:"你有沒有感冒藥？"}],
+["要","yào","to want; will",2,{ex:"你要喝什麼飲料？"}],
+["也","yě","also",2,{ex:"我也喜歡打電動。"}],
+["已经","yǐjīng","already",2,{ex:"我已經在台灣住了三年了。"}],
+["一起","yìqǐ","together",2,{ex:"我們一起去吃飯吧。"}],
+["意思","yìsi","meaning",2,{n:"不好意思 = excuse me/sorry — Taiwan's most-used phrase. 有意思 = interesting.",ex:"這個字是什麼意思？"}],
+["因为","yīnwèi","because",2,{ex:"因為下雨，我叫了計程車。"}],
+["游泳","yóuyǒng","to swim",2,{ex:"我週末喜歡去游泳。"}],
+["右边","yòubian","right side",2,{ex:"廁所在右邊。"}],
+["鱼","yú","fish",2,{n:"年年有餘 — fish at New Year means surplus every year; 魚 yú sounds like 餘 surplus.",ex:"過年的時候要吃魚。"}],
+["远","yuǎn","far",2,{ex:"你家離公司遠不遠？"}],
+["运动","yùndòng","sports; exercise",2,{ex:"我每天都要做運動。"}],
+["再","zài","again",2,{ex:"請再說一遍，謝謝。"}],
+["早上","zǎoshang","(early) morning",2,{n:"Taiwan breakfast culture is sacred: 早餐店 everywhere — 蛋餅, 飯糰, 奶茶. 早安 = good morning.",ex:"我早上喜歡去早餐店吃蛋餅。"}],
+["丈夫","zhàngfu","husband",2,{n:"Taiwan speech: 先生 or 老公 lǎogōng are more common.",ex:"她老公也在台北工作。"}],
+["找","zhǎo","to look for",2,{ex:"我最近在找新工作。"}],
+["真","zhēn","really",2,{ex:"這家店的食物真的很好吃。"}],
+["正在","zhèngzài","in the middle of (doing)",2,{ex:"我正在開會，晚點回電。"}],
+["知道","zhīdào","to know (a fact)",2,{ex:"你知道這個字怎麼念嗎？"}],
+["准备","zhǔnbèi","to prepare",2,{ex:"我在準備面試。"}],
+["走","zǒu","to walk",2,{ex:"我走路去捷運站。"}],
+["最","zuì","most",2,{ex:"台灣的食物是全世界最好吃的。"}],
+["左边","zuǒbian","left side",2,{ex:"便利商店在左邊。"}],
+/* ---- WORK PACK ---- */
+["市场","shìchǎng","market","P",{ex:"我們需要研究目標市場。"}],
+["营销","yíngxiāo","marketing","P",{tw:["行销","xíngxiāo"],n:"Your job-title word! Taiwan says 行銷; 營銷 is mainland. Product marketing = 產品行銷.",ex:"我做行銷工作十年了。"}],
+["市场营销","shìchǎng yíngxiāo","(field of) marketing","P",{tw:["行销","xíngxiāo"],n:"In a Taiwanese interview, say 我做行銷 or 我做產品行銷.",ex:"我的專業是行銷。"}],
+["品牌","pǐnpái","brand","P",{ex:"我們要打造強大的品牌形象。"}],
+["广告","guǎnggào","advertisement","P",{ex:"這支廣告的創意很棒。"}],
+["产品","chǎnpǐn","product","P",{ex:"我負責這個產品的行銷文案。"}],
+["新品","xīnpǐn","new product","P",{ex:"我們下個月要發布新品。"}],
+["客户","kèhù","client; customer","P",{ex:"我今天要去拜訪客戶。"}],
+["用户","yònghù","user","P",{n:"Taiwan tech also says 使用者 shǐyòngzhě for user.",ex:"我們要了解使用者的需求。"}],
+["内容","nèiróng","content","P",{ex:"我負責寫社群媒體的內容。"}],
+["文案","wén'àn","copy(writing)","P",{n:"Your craft! 文 writing + 案 plan. A copywriter is 文案 too.",ex:"他是一個很有才華的文案人員。"}],
+["创意","chuàngyì","creative idea","P",{ex:"這個活動的創意非常吸引人。"}],
+["策略","cèlüè","strategy","P",{ex:"我們需要制定新的行銷策略。"}],
+["社交媒体","shèjiāo méitǐ","social media","P",{tw:["社群媒体","shèqún méitǐ"],n:"Taiwan says 社群 (community) media. LINE, Facebook, Instagram and Dcard rule Taiwan; little RED/WeChat presence.",ex:"我管理公司的社群媒體帳號。"}],
+["媒体","méitǐ","media","P",{ex:"媒體報導對品牌知名度很重要。"}],
+["视频","shìpín","video","P",{tw:["影片","yǐngpiàn"],n:"Taiwan says 影片; 視頻 instantly marks the speaker as mainland.",ex:"我做了一支新產品的影片。"}],
+["直播","zhíbō","livestream","P",{ex:"我們用直播來介紹新產品。"}],
+["主播","zhǔbō","streamer; host","P",{ex:"他是台灣知名的電競主播。"}],
+["粉丝","fěnsī","fans; followers","P",{n:"Borrowed from English fans. Also a food — glass noodles!",ex:"這個品牌在Instagram上有很多粉絲。"}],
+["关注","guānzhù","to follow (account)","P",{n:"On Taiwanese socials you will also see 追蹤 zhuīzōng for follow.",ex:"請追蹤我們的社群帳號。"}],
+["流量","liúliàng","(internet) traffic","P",{ex:"我們要提升網站的流量。"}],
+["热门","rèmén","trending; popular","P",{ex:"這個話題在台灣很熱門。"}],
+["游戏","yóuxì","game","P",{n:"Gamers in Taiwan say 打電動 dǎ diàndòng for playing video games.",ex:"Predator筆電是專為遊戲設計的。"}],
+["玩家","wánjiā","gamer; player","P",{ex:"我們的目標族群是硬核玩家。"}],
+["电竞","diànjìng","esports","P",{n:"Taiwan is an esports powerhouse — 電競 teams, 電競 laptops (your Predator world).",ex:"台灣的電競市場非常大。"}],
+["比赛","bǐsài","match; competition","P",{ex:"我們贊助電競比賽來推廣品牌。"}],
+["笔记本","bǐjìběn","laptop","P",{tw:["笔电","bǐdiàn"],n:"Taiwan: 筆電 (short for 筆記型電腦). Careful — 筆記本 in Taiwan means a PAPER notebook.",ex:"這台筆電的性能非常強。"}],
+["键盘","jiànpán","keyboard","P",{ex:"這個鍵盤打起來的手感很好。"}],
+["鼠标","shǔbiāo","mouse (computer)","P",{tw:["滑鼠","huáshǔ"],n:"Taiwan: 滑鼠 gliding mouse. Mainland: 鼠標 mouse pointer.",ex:"這個滑鼠很適合玩電競遊戲。"}],
+["屏幕","píngmù","screen","P",{tw:["萤幕","yíngmù"],n:"Taiwan: 螢幕 — 螢 firefly + 幕 curtain, a glowing curtain. Mainland: 屏幕.",ex:"這台筆電的螢幕解析度很高。"}],
+["性能","xìngnéng","performance (specs)","P",{ex:"Predator在同價位中性能最強。"}],
+["体验","tǐyàn","experience (UX)","P",{ex:"我們要提升使用者體驗。"}],
+["功能","gōngnéng","feature; function","P",{ex:"這個軟體有很多實用的功能。"}],
+["设计","shèjì","design","P",{ex:"這個產品的工業設計很有質感。"}],
+["价格","jiàgé","price","P",{ex:"這台筆電的價格很合理。"}],
+["销售","xiāoshòu","sales","P",{ex:"今年的銷售成績超越目標。"}],
+["销量","xiāoliàng","sales volume","P",{ex:"我們的銷量比去年成長了三成。"}],
+["活动","huódòng","event; campaign","P",{ex:"我策劃了一個產品發表活動。"}],
+["发布","fābù","to launch; release","P",{ex:"我們在Computex發布了新產品。"}],
+["发布会","fābùhuì","launch event","P",{tw:["发表会","fābiǎohuì"],n:"Taiwan says 發表會 (產品發表會); 發布會 is mainland usage.",ex:"明天是Predator新品發表會。"}],
+["数据","shùjù","data","P",{n:"Taiwan tech also says 資料 zīliào for data.",ex:"我分析了這次活動的資料。"}],
+["增长","zēngzhǎng","growth","P",{tw:["成长","chéngzhǎng"],n:"Taiwan business talk prefers 成長: 銷量成長 sales growth.",ex:"今年的業績成長了百分之二十。"}],
+["目标","mùbiāo","goal; target","P",{ex:"我們的目標是提升品牌知名度。"}],
+["受众","shòuzhòng","(target) audience","P",{tw:["目标族群","mùbiāo zúqún"],n:"Taiwan marketing says 目標族群 target tribe/group — 受眾 reads mainland.",ex:"我們的目標族群是年輕玩家。"}],
+["团队","tuánduì","team","P",{ex:"我們的行銷團隊有五個人。"}],
+["经理","jīnglǐ","manager","P",{ex:"我的主管是行銷經理。"}],
+["会议","huìyì","meeting","P",{ex:"今天早上有一個重要的會議。"}],
+["报告","bàogào","report","P",{ex:"我要準備這個月的銷售報告。"}],
+["合作","hézuò","to cooperate; collab","P",{ex:"我們和代理商合作做行銷。"}],
+["伙伴","huǒbàn","partner","P",{ex:"他是我工作上的重要夥伴。"}],
+["竞争","jìngzhēng","competition (rivalry)","P",{ex:"電競筆電的市場競爭很激烈。"}],
+["对手","duìshǒu","rival; competitor","P",{ex:"我們要了解競爭對手的策略。"}],
+["全球","quánqiú","global","P",{ex:"Acer是一個全球品牌。"}],
+["海外","hǎiwài","overseas","P",{ex:"我們要拓展海外市場。"}],
+["面试","miànshì","job interview","P",{n:"面 face + 試 test — a face test. Bring 名片 and use both hands.",ex:"我明天有一個行銷職位的面試。"}],
+["简历","jiǎnlì","resume; CV","P",{tw:["履历","lǚlì"],n:"Taiwan: 履歷 — your footsteps through history. Mainland: 簡歷. Job sites: 104, CakeResume.",ex:"我更新了我的履歷。"}],
+["经验","jīngyàn","(work) experience","P",{ex:"我有十年的行銷工作經驗。"}],
+["技能","jìnéng","skill","P",{ex:"文案寫作是我最強的技能。"}],
+["机会","jīhuì","opportunity","P",{ex:"這是一個很好的工作機會。"}],
+["挑战","tiǎozhàn","challenge","P",{ex:"求職是一個挑戰，也是機會。"}],
+["成功","chénggōng","success","P",{ex:"努力和創意才能帶來成功。"}],
+["工资","gōngzī","salary","P",{tw:["薪水","xīnshuǐ"],n:"Taiwan says 薪水 — literally firewood and water, the ancient cost of living. Monthly salary = 月薪.",ex:"你這份工作的月薪是多少？"}],
+["但是","dànshì","but; however","P",{ex:"我喜歡這份工作，但是薪水太低。"}],
+["一定","yídìng","definitely; certainly","P",{ex:"你一定可以找到好工作。"}],
+["奶茶","nǎichá","milk tea","P",{ex:"下午來杯奶茶，精神好多了。"}],
+["网上","wǎngshàng","online","P",{tw:["网路上","wǎnglù shàng"],n:"Internet: Taiwan 網路, mainland 網絡. Online shopping = 網購 (Shopee 蝦皮 / momo).",ex:"我在網路上找工作機會。"}],
+/* ---- TAIWAN LIFE PACK ---- */
+["台湾","Táiwān","Taiwan","T",{n:"台 or 臺 — both correct; 臺灣 is the formal form on official documents.",ex:"我在台灣住了三年了。"}],
+["台北","Táiběi","Taipei","T",{n:"Your city. 101 is 一零一 yī líng yī; the riverside bike paths are 河濱.",ex:"我住在台北，很喜歡這裡的生活步調。"}],
+["国语","Guóyǔ","Mandarin (Taiwan term)","T",{n:"Taiwan calls Mandarin 國語 national language; mainland says 普通話. Taiwanese Hokkien is 台語.",ex:"我在學國語，每天練習。"}],
+["捷运","jiéyùn","MRT; metro","T",{n:"捷 swift + 運 transport. No eating or drinking past the gates — the fine is real. Stand right on escalators.",ex:"我每天搭捷運去上班。"}],
+["机车","jīchē","scooter","T",{n:"Taiwan's rivers of scooters. Also slang: 你很機車 = you're so difficult/annoying!",ex:"台北到處都是機車。"}],
+["夜市","yèshì","night market","T",{n:"夜 night + 市 market. Shilin 士林, Raohe 饒河, Ningxia 寧夏 — dinner is a walking tour.",ex:"我喜歡去夜市吃小吃。"}],
+["小吃","xiǎochī","snacks; street food","T",{n:"Small eats — Taiwan's culinary pride. 滷肉飯, 鹽酥雞, 蚵仔煎...",ex:"台灣的小吃全世界有名。"}],
+["珍珠奶茶","zhēnzhū nǎichá","bubble tea","T",{n:"Invented in Taichung in the 1980s! Order like a local: 大杯半糖少冰 — large, half sugar, less ice.",ex:"我每天都要喝一杯珍珠奶茶。"}],
+["便利商店","biànlì shāngdiàn","convenience store","T",{n:"World's densest 7-11s — pay bills, ship packages, print, buy HSR tickets. 全家 FamilyMart is the rival.",ex:"我在便利商店繳水電費。"}],
+["悠游卡","Yōuyóukǎ","EasyCard","T",{n:"悠遊 roam at ease — tap for MRT, bus, 7-11, YouBike. Your Taipei life in one card.",ex:"我用悠遊卡搭捷運和公車。"}],
+["卤肉饭","lǔròufàn","braised pork rice","T",{n:"The national comfort food — NT$35 of happiness.",ex:"這家店的滷肉飯是全台北最好吃的。"}],
+["宵夜","xiāoyè","late-night snack","T",{n:"The honorary 4th meal. 要不要吃宵夜？ is a friendship ritual.",ex:"加班結束，我們去吃宵夜吧。"}],
+["台风","táifēng","typhoon","T",{n:"颱風 — likely the origin of the English word typhoon. 颱風假 = typhoon day off!",ex:"今天有颱風，公司放颱風假！"}],
+["老板","lǎobǎn","boss; shop owner","T",{n:"Trad 闆 shows eyes peering from the 門 gate — the boss watching the shop. Also how you address any vendor: 老闆，多少錢？",ex:"老闆，這個多少錢？"}],
+["加班","jiābān","to work overtime","T",{n:"加 add + 班 shift. Taiwan tech's famous vice. 我今天要加班 — useful, sadly.",ex:"我今天要加班，不能去吃飯。"}],
+["开会","kāihuì","to have a meeting","T",{n:"You open 開 a meeting 會 in Chinese. 我在開會 = I'm in a meeting.",ex:"我正在開會，晚點回電。"}],
+["名片","míngpiàn","business card","T",{n:"Give and receive with BOTH hands, read it before putting it away — never pocket it unread.",ex:"我用雙手給他名片。"}],
+["红包","hóngbāo","red envelope","T",{n:"Cash gift for New Year and weddings. Even amounts only, never 4; 600, 1600, 2600 NT are safe.",ex:"過年我收到很多紅包。"}],
+["过年","guònián","Lunar New Year","T",{n:"THE holiday — island shuts down. Greetings: 新年快樂! 恭喜發財!",ex:"過年的時候，全家人一起吃飯。"}],
+["中秋节","Zhōngqiūjié","Mid-Autumn Festival","T",{n:"In Taiwan it became national BBQ night — thanks to a 1980s soy-sauce ad campaign. Marketing changed a holiday!",ex:"中秋節到了，一起來烤肉吧！"}],
+["拜拜","bāibāi","bye-bye","T",{n:"From English — the default casual goodbye. With falling tones (bàibài) it means to worship at a temple!",ex:"拜拜！明天見！"}],
+["不好意思","bù hǎoyìsi","excuse me; sorry","T",{n:"Taiwan's all-purpose social lubricant: get attention, apologize, squeeze through the MRT.",ex:"不好意思，請問廁所在哪裡？"}],
+["帅","shuài","handsome; cool","T",{n:"帥哥! shuàigē — what night-market vendors call every male customer. Reply 老闆也很帥 for a discount (maybe).",ex:"帥哥，你的筆電很酷！"}],
+["掌机","zhǎngjī","handheld console","T",{n:"掌 palm + 機 machine — your Predator Atlas 8 territory. Also 掌上型遊戲機.",ex:"這台掌機的電池可以用八小時。"}],
+["电玩展","diànwánzhǎn","game expo","T",{n:"台北國際電玩展 Taipei Game Show every winter; Computex 電腦展 in June — your stage.",ex:"我每年都去台北國際電玩展。"}],
+["万","wàn","ten thousand","T",{n:"Chinese counts in 萬 (10,000s): 三萬五 = 35,000. A gaming 筆電 ≈ NT$30,000-60,000.",ex:"這台筆電要三萬五千塊。"}]
+];
+/* ============ RADICALS [glyph, meaning, story, example-chars] ============ */
+const RAD=[
+["口","mouth","An open mouth — speaking, eating and asking all happen here.","吃喝叫吗问"],
+["氵","water","Three splashing drops (full form 水).","洗游泳海"],
+["心 / 忄","heart","A heart with its chambers; squeezed thin it becomes 忄. All feelings live here.","想忙意爱"],
+["亻","person","A person walking (full form 人).","你他住做休"],
+["訁","speech","Sound waves rising from a mouth (full form 言). Everything about talking.","说请谢谁话"],
+["女","woman","A kneeling figure — family words and femininity.","妈好姐妹她"],
+["子","child","A swaddled baby with open arms.","学字好"],
+["日","sun","A square sun — time and light.","明早晚时星晴"],
+["月","moon / flesh","A crescent moon; as a left-side component it usually means a body part.","脑朋"],
+["木","tree","Trunk, branches and roots — anything wooden.","机杯桌椅本果"],
+["火 / 灬","fire","Flames; 灬 is the embers glowing underneath.","热点黑"],
+["土","earth","A mound of soil on the ground.","坐块场"],
+["釒","metal / gold","Nuggets buried under a cover (full form 金). Money and metal.","钱"],
+["糹","silk thread","A twisted skein of silk (full form 糸). Threads, ties, textiles.","红给经"],
+["艹","plant","Two sprouts breaking through soil.","茶菜药苹"],
+["雨","rain","Drops falling from a cloud — all weather lives under it.","电雪"],
+["貝","shell / money","Cowrie shells were ancient cash. A marketer's radical — it hides inside buy, sell and expensive.","买卖贵"],
+["飠","food","A lid over a steaming pot (full form 食).","饭"],
+["辶","road","A foot on a winding path — movement and travel.","过进远送这还运"],
+["門","gate","Double saloon doors swinging.","问间开们"],
+["宀","roof","A roof with a chimney — home things happen under it.","家字写"],
+["目","eye","An upright eye with its lashes.","看睡眼"],
+["耳","ear","The curves of an ear.","听"],
+["足","foot","A knee over a foot — kicking, running, roads.","跑路踢跳"],
+["馬","horse","Mane flying, four legs galloping. Often just lends its sound mǎ.","马妈吗"],
+["犭","beast","A leaping animal on its hind legs.","狗猫"],
+["竹","bamboo","Two stalks with drooping leaves.","笔笑第等"],
+["王","jade / king","Discs of jade on a string — precious things.","玩现班"],
+["隹","bird","A plump short-tailed bird.","谁进准"],
+["冫","ice","Two cracks in winter ice.","冷"]
+];
+/* ============ CHARACTER STORIES (simplified key) ============ */
+const CHARRAD={
+"好":"女 woman + 子 child — a mother holding her baby = GOOD.",
+"妈":"女 woman + 馬 horse (the sound mǎ) — the woman whose word sounds like mǎ = mom.",
+"吗":"口 mouth + 馬 mǎ — a spoken mǎ that turns any sentence into a question.",
+"她":"女 woman + 也 also — she.",
+"他":"亻person + 也 also — he.",
+"你":"亻person + 尔 — the person right in front of you = you.",
+"们":"亻person + 門 gate — people crowding through a gate = plural marker.",
+"住":"亻person + 主 master — a person settled as master of a place = to live.",
+"做":"亻person + 故 — a person at their task = to do.",
+"休":"亻person leaning against 木 a tree = to REST (休息).",
+"喝":"口 mouth doing the work = to drink.",
+"吃":"口 mouth + 乞 to beg — a begging mouth = to eat.",
+"叫":"口 mouth + 丩 — calling out = to be called.",
+"听":"Traditional 聽 has 耳 EAR + 心 heart — listen with your ear AND your heart. Simplified 听 lost both!",
+"说":"訁speech + 兌 exchange — words exchanged = to speak.",
+"请":"訁speech + 青 — refined words = please.",
+"谢":"訁speech + 射 to shoot — words shot back in gratitude = thanks.",
+"话":"訁speech + 舌 tongue — what the tongue produces = words.",
+"语":"訁speech + 吾 I — my speech = language.",
+"谁":"訁speech + 隹 bird — which bird said that? = who.",
+"读":"訁speech + 賣 (in trad 讀) — reading aloud to sell the idea.",
+"问":"口 a mouth standing at the 門 gate, knocking = to ask.",
+"间":"日 the sun shining between the 門 gate doors = the space between; room (房間).",
+"开":"Traditional 開: two hands lifting the bar inside the 門 gate = to open.",
+"茶":"艹 plant + a person resting under a canopy = tea — the plant you rest with.",
+"菜":"艹 plant + 采 to pick — picked greens = vegetables; a dish.",
+"药":"Traditional 藥 = 艹 herbs + 樂 music/joy — the herbs that bring back joy = medicine.",
+"水":"A pictograph of a flowing stream with side-splashes.",
+"洗":"氵water + 先 first — water first = to wash.",
+"游":"氵water + a flag — drifting through water = to swim, to roam.",
+"泳":"氵water + 永 forever — staying long in the water = swimming.",
+"想":"相 (tree + eye, inspecting) over 心 heart — turning someone over in your heart = to think of, to miss.",
+"忙":"忄heart + 亡 to die — your heart is dying = BUSY.",
+"意":"音 sound over 心 heart — what your heart sounds like = meaning, intention.",
+"爱":"Traditional 愛 keeps 心 the heart in the middle — love needs a heart.",
+"买":"Traditional 買 = 网 net + 貝 shells (money) — netting goods with money = to buy.",
+"卖":"Traditional 賣 = 出 out over 買 buy — money goes out = to sell.",
+"贵":"貝 money at the bottom — costs many shells = expensive.",
+"钱":"釒metal + 戔 small — small pieces of metal = money.",
+"块":"土 earth + a lump (trad 塊) — a clod of earth = piece; an NT dollar.",
+"坐":"Two 人 people resting on 土 the ground = to sit.",
+"场":"土 ground + 昜 open — open ground = field, market (市場).",
+"饭":"飠food + 反 return — the food you return to every day = rice, a meal.",
+"狗":"犭beast + 句 gǒu-ish sound = dog.",
+"猫":"犭beast + 苗 miáo — the beast that says miao = cat.",
+"鱼":"A whole fish: head on top, scaled body (田), flick of tail below.",
+"马":"Traditional 馬: flying mane, four galloping legs (the 灬).",
+"笔":"Traditional 筆 = 竹 bamboo + 毛 hair — a bamboo-handled hair brush = pen. 筆電 = laptop!",
+"笑":"竹 bamboo bending in the wind — like a person doubled over laughing.",
+"第":"竹 bamboo — bamboo grows in numbered segments = ordinal (第一 first).",
+"等":"竹 bamboo + 寺 temple — waiting in ordered ranks like bamboo joints = to wait.",
+"玩":"王 jade + 元 — turning a jade piece in your hands = to play. 玩家 = gamer!",
+"现":"王 jade + 見 to see — jade catching the light right now = present, to appear (現在).",
+"班":"Two 王 jades split by a blade — dividing the work = shift, team (上班, 加班).",
+"电":"Traditional 電 = 雨 RAIN + a lightning bolt — electricity is captured lightning (電腦, 電玩).",
+"雪":"雨 rain + 彐 a broom-hand — rain you can sweep = snow.",
+"脑":"月 flesh + skull marks (trad 腦) — the body's thinking organ = brain. 電腦 = electric brain!",
+"明":"日 sun + 月 moon shining together = bright; 明天 = the bright day ahead.",
+"早":"日 the sun just above the first sprout 十 = early morning.",
+"晚":"日 sun + 免 escaping — the sun slipping away = evening, late.",
+"昨":"日 sun + 乍 just-now — the sun that just passed = yesterday.",
+"时":"Traditional 時 = 日 sun + 寺 temple — temple bells marked the hours = time.",
+"星":"日 sun + 生 born — little suns being born = stars.",
+"晴":"日 sun + 青 clear blue = sunny.",
+"是":"日 sun + 正 upright — clear as the noon sun = to be; correct.",
+"看":"手 a hand shading 目 the eye — peering into the distance = to look.",
+"睡":"目 eye + 垂 to droop — eyelids drooping = to sleep.",
+"眼":"目 eye + 艮 — the eye itself.",
+"跑":"足 foot + 包 bāo sound = to run.",
+"路":"足 foot + 各 each — where each foot has gone = road.",
+"踢":"足 foot + 易 = to kick.",
+"跳":"足 foot + 兆 = to jump.",
+"走":"A figure mid-stride, arms swinging = to walk, to go.",
+"远":"辶 road + 袁 (trad 遠) — a long, long way down the road = far.",
+"近":"辶 road + 斤 axe — within axe-throwing distance = near.",
+"过":"辶 road + 咼 (trad 過) — passing along the road = to pass, over.",
+"进":"辶 road + 隹 bird (trad 進) — birds only walk forward = to advance, enter.",
+"送":"辶 road + a bundle — carrying something down the road = to deliver, to gift.",
+"这":"辶 road + 言 (trad 這) — the spot on the road you point at = this.",
+"还":"辶 road + 不 (trad 還) — coming back along the road = still; to return.",
+"运":"辶 road + 軍 army (trad 運) — troops moving supplies = transport. 捷運 = swift transport = MRT!",
+"家":"宀 roof + 豕 pig — a pig under your roof meant wealth and dinner = home, family.",
+"字":"宀 roof + 子 child — characters multiplied like children under a roof = written character.",
+"写":"Traditional 寫 — careful work done under 宀 a roof = to write.",
+"学":"Traditional 學: two hands passing knowledge down to 子 the child below = to learn.",
+"冷":"冫ice + 令 command — an icy order = cold.",
+"热":"Traditional 熱 — 灬 embers glowing underneath = hot.",
+"点":"Traditional 點 = 黑 black + 占 — a small burnt mark = dot; o'clock.",
+"黑":"A chimney window over 灬 fire — soot everywhere = black.",
+"红":"糹silk + 工 work — worked (dyed) silk = red.",
+"给":"糹silk + 合 to join — handing over joined threads = to give.",
+"经":"糹silk + the loom's warp — the threads everything runs through = to pass through; manage (經理).",
+"机":"Traditional 機 = 木 wood + 幾 intricate — an intricate wooden loom = machine (手機, 機車, 掌機).",
+"杯":"木 wood + 不 — a carved wooden vessel = cup.",
+"桌":"卓 high + 木 wood — a raised wooden surface = table.",
+"椅":"木 wood + 奇 — wood you lean against = chair.",
+"本":"木 a tree with a stroke marking the ROOT = origin; measure word for books.",
+"果":"Fruit (田) hanging on 木 a tree = fruit; result.",
+"样":"木 wood + 羊 (trad 樣) — a wooden template = appearance, kind (怎麼樣).",
+"天":"大 a person with arms wide + the line of sky above = sky, day, heaven.",
+"气":"Traditional 氣 — rising steam (with 米 rice cooking inside!) = air, energy (天氣, 客氣).",
+"客":"宀 roof + 各 arriving — someone arriving under your roof = guest (客戶 client).",
+"朋":"Two 月 strings of shells side by side, perfectly matched = friend.",
+"友":"Two hands clasped together = friend.",
+"工":"A carpenter's square = work, craft.",
+"司":"A mouth giving orders = to manage (公司 company).",
+"公":"八 to divide + 厶 private — private things divided up = public (公司).",
+"师":"Traditional 師 — a banner and the troops around it = master, teacher (老師).",
+"医":"Traditional 醫: an arrow wound + a wine jar 酉 — pull the arrow, disinfect with wine = medicine, doctor.",
+"院":"阝wall + 完 — a walled compound = institute (醫院 hospital).",
+"飞":"Traditional 飛 — two wings beating upward = to fly.",
+"高":"A tall watchtower with rooms stacked up = tall, high.",
+"兴":"Traditional 興 — many hands lifting a platform together = excitement (高興).",
+"喜":"壴 a drum + 口 a mouth singing over it = joy (喜歡).",
+"欢":"Traditional 歡 — a bird 雚 + 欠 an open mouth = cries of delight = joy.",
+"滑":"氵water + 骨 bone — slippery as wet bone = to glide (滑鼠 the gliding mouse).",
+"萤":"艹 + cover + 虫/火 — a firefly's glow (螢幕 = the glowing curtain = screen).",
+"捷":"扌hand + quick strokes = swift (捷運 swift transport).",
+"夜":"A person walking under 月 the moon = night.",
+"市":"A banner flying over a counter = market, city (夜市, 市場).",
+"奶":"女 woman + 乃 — milk; also grandma (珍珠奶茶).",
+"珍":"王 jade + 㐱 — precious as jade (珍珠 pearl).",
+"珠":"王 jade + 朱 red — a jade bead = pearl.",
+"掌":"尚 above + 手 hand — the flat of the hand = palm (掌機 = palm machine = handheld).",
+"老":"An elder with long hair leaning on a cane = old (老師, 老闆).",
+"板":"木 wood + 反 — a plank. In 老闆, trad 闆 shows eyes peering from the 門 gate — the boss watching the shop!",
+"加":"力 strength + 口 mouth — shouting to push harder = to add (加班 overtime, 加油 go!).",
+"片":"The right half of a split tree trunk = slice, flat piece (名片 business card, 影片 video).",
+"包":"A person wrapped around something = to wrap; bag (紅包, 麵包).",
+"节":"Traditional 節 = 竹 bamboo joints — natural segments = festival; section (中秋節).",
+"帅":"Traditional 帥 — a general's sash and banner = dashing, handsome (帥哥!).",
+"万":"Traditional 萬 was a scorpion pictograph — borrowed long ago for ten thousand.",
+"礼":"Traditional 禮 = 示 altar + offerings piled high = ritual, courtesy (禮拜).",
+"履":"尸 a body + steps below — footsteps = to tread (履歷 your career's footsteps).",
+"历":"Traditional 歷 — footsteps passing through 厂 the years = history, to pass through.",
+"薪":"艹 plant + 新 (firewood) — salary was once paid in firewood = 薪水 salary.",
+"影":"景 bright scene + 彡 strokes of shadow = shadow, image (影片 video, 電影 movie).",
+"展":"尸 + clothes unfolding = to unfold, exhibit (電玩展 game expo).",
+"竞":"Traditional 競 — two people racing head-to-head = to compete (電競 esports!).",
+"夢":"艹 + 目 + 夕 — grass, an eye, and evening: what the eye sees among grasses at dusk = a dream.",
+"海":"氵water + 每 every — where every stream ends up = the sea.",
+"姐":"女 woman + 且 — the elder sister (姐姐).",
+"妹":"女 woman + 未 not-yet — the not-yet-grown woman = little sister (妹妹).",
+"苹":"艹 plant + 平 píng — the píng plant = apple (蘋果).",
+"准":"冫ice + 隹 bird (trad 準) — a bird sighted dead-on = accurate; to allow (準備 prepare)."
+};
+/* ============ SENTENCES [simplified, pinyin, english] ============ */
+const S=[
+["你好！你叫什么名字？","Nǐ hǎo! Nǐ jiào shénme míngzi?","Hello! What's your name?"],
+["我叫王明，我是学生。","Wǒ jiào Wáng Míng, wǒ shì xuésheng.","My name is Wang Ming, I'm a student."],
+["他是我的好朋友。","Tā shì wǒ de hǎo péngyou.","He is my good friend."],
+["今天天气很好。","Jīntiān tiānqì hěn hǎo.","The weather is nice today."],
+["我喜欢喝茶，不喜欢喝咖啡。","Wǒ xǐhuan hē chá, bù xǐhuan hē kāfēi.","I like tea, not coffee."],
+["你想吃什么？","Nǐ xiǎng chī shénme?","What do you want to eat?"],
+["现在几点？","Xiànzài jǐ diǎn?","What time is it now?"],
+["明天我去台北。","Míngtiān wǒ qù Táiběi.","Tomorrow I'm going to Taipei."],
+["我家有五口人。","Wǒ jiā yǒu wǔ kǒu rén.","There are five people in my family."],
+["这个多少钱？","Zhège duōshao qián?","How much is this one?"],
+["太贵了！","Tài guì le!","Too expensive!"],
+["我会说一点中文。","Wǒ huì shuō yìdiǎn Zhōngwén.","I can speak a little Chinese."],
+["请坐，请喝茶。","Qǐng zuò, qǐng hē chá.","Please sit, please have some tea."],
+["他在医院工作，他是医生。","Tā zài yīyuàn gōngzuò, tā shì yīshēng.","He works at a hospital; he is a doctor."],
+["我每天早上七点起床。","Wǒ měitiān zǎoshang qī diǎn qǐchuáng.","I get up at seven every morning."],
+["昨天下雨，今天很冷。","Zuótiān xiàyǔ, jīntiān hěn lěng.","It rained yesterday; today it's cold."],
+["你的手机很漂亮。","Nǐ de shǒujī hěn piàoliang.","Your phone is very pretty."],
+["我们一起去夜市吃东西吧。","Wǒmen yìqǐ qù yèshì chī dōngxi ba.","Let's go eat at the night market together."],
+["对不起！没关系。","Duìbuqǐ! Méi guānxi.","Sorry! It's okay."],
+["你住在哪里？","Nǐ zhù zài nǎlǐ?","Where do you live?"],
+["我想学习汉字。","Wǒ xiǎng xuéxí Hànzì.","I want to learn Chinese characters."],
+["这是谁的书？是老师的。","Zhè shì shéi de shū? Shì lǎoshī de.","Whose book is this? It's the teacher's."],
+["他正在打电话。","Tā zhèngzài dǎ diànhuà.","He is making a phone call right now."],
+["我们的新产品非常好。","Wǒmen de xīn chǎnpǐn fēicháng hǎo.","Our new product is excellent."],
+["玩家都喜欢这个游戏。","Wánjiā dōu xǐhuan zhège yóuxì.","Gamers all love this game."],
+["请关注我们的社群媒体。","Qǐng guānzhù wǒmen de shèqún méitǐ.","Please follow our social media."],
+["我做游戏产品行销。","Wǒ zuò yóuxì chǎnpǐn xíngxiāo.","I do gaming product marketing."],
+["这个品牌的粉丝很多。","Zhège pǐnpái de fěnsī hěn duō.","This brand has a lot of fans."],
+["新的显卡性能非常好。","Xīn de xiǎnkǎ xìngnéng fēicháng hǎo.","The new graphics card performs extremely well."],
+["我的履历写好了。","Wǒ de lǚlì xiě hǎo le.","My resume is finished."],
+["我每天坐捷运上班。","Wǒ měitiān zuò jiéyùn shàngbān.","I take the MRT to work every day."],
+["我想喝珍珠奶茶，半糖少冰。","Wǒ xiǎng hē zhēnzhū nǎichá, bàn táng shǎo bīng.","I want bubble tea — half sugar, less ice."],
+["下个礼拜我有面试。","Xià ge lǐbài wǒ yǒu miànshì.","I have a job interview next week."],
+["台北的夜市很好吃。","Táiběi de yèshì hěn hǎochī.","Taipei's night markets are delicious."]
+];
+/* ============ DIALOGUES ============ */
+const D=[
+{t:"發表會 — The Launch Meeting",scene:"Planning a gaming-laptop launch with your team in Taipei",
+L:[
+[0,"大家好！我们今天说一说新品发表会。","Dàjiā hǎo! Wǒmen jīntiān shuō yi shuō xīnpǐn fābiǎohuì.","Hi everyone! Today let's talk about the new-product launch event."],
+[1,"好！发表会是几月几号？","Hǎo! Fābiǎohuì shì jǐ yuè jǐ hào?","Great — what date is it?"],
+[0,"七月十号，在台北。","Qī yuè shí hào, zài Táiběi.","July 10th, in Taipei."],
+[1,"我们的新笔电怎么样？","Wǒmen de xīn bǐdiàn zěnmeyàng?","How's our new laptop?"],
+[0,"性能非常好，玩家一定喜欢。","Xìngnéng fēicháng hǎo, wánjiā yídìng xǐhuan.","Performance is excellent — gamers will love it."],
+[1,"价格是多少？","Jiàgé shì duōshao?","What's the price?"],
+[0,"三万九千块。","Sānwàn jiǔqiān kuài.","NT$39,000."],
+[1,"有点贵，但是没问题！","Yǒudiǎn guì, dànshì méi wèntí!","A bit pricey, but no problem!"]],
+Q:[["发表会在哪里？",["台北","上海","东京","香港"],0],["新笔电的价格是多少？",["三万九千块","九千块","三千块","一万块"],0]]},
+{t:"電玩展 — Taipei Game Show",scene:"Working the booth at 台北電玩展",
+L:[
+[1,"你好！这是新的掌机吗？","Nǐ hǎo! Zhè shì xīn de zhǎngjī ma?","Hi! Is this the new handheld?"],
+[0,"对！你可以玩一玩。","Duì! Nǐ kěyǐ wán yi wán.","Yes! Give it a try."],
+[1,"萤幕很漂亮！多少钱？","Yíngmù hěn piàoliang! Duōshao qián?","The screen is gorgeous! How much?"],
+[0,"电玩展有活动，两万五千块。","Diànwánzhǎn yǒu huódòng, liǎngwàn wǔqiān kuài.","Expo promo — NT$25,000."],
+[1,"我是你们的粉丝，我也看你们的直播！","Wǒ shì nǐmen de fěnsī, wǒ yě kàn nǐmen de zhíbō!","I'm a fan — I watch your livestreams too!"],
+[0,"谢谢！请关注我们的社群媒体。","Xièxie! Qǐng guānzhù wǒmen de shèqún méitǐ.","Thanks! Follow our socials."]],
+Q:[["这是什么产品？",["掌机","笔电","滑鼠","键盘"],0],["电玩展的价格是多少？",["两万五千块","五千块","两千块","两万块"],0]]},
+{t:"面試 — The Job Interview",scene:"Your real story, in Chinese you can actually say — practice this before July!",
+L:[
+[0,"你好，请坐。请介绍一下你自己。","Nǐ hǎo, qǐng zuò. Qǐng jièshào yíxià nǐ zìjǐ.","Hello, please sit. Tell me about yourself."],
+[1,"你好！我叫Clark，我在台北工作十年了。","Nǐ hǎo! Wǒ jiào Clark, wǒ zài Táiběi gōngzuò shí nián le.","Hello! I'm Clark — I've worked in Taipei for ten years."],
+[0,"你做什么工作？","Nǐ zuò shénme gōngzuò?","What do you do?"],
+[1,"我在Acer做游戏产品行销，也写文案。","Wǒ zài Acer zuò yóuxì chǎnpǐn xíngxiāo, yě xiě wén'àn.","I do gaming product marketing at Acer, and I write copy."],
+[0,"你做过什么产品？","Nǐ zuòguo shénme chǎnpǐn?","What products have you worked on?"],
+[1,"笔电、萤幕、掌机——每年二十多个新品。","Bǐdiàn, yíngmù, zhǎngjī — měi nián èrshí duō ge xīnpǐn.","Laptops, monitors, handhelds — twenty-plus launches a year."],
+[0,"为什么想来我们公司？","Wèishénme xiǎng lái wǒmen gōngsī?","Why our company?"],
+[1,"我希望有新的挑战，我也很喜欢你们的品牌。","Wǒ xīwàng yǒu xīn de tiǎozhàn, wǒ yě hěn xǐhuan nǐmen de pǐnpái.","I'm hoping for a new challenge, and I really like your brand."],
+[0,"你的中文怎么样？","Nǐ de Zhōngwén zěnmeyàng?","How's your Chinese?"],
+[1,"我会说一点，我每天学习！","Wǒ huì shuō yìdiǎn, wǒ měitiān xuéxí!","I speak a little — and I study every day!"],
+[0,"很好！欢迎你。","Hěn hǎo! Huānyíng nǐ.","Excellent! Welcome."]],
+Q:[["他在台北工作几年了？",["十年","五年","一年","二十年"],0],["他做什么工作？",["产品行销","医生","老师","服务员"],0],["每年有多少个新品？",["二十多个","两个","一百个","五个"],0]]},
+{t:"夜市 — Night Market Run",scene:"Dinner the Taiwanese way",
+L:[
+[0,"帅哥，要吃什么？","Shuàigē, yào chī shénme?","Handsome! What'll you have?"],
+[1,"一份卤肉饭，谢谢。","Yí fèn lǔròufàn, xièxie.","One braised pork rice, thanks."],
+[0,"要不要珍珠奶茶？","Yào bu yào zhēnzhū nǎichá?","Want a bubble tea with that?"],
+[1,"好！大杯，半糖少冰。","Hǎo! Dà bēi, bàn táng shǎo bīng.","Yes! Large, half sugar, less ice."],
+[0,"一共一百二十块。","Yígòng yìbǎi èrshí kuài.","NT$120 altogether."],
+[1,"可以用悠游卡吗？","Kěyǐ yòng Yōuyóukǎ ma?","Can I pay with EasyCard?"],
+[0,"可以！谢谢，下次再来！","Kěyǐ! Xièxie, xià cì zài lái!","Sure! Thanks — come again!"]],
+Q:[["他吃什么？",["卤肉饭","米饭","苹果","鸡蛋"],0],["一共多少钱？",["一百二十块","二十块","一百块","十二块"],0]]},
+{t:"文案 — The Copy Review",scene:"Your boss reviews your ad copy",
+L:[
+[0,"这个广告文案是你写的吗？","Zhège guǎnggào wén'àn shì nǐ xiě de ma?","Did you write this ad copy?"],
+[1,"对，是我写的。怎么样？","Duì, shì wǒ xiě de. Zěnmeyàng?","Yes, I wrote it. What do you think?"],
+[0,"写得很好！但是有点长。","Xiě de hěn hǎo! Dànshì yǒudiǎn cháng.","Well written! But a little long."],
+[1,"好，我让它短一点。","Hǎo, wǒ ràng tā duǎn yìdiǎn.","OK, I'll tighten it up."],
+[0,"图片也要新的，要热门的游戏。","Túpiàn yě yào xīn de, yào rèmén de yóuxì.","New image too — use a trending game."],
+[1,"没问题，今天下午给你。","Méi wèntí, jīntiān xiàwǔ gěi nǐ.","No problem — you'll have it this afternoon."]],
+Q:[["文案怎么样？",["很好，但是有点长","不好","太短","很贵"],0],["图片要什么样的游戏？",["热门的","老的","小的","贵的"],0]]},
+{t:"新電腦 — The New Rig",scene:"Chatting with a friend about your setup",
+L:[
+[0,"你的新电脑怎么样？","Nǐ de xīn diànnǎo zěnmeyàng?","How's your new computer?"],
+[1,"非常快！显卡很好。","Fēicháng kuài! Xiǎnkǎ hěn hǎo.","Super fast! The graphics card is great."],
+[0,"你在哪里买的？多少钱？","Nǐ zài nǎlǐ mǎi de? Duōshao qián?","Where'd you buy it? How much?"],
+[1,"在网路上买的，三万五千块。","Zài wǎnglù shàng mǎi de, sānwàn wǔqiān kuài.","Online — NT$35,000."],
+[0,"我也想买一个，我们一起看看吧！","Wǒ yě xiǎng mǎi yí gè, wǒmen yìqǐ kànkan ba!","I want one too — let's look together!"]],
+Q:[["新电脑怎么样？",["非常快","很慢","很小","不好"],0],["他在哪里买的？",["网路上","商店","学校","公司"],0]]}
+];
+/* ============ SENTENCE BUILDER ============ */
+const SB=[
+{s:["我","喜欢","喝","茶"],p:"Wǒ xǐhuan hē chá.",e:"I like drinking tea."},
+{s:["明天","我","去","台北"],p:"Míngtiān wǒ qù Táiběi.",e:"Tomorrow I'm going to Taipei."},
+{s:["你","叫","什么","名字"],p:"Nǐ jiào shénme míngzi?",e:"What is your name?"},
+{s:["我们","一起","去","夜市","吃","东西"],p:"Wǒmen yìqǐ qù yèshì chī dōngxi.",e:"Let's go eat at the night market."},
+{s:["他","在","医院","工作"],p:"Tā zài yīyuàn gōngzuò.",e:"He works at a hospital."},
+{s:["我","每天","早上","七点","起床"],p:"Wǒ měitiān zǎoshang qī diǎn qǐchuáng.",e:"I get up at 7 every morning."},
+{s:["这个","多少","钱"],p:"Zhège duōshao qián?",e:"How much is this?"},
+{s:["我","会","说","一点","中文"],p:"Wǒ huì shuō yìdiǎn Zhōngwén.",e:"I can speak a little Chinese."},
+{s:["你","住","在","哪里"],p:"Nǐ zhù zài nǎlǐ?",e:"Where do you live?"},
+{s:["他","正在","打","电话"],p:"Tā zhèngzài dǎ diànhuà.",e:"He's making a call."},
+{s:["今天","天气","很","好"],p:"Jīntiān tiānqì hěn hǎo.",e:"The weather is nice today."},
+{s:["我","想","学习","汉字"],p:"Wǒ xiǎng xuéxí Hànzì.",e:"I want to learn characters."},
+{s:["我们","的","新","产品","非常","好"],p:"Wǒmen de xīn chǎnpǐn fēicháng hǎo.",e:"Our new product is excellent."},
+{s:["发表会","七月","十号","在","台北"],p:"Fābiǎohuì qī yuè shí hào zài Táiběi.",e:"The launch event is July 10th in Taipei."},
+{s:["玩家","都","喜欢","这个","游戏"],p:"Wánjiā dōu xǐhuan zhège yóuxì.",e:"Gamers all love this game."},
+{s:["请","关注","我们","的","社群媒体"],p:"Qǐng guānzhù wǒmen de shèqún méitǐ.",e:"Please follow our social media."},
+{s:["我","做","产品","行销"],p:"Wǒ zuò chǎnpǐn xíngxiāo.",e:"I do product marketing."},
+{s:["这个","品牌","的","粉丝","很","多"],p:"Zhège pǐnpái de fěnsī hěn duō.",e:"This brand has many fans."},
+{s:["我","的","履历","写","好","了"],p:"Wǒ de lǚlì xiě hǎo le.",e:"My resume is finished."},
+{s:["新","的","显卡","性能","非常","好"],p:"Xīn de xiǎnkǎ xìngnéng fēicháng hǎo.",e:"The new graphics card performs great."},
+{s:["我","每天","坐","捷运","上班"],p:"Wǒ měitiān zuò jiéyùn shàngbān.",e:"I take the MRT to work every day."},
+{s:["我","想","喝","珍珠奶茶"],p:"Wǒ xiǎng hē zhēnzhū nǎichá.",e:"I want to drink bubble tea."},
+{s:["下个","礼拜","我","有","面试"],p:"Xià ge lǐbài wǒ yǒu miànshì.",e:"I have an interview next week."}
+];
+/* ============ PERSONAL SENTENCE BANK (Core ᛟ) — {h,p,e,c,d} ============ */
+const PSBCATS=[["daily","ᚷ Daily life"],["work","ᚨ Work / job hunt"],["mkt","✒ Marketing / copy"],["tech","ᚲ Circuit · Gaming / AI PC"],["fit","♻ Pulse · Fitness"],["tw","☀ Taiwan life"],["soc","☺ Social"],["grow","↑ Personal growth"],["vargr","ᛟ VARGR / Forgebound"]];
+const PSB=[
+{h:"我每天早上六点半起床。",p:"Wǒ měitiān zǎoshang liù diǎn bàn qǐchuáng.",e:"I get up at 6:30 every morning.",c:"daily",d:1},
+{h:"我先洗澡，然后吃早餐。",p:"Wǒ xiān xǐzǎo, ránhòu chī zǎocān.",e:"I shower first, then eat breakfast.",c:"daily",d:2},
+{h:"今天我有很多事情要做。",p:"Jīntiān wǒ yǒu hěn duō shìqing yào zuò.",e:"I have a lot to do today.",c:"daily",d:1},
+{h:"我晚上十一点睡觉。",p:"Wǒ wǎnshang shíyī diǎn shuìjiào.",e:"I go to bed at 11 pm.",c:"daily",d:1},
+{h:"周末我想好好休息。",p:"Zhōumò wǒ xiǎng hǎohǎo xiūxi.",e:"On the weekend I want to rest properly.",c:"daily",d:2},
+{h:"我在找新的工作机会。",p:"Wǒ zài zhǎo xīn de gōngzuò jīhuì.",e:"I'm looking for new job opportunities.",c:"work",d:2},
+{h:"我的专长是产品行销和文案。",p:"Wǒ de zhuāncháng shì chǎnpǐn xíngxiāo hé wén'àn.",e:"My specialty is product marketing and copywriting.",c:"work",d:2},
+{h:"我有十年的行销经验。",p:"Wǒ yǒu shí nián de xíngxiāo jīngyàn.",e:"I have ten years of marketing experience.",c:"work",d:1},
+{h:"我希望找一个有挑战的工作。",p:"Wǒ xīwàng zhǎo yí ge yǒu tiǎozhàn de gōngzuò.",e:"I hope to find a challenging job.",c:"work",d:2},
+{h:"请问这个职位的薪水是多少？",p:"Qǐngwèn zhège zhíwèi de xīnshuǐ shì duōshao?",e:"May I ask the salary for this position?",c:"work",d:3},
+{h:"我下个礼拜可以开始上班。",p:"Wǒ xià ge lǐbài kěyǐ kāishǐ shàngbān.",e:"I can start work next week.",c:"work",d:2},
+{h:"好的文案要简单、有力。",p:"Hǎo de wén'àn yào jiǎndān, yǒulì.",e:"Good copy should be simple and powerful.",c:"mkt",d:2},
+{h:"我们要先了解目标族群。",p:"Wǒmen yào xiān liǎojiě mùbiāo zúqún.",e:"First we need to understand the target audience.",c:"mkt",d:2},
+{h:"这个广告的点击率很高。",p:"Zhège guǎnggào de diǎnjīlǜ hěn gāo.",e:"This ad's click-through rate is high.",c:"mkt",d:3},
+{h:"品牌的声音要一致。",p:"Pǐnpái de shēngyīn yào yízhì.",e:"The brand voice must stay consistent.",c:"mkt",d:3},
+{h:"我会把卖点写得更清楚。",p:"Wǒ huì bǎ màidiǎn xiě de gèng qīngchu.",e:"I'll make the selling points clearer.",c:"mkt",d:2},
+{h:"这台笔电的显卡非常强。",p:"Zhè tái bǐdiàn de xiǎnkǎ fēicháng qiáng.",e:"This laptop's graphics card is extremely powerful.",c:"tech",d:1},
+{h:"萤幕的更新率是一百八十赫兹。",p:"Yíngmù de gēngxīnlǜ shì yìbǎi bāshí hèzī.",e:"The screen refresh rate is 180 Hz.",c:"tech",d:3},
+{h:"散热设计很重要。",p:"Sànrè shèjì hěn zhòngyào.",e:"The cooling design is very important.",c:"tech",d:2},
+{h:"AI PC有专门的NPU。",p:"AI PC yǒu zhuānmén de NPU.",e:"AI PCs have a dedicated NPU.",c:"tech",d:3},
+{h:"记忆体是三十二GB。",p:"Jìyìtǐ shì sānshí'èr GB.",e:"The RAM is 32 GB. (TW: 記憶體; mainland: 內存)",c:"tech",d:2},
+{h:"玩家最在乎性能和价格。",p:"Wánjiā zuì zàihu xìngnéng hé jiàgé.",e:"Gamers care most about performance and price.",c:"tech",d:2},
+{h:"我每个礼拜去健身房三次。",p:"Wǒ měi ge lǐbài qù jiànshēnfáng sān cì.",e:"I go to the gym three times a week.",c:"fit",d:2},
+{h:"今天练腿，明天休息。",p:"Jīntiān liàn tuǐ, míngtiān xiūxi.",e:"Leg day today, rest day tomorrow.",c:"fit",d:2},
+{h:"运动以后要多喝水。",p:"Yùndòng yǐhòu yào duō hē shuǐ.",e:"Drink plenty of water after exercise.",c:"fit",d:1},
+{h:"我的肩膀有点痛。",p:"Wǒ de jiānbǎng yǒudiǎn tòng.",e:"My shoulder hurts a little.",c:"fit",d:2},
+{h:"睡觉是最好的恢复。",p:"Shuìjiào shì zuì hǎo de huīfù.",e:"Sleep is the best recovery.",c:"fit",d:2},
+{h:"我住在台北，每天坐捷运。",p:"Wǒ zhù zài Táiběi, měitiān zuò jiéyùn.",e:"I live in Taipei and take the MRT every day.",c:"tw",d:1},
+{h:"下班以后我去夜市吃宵夜。",p:"Xiàbān yǐhòu wǒ qù yèshì chī xiāoyè.",e:"After work I go to the night market for a late-night snack.",c:"tw",d:2},
+{h:"台风天不用上班！",p:"Táifēng tiān bú yòng shàngbān!",e:"Typhoon day — no work!",c:"tw",d:2},
+{h:"我用悠游卡买咖啡。",p:"Wǒ yòng Yōuyóukǎ mǎi kāfēi.",e:"I buy coffee with my EasyCard.",c:"tw",d:1},
+{h:"周末我想去泡温泉。",p:"Zhōumò wǒ xiǎng qù pào wēnquán.",e:"This weekend I want to soak in a hot spring.",c:"tw",d:3},
+{h:"好久不见！最近怎么样？",p:"Hǎojiǔ bú jiàn! Zuìjìn zěnmeyàng?",e:"Long time no see! How have you been?",c:"soc",d:1},
+{h:"你周末做了什么？",p:"Nǐ zhōumò zuò le shénme?",e:"What did you do on the weekend?",c:"soc",d:1},
+{h:"我们改天一起吃饭吧。",p:"Wǒmen gǎitiān yìqǐ chīfàn ba.",e:"Let's grab a meal together some other day.",c:"soc",d:2},
+{h:"你说得太快，请再说一次。",p:"Nǐ shuō de tài kuài, qǐng zài shuō yí cì.",e:"You speak too fast — please say it again.",c:"soc",d:1},
+{h:"我请客！",p:"Wǒ qǐngkè!",e:"My treat!",c:"soc",d:1},
+{h:"我每天学习一点，慢慢进步。",p:"Wǒ měitiān xuéxí yìdiǎn, mànmàn jìnbù.",e:"I study a little every day and improve slowly.",c:"grow",d:1},
+{h:"失败也是学习。",p:"Shībài yě shì xuéxí.",e:"Failure is also learning.",c:"grow",d:2},
+{h:"今天的我比昨天的我更好。",p:"Jīntiān de wǒ bǐ zuótiān de wǒ gèng hǎo.",e:"Today's me is better than yesterday's me.",c:"grow",d:2},
+{h:"坚持最重要。",p:"Jiānchí zuì zhòngyào.",e:"Persistence matters most.",c:"grow",d:2},
+{h:"VARGR是我的创作计画。",p:"VARGR shì wǒ de chuàngzuò jìhuà.",e:"VARGR is my creative project.",c:"vargr",d:2},
+{h:"我正在写一个新的故事。",p:"Wǒ zhèngzài xiě yí ge xīn de gùshi.",e:"I'm writing a new story.",c:"vargr",d:1},
+{h:"这个角色还需要一个名字。",p:"Zhège juésè hái xūyào yí ge míngzi.",e:"This character still needs a name.",c:"vargr",d:2},
+{h:"灵感来的时候，我马上写下来。",p:"Línggǎn lái de shíhou, wǒ mǎshàng xiě xiàlái.",e:"When inspiration strikes, I write it down immediately.",c:"vargr",d:3},
+{h:"Forgebound的世界很黑暗，但是有希望。",p:"Forgebound de shìjiè hěn hēi'àn, dànshì yǒu xīwàng.",e:"The world of Forgebound is dark, but there is hope.",c:"vargr",d:2}
+];
+/* ============ CAREER MANDARIN (Hunt ᚨ) ============ */
+const CAREER=[
+{g:"ᚨ",t:"Self-introduction 自我介紹",intro:"Your 30-second opener. Drill until automatic.",items:[
+{h:"大家好，我叫Clark，很高兴认识你们。",p:"Dàjiā hǎo, wǒ jiào Clark, hěn gāoxìng rènshi nǐmen.",e:"Hi everyone, I'm Clark, great to meet you."},
+{h:"我住在台北十年了。",p:"Wǒ zhù zài Táiběi shí nián le.",e:"I've lived in Taipei for ten years."},
+{h:"我做游戏产品行销，也写文案。",p:"Wǒ zuò yóuxì chǎnpǐn xíngxiāo, yě xiě wén'àn.",e:"I do gaming product marketing, and I write copy."},
+{h:"我在Acer负责Predator和Nitro的产品内容。",p:"Wǒ zài Acer fùzé Predator hé Nitro de chǎnpǐn nèiróng.",e:"At Acer I was responsible for Predator and Nitro product content."},
+{h:"我的中文还在学习，请多多指教。",p:"Wǒ de Zhōngwén hái zài xuéxí, qǐng duōduō zhǐjiào.",e:"My Chinese is still improving — please guide me. (Classic humble closer.)"}]},
+{g:"ᚨ",t:"Interview answers 面試",intro:"Answers to the questions you WILL be asked.",items:[
+{h:"我最大的优点是写得快、写得清楚。",p:"Wǒ zuì dà de yōudiǎn shì xiě de kuài, xiě de qīngchu.",e:"My biggest strength: I write fast and I write clearly."},
+{h:"我离开Acer，因为我想要新的挑战。",p:"Wǒ líkāi Acer, yīnwèi wǒ xiǎng yào xīn de tiǎozhàn.",e:"I left Acer because I want a new challenge."},
+{h:"一年我负责二十多个产品上市。",p:"Yì nián wǒ fùzé èrshí duō ge chǎnpǐn shàngshì.",e:"I handled 20+ product launches a year."},
+{h:"五年后，我希望带一个内容团队。",p:"Wǔ nián hòu, wǒ xīwàng dài yí ge nèiróng tuánduì.",e:"In five years, I hope to lead a content team."},
+{h:"我的期望薪水可以面议。",p:"Wǒ de qīwàng xīnshuǐ kěyǐ miànyì.",e:"My expected salary is negotiable."},
+{h:"请问，团队现在最大的挑战是什么？",p:"Qǐngwèn, tuánduì xiànzài zuì dà de tiǎozhàn shì shénme?",e:"May I ask — what's the team's biggest challenge right now? (Always ask one back.)"}]},
+{g:"ᚨ",t:"LinkedIn / recruiters 獵頭",intro:"For messages from 獵頭 (headhunters) and HR.",items:[
+{h:"谢谢你的讯息，我很有兴趣。",p:"Xièxie nǐ de xùnxí, wǒ hěn yǒu xìngqù.",e:"Thanks for your message — I'm very interested. (TW: 訊息, not 消息/信息.)"},
+{h:"我们可以先线上聊一聊。",p:"Wǒmen kěyǐ xiān xiànshàng liáo yi liáo.",e:"We could chat online first. (TW: 線上.)"},
+{h:"请把职位说明寄给我。",p:"Qǐng bǎ zhíwèi shuōmíng jì gěi wǒ.",e:"Please send me the job description."},
+{h:"我目前在看新的机会。",p:"Wǒ mùqián zài kàn xīn de jīhuì.",e:"I'm currently exploring new opportunities."}]},
+{g:"ᚨ",t:"Freelance pitch 接案",intro:"接案 jiē'àn = taking freelance work — useful after July.",items:[
+{h:"我可以帮你写英文和中文的文案。",p:"Wǒ kěyǐ bāng nǐ xiě Yīngwén hé Zhōngwén de wén'àn.",e:"I can write English and Chinese copy for you."},
+{h:"我的专长是科技产品的内容。",p:"Wǒ de zhuāncháng shì kējì chǎnpǐn de nèiróng.",e:"My specialty is tech product content."},
+{h:"这是我的作品集。",p:"Zhè shì wǒ de zuòpǐnjí.",e:"This is my portfolio."},
+{h:"价格可以谈。",p:"Jiàgé kěyǐ tán.",e:"The price is negotiable."}]},
+{g:"✒",t:"Product messaging 產品訊息",intro:"Predator-style lines — taglines have rhythm in Chinese too.",items:[
+{h:"为胜利而生。",p:"Wèi shènglì ér shēng.",e:"Born for victory."},
+{h:"性能没有上限。",p:"Xìngnéng méiyǒu shàngxiàn.",e:"Performance without limits."},
+{h:"掌握每一帧。",p:"Zhǎngwò měi yì zhēn.",e:"Master every frame. (幀 = frame — gamer vocabulary.)"},
+{h:"这不只是笔电，这是你的武器。",p:"Zhè bù zhǐshì bǐdiàn, zhè shì nǐ de wǔqì.",e:"This isn't just a laptop — it's your weapon."}]},
+{g:"ᚲ",t:"Circuit · Laptop specs 規格",intro:"Spec-sheet vocabulary, Taiwan forms (mainland forms noted).",items:[
+{h:"处理器",p:"chǔlǐqì",e:"CPU / processor"},
+{h:"显示卡",p:"xiǎnshìkǎ",e:"graphics card (full TW form of 顯卡)"},
+{h:"记忆体",p:"jìyìtǐ",e:"RAM — TW; mainland says 內存"},
+{h:"硬碟",p:"yìngdié",e:"hard drive / SSD — TW; mainland says 硬盘"},
+{h:"萤幕更新率",p:"yíngmù gēngxīnlǜ",e:"screen refresh rate"},
+{h:"解析度",p:"jiěxīdù",e:"resolution — TW; mainland says 分辨率"},
+{h:"散热",p:"sànrè",e:"cooling / thermals"},
+{h:"电池续航",p:"diànchí xùháng",e:"battery life"}]},
+{g:"ᚲ",t:"Circuit · AI PC 人工智慧",intro:"The category you launched into — in Taiwan Mandarin.",items:[
+{h:"人工智慧",p:"réngōng zhìhuì",e:"artificial intelligence — TW; mainland says 人工智能"},
+{h:"AI晶片",p:"AI jīngpiàn",e:"AI chip — TW: 晶片; mainland: 芯片"},
+{h:"模型",p:"móxíng",e:"(AI) model"},
+{h:"算力",p:"suànlì",e:"compute power"},
+{h:"即时翻译",p:"jíshí fānyì",e:"real-time translation — TW: 即時"},
+{h:"语音助理",p:"yǔyīn zhùlǐ",e:"voice assistant"}]},
+{g:"ᚨ",t:"Explaining your work 我的工作",intro:"How to describe a decade of Predator copy, naturally.",items:[
+{h:"我负责全球的产品讯息，一年二十多个新品。",p:"Wǒ fùzé quánqiú de chǎnpǐn xùnxí, yì nián èrshí duō ge xīnpǐn.",e:"I handle global product messaging — 20+ new products a year."},
+{h:"我把工程师的规格，变成大家看得懂的故事。",p:"Wǒ bǎ gōngchéngshī de guīgé, biànchéng dàjiā kàn de dǒng de gùshi.",e:"I turn engineers' specs into stories everyone can understand. (Your best line — memorize it.)"},
+{h:"Predator的声音比较强，Nitro比较亲切。",p:"Predator de shēngyīn bǐjiào qiáng, Nitro bǐjiào qīnqiè.",e:"Predator's voice is fiercer; Nitro is friendlier."},
+{h:"我也做SEO，让更多人找到我们的页面。",p:"Wǒ yě zuò SEO, ràng gèng duō rén zhǎodào wǒmen de yèmiàn.",e:"I also do SEO, so more people find our pages."}]}
+];
+/* ================= STATE ================= */
+const KEY="zhTrainerV4";
+const DEFAULTS={cards:{},streak:0,lastDay:"",newPerDay:8,rate:0.9,pitch:1.0,voiceName:"",plan:{},doneToday:{},script:"t",pinyinShow:"reveal",toneColors:true,frontMode:"hanzi",xp:0,proIncluded:true,taiwan:true,lessonLog:[],mistakes:{},myBank:[],sessMode:"full",bopomofo:false};
+let st=JSON.parse(localStorage.getItem(KEY)||"null");
+if(!st){
+const old=JSON.parse(localStorage.getItem("zhTrainerV3")||localStorage.getItem("zhTrainerV2")||localStorage.getItem("zhTrainerV1")||"null");
+st={...DEFAULTS};
+if(old)for(const k of ["cards","streak","lastDay","newPerDay","rate","plan","doneToday","toneColors","frontMode","pinyinShow","xp","proIncluded"])if(old[k]!==undefined)st[k]=old[k];
+}else st={...DEFAULTS,...st};
+function save(){localStorage.setItem(KEY,JSON.stringify(st))}
+const today=()=>new Date().toISOString().slice(0,10);
+const now=()=>Date.now();
+const DAY=864e5;
+function card(i){return st.cards[i]||(st.cards[i]={iv:0,due:0,reps:0,lapses:0})}
+function isLearned(i){const c=st.cards[i];return c&&c.reps>0}
+function dueIds(){return W.map((w,i)=>i).filter(i=>st.cards[i]&&st.cards[i].reps>0&&st.cards[i].due<=now())}
+function newIds(){
+const introduced=(st.doneToday[today()]||{}).newCount||0;
+const n=Math.max(0,st.newPerDay-introduced);
+const core=[],pro=[];
+W.forEach((w,i)=>{if(!st.cards[i]||st.cards[i].reps===0)(w[3]==="P"?pro:core).push(i)});
+const out=[];let ci=0,pi=0,k=0;
+while(out.length<n&&(ci<core.length||(st.proIncluded&&pi<pro.length))){
+if(st.proIncluded&&pi<pro.length&&(k%4===3||ci>=core.length))out.push(pro[pi++]);
+else if(ci<core.length)out.push(core[ci++]);
+k++;
+}
+return out;
+}
+const XPMAP={review:2,newCount:0,listen:2,type:3,write:6,speak:5,game:3,dlg:1,quiz:3,num:3,rad:3};
+function bumpDone(k,v=1){const d=st.doneToday[today()]=st.doneToday[today()]||{};d[k]=(d[k]||0)+v;st.xp=(st.xp||0)+(XPMAP[k]||1)*v;save();renderHud()}
+function touchStreak(){const t=today();if(st.lastDay===t)return;const y=new Date(now()-DAY).toISOString().slice(0,10);st.streak=(st.lastDay===y)?st.streak+1:1;st.lastDay=t;save();renderHud()}
+function recordMiss(kind,wi,label){
+const word=(wi!=null&&wi>=0);
+const k=word?("w"+wi):("x"+(label||kind));
+const m=st.mistakes[k]=st.mistakes[k]||{n:0,kinds:{},wi:word?wi:null,label:label||null,last:""};
+m.n++;m.kinds[kind]=(m.kinds[kind]||0)+1;m.last=today();save();
+if(sess&&sess.miss)sess.miss.push(word?T(wHanzi(W[wi])):(label||kind));
+}
+function weakIds(){return Object.values(st.mistakes).filter(m=>m.wi!=null).sort((a,b)=>b.n-a.n).map(m=>m.wi)}
+function missMap(){const m={};Object.values(st.mistakes).forEach(e=>{if(e.wi!=null)m[e.wi]=e.n});return m}
+function weakDueFirst(ids){const mm=missMap();const weak=ids.filter(i=>mm[i]).sort((a,b)=>mm[b]-mm[a]);return weak.concat(shuffle(ids.filter(i=>!mm[i])))}
+function weightedLPick(pool){const mm=missMap();const exp=[];pool.forEach(i=>{const n=1+(mm[i]||0);for(let k=0;k<n;k++)exp.push(i)});return exp[Math.floor(Math.random()*exp.length)]}
+let weakQueue=null;
+function reviewWeak(){const ids=weakIds().slice(0,20);if(!ids.length){alert("No weak words logged yet — go make some mistakes first!");return}weakQueue=ids;go("cards")}
+function level(){return Math.floor(Math.sqrt((st.xp||0)/50))+1}
+function lvlInfo(){const l=level();const cur=(l-1)*(l-1)*50,next=l*l*50;return{l,pct:Math.min(100,Math.round((st.xp-cur)/(next-cur)*100)),need:next-st.xp}}
+/* ===== Taiwan-aware accessors ===== */
+function wHanzi(w){return (st.taiwan&&w[4]&&w[4].tw)?w[4].tw[0]:w[0]}
+function wPin(w){return (st.taiwan&&w[4]&&w[4].tw)?w[4].tw[1]:w[1]}
+/* ================= TRADITIONAL (OpenCC) ================= */
+let conv=null;const tCache={};
+function T(s){
+if(st.script!=="t")return s;
+if(tCache[s])return tCache[s];
+try{if(!conv&&typeof OpenCC!=="undefined")conv=OpenCC.Converter({from:"cn",to:"tw"});if(conv)return tCache[s]=conv(s)}catch(e){}
+return s;
+}
+function toggleScript(){st.script=st.script==="s"?"t":"s";save();renderScriptBtn();render()}
+function renderScriptBtn(){const b=document.getElementById("scriptBtn");b.textContent=st.script==="s"?"简":"繁";b.title="Toggle traditional / simplified"}
+/* ================= AUDIO ================= */
+let zhVoice=null;
+function pickVoice(){
+const v=speechSynthesis.getVoices();
+if(st.voiceName){zhVoice=v.find(x=>x.name===st.voiceName)||null}
+if(!zhVoice){
+const pref=st.script==="t"?[/zh.TW/i,/zh.HK/i,/^zh/i]:[/zh.CN/i,/^zh/i];
+for(const re of pref){zhVoice=v.find(x=>re.test(x.lang));if(zhVoice)break}
+}
+}
+function populateVoiceSelect(){
+const sel=document.getElementById("voiceSel");if(!sel)return;
+const v=speechSynthesis.getVoices().filter(x=>/^zh/i.test(x.lang));
+sel.innerHTML=v.length?v.map(x=>'<option value="'+esc(x.name)+'"'+(x.name===st.voiceName?" selected":"")+'>'+esc(x.name)+' ('+esc(x.lang)+')</option>').join(""):'<option value="">No zh voices found</option>';
+pickVoice();
+}
+speechSynthesis.onvoiceschanged=()=>{pickVoice();populateVoiceSelect()};pickVoice();
+function utter(t,rate){const u=new SpeechSynthesisUtterance(T(t));u.lang=st.script==="t"?"zh-TW":"zh-CN";if(zhVoice)u.voice=zhVoice;u.rate=rate||st.rate;u.pitch=st.pitch!=null?st.pitch:1;return u}
+function speak(t,rate){speechSynthesis.cancel();pickVoice();speechSynthesis.speak(utter(t,rate))}
+let seqOn=false;
+function speakSeq(arr,i=0){
+if(i===0){speechSynthesis.cancel();pickVoice();seqOn=true}
+if(!seqOn||i>=arr.length){seqOn=false;return}
+const u=utter(arr[i]);
+u.onend=()=>setTimeout(()=>speakSeq(arr,i+1),400);
+speechSynthesis.speak(u);
+}
+function stopAudio(){seqOn=false;speechSynthesis.cancel()}
+/* ================= PINYIN ENGINE ================= */
+const $=s=>document.querySelector(s);
+function shuffle(a){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
+const rnd=a=>a[Math.floor(Math.random()*a.length)];
+const TONEMAP={"ā":["a",1],"á":["a",2],"ǎ":["a",3],"à":["a",4],"ē":["e",1],"é":["e",2],"ě":["e",3],"è":["e",4],"ī":["i",1],"í":["i",2],"ǐ":["i",3],"ì":["i",4],"ō":["o",1],"ó":["o",2],"ǒ":["o",3],"ò":["o",4],"ū":["u",1],"ú":["u",2],"ǔ":["u",3],"ù":["u",4],"ǖ":["v",1],"ǘ":["v",2],"ǚ":["v",3],"ǜ":["v",4],"ü":["v",0]};
+function plainPinyin(p){return p.toLowerCase().split("").map(c=>TONEMAP[c]?TONEMAP[c][0]:c).join("").replace(/[^a-zv]/g,"")}
+const SYL=/(?:zh|ch|sh|[bpmfdtnlgkhjqxzcsrwy])?[aeiouüvāáǎàēéěèīíǐìōóǒòūúǔùǖǘǚǜ]+(?:ng|n|r)?/gi;
+function syls(p){const out=[];p.split(/[\s'’]+/).forEach(w=>{const m=w.match(SYL);if(m)out.push(...m)});return out}
+function tone(s){for(const c of s.toLowerCase()){const t=TONEMAP[c];if(t&&t[1]>0)return t[1]}return 5}
+function esc(t){return String(t).replace(/&/g,"&amp;").replace(/</g,"&lt;")}
+function pinHTML(p){
+if(!st.toneColors)return esc(p);
+return p.split(/([^a-zA-Zāáǎàēéěèīíǐìōóǒòūúǔùǖǘǚǜüv'’]+)/).map(chunk=>{
+if(!chunk)return "";
+if(/[a-zāáǎàēéěèīíǐìōóǒòūúǔùǖǘǚǜü]/i.test(chunk)){
+const m=chunk.match(SYL);
+if(m)return m.map(s=>'<span class="t'+tone(s)+'">'+esc(s)+'</span>').join("");
+}
+return esc(chunk);
+}).join("");
+}
+function numPinyin(p,keepNeutral){return syls(p).map(s=>{const t=tone(s);return plainPinyin(s)+(t===5?(keepNeutral?"5":""):t)}).join("")}
+/* ================= BOPOMOFO (注音) ENGINE ================= */
+function pinToBopo(pStr){
+const BT=['','','ˊ','ˇ','ˋ','˙'];
+const BF={'zhi':'ㄓ','chi':'ㄔ','shi':'ㄕ','ri':'ㄖ','zi':'ㄗ','ci':'ㄘ','si':'ㄙ',
+'yi':'ㄧ','ya':'ㄧㄚ','ye':'ㄧㄝ','yao':'ㄧㄠ','you':'ㄧㄡ','yan':'ㄧㄢ','yin':'ㄧㄣ','yang':'ㄧㄤ','ying':'ㄧㄥ','yong':'ㄩㄥ',
+'wu':'ㄨ','wa':'ㄨㄚ','wo':'ㄨㄛ','wai':'ㄨㄞ','wei':'ㄨㄟ','wan':'ㄨㄢ','wen':'ㄨㄣ','wang':'ㄨㄤ','weng':'ㄨㄥ',
+'yu':'ㄩ','yue':'ㄩㄝ','yuan':'ㄩㄢ','yun':'ㄩㄣ','yo':'ㄧㄛ'};
+const BI=[['zh','ㄓ'],['ch','ㄔ'],['sh','ㄕ'],['b','ㄅ'],['p','ㄆ'],['m','ㄇ'],['f','ㄈ'],
+['d','ㄉ'],['t','ㄊ'],['n','ㄋ'],['l','ㄌ'],['g','ㄍ'],['k','ㄎ'],['h','ㄏ'],
+['j','ㄐ'],['q','ㄑ'],['x','ㄒ'],['r','ㄖ'],['z','ㄗ'],['c','ㄘ'],['s','ㄙ']];
+const BN=[['iang','ㄧㄤ'],['uang','ㄨㄤ'],['iong','ㄩㄥ'],['ian','ㄧㄢ'],['iao','ㄧㄠ'],['ing','ㄧㄥ'],
+['uan','ㄨㄢ'],['uai','ㄨㄞ'],['ang','ㄤ'],['eng','ㄥ'],['ong','ㄨㄥ'],
+['ia','ㄧㄚ'],['ie','ㄧㄝ'],['iu','ㄧㄡ'],['in','ㄧㄣ'],
+['ua','ㄨㄚ'],['uo','ㄨㄛ'],['ui','ㄨㄟ'],['un','ㄨㄣ'],
+['ve','ㄩㄝ'],['van','ㄩㄢ'],['vn','ㄩㄣ'],['v','ㄩ'],
+['ai','ㄞ'],['ei','ㄟ'],['ao','ㄠ'],['ou','ㄡ'],['an','ㄢ'],['en','ㄣ'],['er','ㄦ'],
+['a','ㄚ'],['o','ㄛ'],['e','ㄜ'],['i','ㄧ'],['u','ㄨ']];
+return syls(pStr).map(s=>{
+const t=tone(s),pl=plainPinyin(s);
+let bstr;
+if(BF[pl]){bstr=BF[pl]+BT[t]}else{
+let ini='',fin=pl;
+for(const[k,v]of BI){if(pl.startsWith(k)){ini=v;fin=pl.slice(k.length);break}}
+if(['ㄐ','ㄑ','ㄒ'].includes(ini))fin=fin.replace(/^u/,'v');
+let sym='';for(const[k,v]of BN){if(fin===k){sym=v;break}}
+bstr=ini+(sym||fin)+BT[t];
+}
+return st.toneColors?'<span class="t'+t+'">'+bstr+'</span>':bstr;
+}).join(' ');
+}
+function bopoHTML(p){return st.bopomofo?'<div class="bopo">'+pinToBopo(p)+'</div>':'';}
+/* ================================================ */
+function cleanHanzi(h){return h.replace(/[。，！？、：；·…—\s!?,.'’0-9a-zA-Z]/g,"")}
+function lcs(a,b){const m=a.length,n=b.length;const dp=Array.from({length:m+1},()=>new Array(n+1).fill(0));for(let i=1;i<=m;i++)for(let j=1;j<=n;j++)dp[i][j]=a[i-1]===b[j-1]?dp[i-1][j-1]+1:Math.max(dp[i-1][j],dp[i][j-1]);return dp[m][n]}
+/* ===== notes & radical breakdown HTML ===== */
+function noteHTML(w){
+const x=w[4];if(!x)return "";
+let h="";
+if(x.tw&&st.taiwan)h+='<div class="note">🇹🇼 Taiwan usage shown. Mainland: <span class="hanzi">'+T(w[0])+'</span> '+esc(w[1])+'</div>';
+else if(x.tw&&!st.taiwan)h+='<div class="note">🇹🇼 In Taiwan: <span class="hanzi">'+T(x.tw[0])+'</span> '+esc(x.tw[1])+'</div>';
+if(x.n)h+='<div class="note cult">💡 '+esc(x.n)+'</div>';
+if(x.ex)h+='<div class="note" style="border-left:3px solid var(--acc);padding-left:8px;font-size:15px">📝 <span class="hanzi">'+T(x.ex)+'</span> <button class="btn sm" onclick="speak(this.previousElementSibling.textContent)">🔊</button></div>';
+return h;
+}
+function breakHTML(hz){
+let out="";const seen={};
+for(const ch of hz){
+if(seen[ch])continue;seen[ch]=1;
+const c=CHARRAD[ch];
+if(c)out+='<div><b class="hanzi">'+T(ch)+'</b> &nbsp;'+esc(c)+'</div>';
+}
+return out?'<div class="brk">'+out+'</div>':"";
+}
+/* ================= NUMBERS ================= */
+const DIGITS="零一二三四五六七八九";
+function numHanzi(n){
+if(n===0)return "零";
+let s="",started=false,zero=false;
+for(const[u,v]of[["千",1000],["百",100],["十",10],["",1]]){
+const d=Math.floor(n/v)%10;
+if(d===0){if(started)zero=true;continue}
+if(zero){s+="零";zero=false}
+if(u==="十"&&!started&&d===1)s+="十";
+else s+=DIGITS[d]+u;
+started=true;
+}
+return s;
+}
+/* ================= NAV / HUD ================= */
+const TABS=[["home","⌂ Home"],["cards","<i class='glyph'>ᛊ</i>Script"],["listen","<i class='glyph'>ᛖ</i>Echo"],["speak","<i class='glyph'>ᚹ</i>Voice"],["pinyin","<i class='glyph'>ᛁ</i>Tones"],["dlg","<i class='glyph'>ᚷ</i>Gate"],["games","<i class='glyph'>ᚠ</i>Forge"],["write","<i class='glyph'>ᚺ</i>Hand"],["type","<i class='glyph'>ᛏ</i>Keys"],["rad","<i class='glyph'>ᚱ</i>Runes"],["hunt","<i class='glyph'>ᚨ</i>Hunt"],["core","<i class='glyph'>ᛟ</i>Core"],["quiz","<i class='glyph'>ᚦ</i>Boss"],["words","<i class='glyph'>ᛚ</i>Lexicon"],["archive","<i class='glyph'>ᛞ</i>Archive"]];
+const TABTITLE={home:"Dashboard & start a session",cards:"Reading & flashcards (spaced repetition)",listen:"Listening comprehension",speak:"Speaking & pronunciation (mic)",pinyin:"Tones & pinyin lab",dlg:"Dialogues — real Taiwan scenes",games:"Sentence builder & number games",write:"Handwriting — stroke order",type:"Typing practice (漢字 / pinyin)",rad:"Radicals & character components",hunt:"Career Mandarin — interviews, products",core:"Your personal sentence bank",quiz:"Mixed boss quiz",words:"Vocabulary list",archive:"Logs, mistakes & review history"};
+let tab="home";
+function renderNav(){$("#nav").innerHTML=TABS.map(([id,l])=>'<button class="'+(tab===id?"on":"")+'" title="'+(TABTITLE[id]||"")+'" onclick="go(\''+id+'\')">'+l+'</button>').join("")}
+function go(t){tab=t;renderNav();render()}
+function renderHud(){
+const li=lvlInfo();
+$("#hud").innerHTML=(st.streak>0?"🔥 "+st.streak+" &nbsp;":"")+"⭐ Lv "+li.l+" · "+(st.xp||0)+" XP";
+}
+function render(){stopAudio();({home:rHome,cards:rCards,listen:rListen,speak:rSpeak,dlg:rDlg,games:rGames,write:rWrite,type:rType,pinyin:rPinyin,rad:rRad,quiz:rQuiz,words:rWords,hunt:rHunt,core:rCore,archive:rArchive})[tab]()}
+/* ================= SESSION ENGINE ================= */
+const SBLOCKS=[
+{id:"warm",label:"Warm-up · flashcard reviews",min:8,tab:"cards"},
+{id:"new",label:"New words",min:6,tab:"cards"},
+{id:"listen",label:"Listening quiz",min:7,tab:"listen"},
+{id:"dlg",label:"Dialogue of the day",min:8,tab:"dlg"},
+{id:"game",label:"Games · sentences & numbers",min:6,tab:"games"},
+{id:"speak",label:"Speaking studio",min:7,tab:"speak"},
+{id:"write",label:"Handwriting",min:6,tab:"write"},
+{id:"rad",label:"Radical recognition",min:5,tab:"rad"},
+{id:"quiz",label:"Boss quiz",min:7,tab:"quiz"}
+];
+const MODES={
+full:{label:"Full",mins:60,desc:"All 9 blocks — the complete hour",ids:["warm","new","listen","dlg","game","speak","write","rad","quiz"],lens:[8,6,7,8,6,7,6,5,7]},
+min:{label:"Minimum",mins:30,desc:"Reviews, new words, listening, dialogue, speaking, quiz",ids:["warm","new","listen","dlg","speak","quiz"],lens:[6,4,5,6,5,4]},
+survival:{label:"Survival",mins:10,desc:"Busy day — keep the streak alive",ids:["warm","listen","quiz"],lens:[4,3,3]}
+};
+function modeBlocks(m){const md=MODES[m]||MODES.full;return md.ids.map((id,i)=>{const b=SBLOCKS.find(x=>x.id===id);return{id:b.id,label:b.label,tab:b.tab,min:md.lens[i]}})}
+let sess=null,sessTimer=null;
+function startSession(mode){
+mode=MODES[mode]?mode:(MODES[st.sessMode]?st.sessMode:"full");
+st.sessMode=mode;save();
+sess={bi:0,xp0:st.xp||0,t0:now(),mode,blocks:modeBlocks(mode),miss:[],newW:[],chars:[],dlgT:null};
+startBlock();
+}
+function startBlock(){
+const b=sess.blocks[sess.bi];
+sess.endAt=now()+b.min*60*1000;
+if(b.id==="dlg"){dlgOpen=Math.floor(Math.random()*D.length);sess.dlgT=T(D[dlgOpen].t)}
+if(b.id==="rad")radMode="quiz";
+tab=b.tab;renderNav();render();
+renderSessBar();
+if(sessTimer)clearInterval(sessTimer);
+sessTimer=setInterval(renderSessBar,1000);
+}
+function renderSessBar(){
+const bar=$("#sessbar");
+if(!sess){bar.style.display="none";if(sessTimer){clearInterval(sessTimer);sessTimer=null}return}
+const b=sess.blocks[sess.bi];
+const left=Math.round((sess.endAt-now())/1000);
+const mm=Math.floor(Math.abs(left)/60),ss=String(Math.abs(left)%60).padStart(2,"0");
+const pct=Math.round((sess.bi)/sess.blocks.length*100);
+bar.style.display="block";
+bar.innerHTML='<div class="row">'+
+'<b>'+MODES[sess.mode].label+' '+(sess.bi+1)+'/'+sess.blocks.length+'</b> <span>'+b.label+'</span>'+
+'<span id="sessleft" class="'+(left<0?"over":"")+'">'+(left<0?"-":"")+mm+":"+ss+'</span>'+
+'<span class="sbar"><i style="width:'+pct+'%"></i></span>'+
+'<button class="btn sm acc" onclick="nextBlock()">'+(sess.bi===sess.blocks.length-1?"Finish ✓":"Next block →")+'</button>'+
+'<button class="btn sm" onclick="endSession(true)">✕ End</button>'+
+'</div>';
+}
+function nextBlock(){sess.bi++;if(sess.bi>=sess.blocks.length)endSession(false);else startBlock()}
+function endSession(aborted){
+const xpGain=(st.xp||0)-sess.xp0;
+const mins=Math.round((now()-sess.t0)/60000);
+const d=st.doneToday[today()]||{};
+const weak=[...new Set(sess.miss)];
+const entry={date:today(),mode:sess.mode,mins,xp:xpGain,topic:sess.dlgT||"Free practice",
+newWords:[...new Set(sess.newW)],chars:[...new Set(sess.chars)],dialogue:sess.dlgT,
+weak:weak.slice(0,12),review:weak.slice(0,6),aborted:!!aborted};
+st.lessonLog.unshift(entry);st.lessonLog=st.lessonLog.slice(0,90);save();
+sess=null;renderSessBar();touchStreak();
+tab="home";renderNav();
+$("#main").innerHTML='<div class="box center">'+
+'<h2>'+(aborted?"Session ended":"🏆 Session complete!")+'</h2>'+
+'<div class="row" style="justify-content:center;margin-top:14px">'+
+'<div class="stat"><b>'+mins+'</b><span>minutes</span></div>'+
+'<div class="stat"><b>+'+xpGain+'</b><span>XP earned</span></div>'+
+'<div class="stat"><b>'+(d.review||0)+'</b><span>cards</span></div>'+
+'<div class="stat"><b>'+entry.newWords.length+'</b><span>new words</span></div>'+
+'<div class="stat"><b>'+((d.listen||0)+(d.quiz||0)+(d.rad||0))+'</b><span>quiz answers</span></div>'+
+'<div class="stat"><b>'+(d.speak||0)+'</b><span>spoken</span></div>'+
+'</div>'+
+(entry.newWords.length?'<p style="margin-top:10px;font-size:14px">New: <span class="hanzi" style="font-size:17px">'+entry.newWords.map(T).join("、")+'</span></p>':"")+
+(entry.weak.length?'<p style="margin-top:8px;font-size:14px" class="mut">Weak points: <span class="hanzi red-t" style="font-size:16px">'+entry.weak.join("、")+'</span></p>':"")+
+(entry.review.length?'<p style="margin-top:8px;font-size:14px" class="gold">📌 Review tomorrow: <span class="hanzi" style="font-size:16px">'+entry.review.join("、")+'</span></p>':"")+
+'<p class="mut" style="margin-top:12px">'+(aborted?"Every minute counts — logged anyway. See you tomorrow.":"Logged to your Archive. Consistency beats intensity. 加油！")+'</p>'+
+'<div class="row" style="margin-top:14px;justify-content:center"><button class="btn" onclick="go(\'archive\')">▤ View log</button><button class="btn" onclick="go(\'home\')">Home</button></div>'+
+'</div>';
+}
+/* ================= HOME ================= */
+function weakPanelHTML(){
+const ids=weakIds().slice(0,5);if(!ids.length)return "";
+const mm=missMap();
+return '<div class="box" style="border-color:var(--red)">'+
+'<div class="row"><b>🎯 Weak points</b>'+
+'<span class="mut" style="font-size:12px;margin-left:8px">auto-boosted in flashcards &amp; listening</span>'+
+'<button class="btn sm red" style="margin-left:auto" onclick="reviewWeak()">Drill all →</button></div>'+
+'<div class="row" style="flex-wrap:wrap;gap:10px;margin-top:10px">'+
+ids.map(i=>'<button class="btn" style="flex:0 0 auto;text-align:center;min-width:80px;padding:8px 12px" onclick="speak(wHanzi(W['+i+']))">'+
+'<div class="hanzi" style="font-size:24px">'+T(wHanzi(W[i]))+'</div>'+
+'<div style="font-size:11px" class="mut">'+esc(wPin(W[i]))+'</div>'+
+'<div style="font-size:11px">'+esc(W[i][2])+'</div>'+
+'<span class="tag" style="font-size:10px;margin-top:4px;display:inline-block;background:var(--red);color:#fff">\xd7'+(mm[i]||0)+' misses</span>'+
+'</button>').join("")+
+'</div></div>';
+}
+/* ===== Self-expression daily prompt (v6) ===== */
+const SELFEXPR=[
+{h:"我今天有點累，但是我還是想練一下。",p:"wǒ jīntiān yǒudiǎn lèi, dànshì wǒ háishì xiǎng liàn yíxià",e:"I'm a bit tired today, but I still want to practice a little."},
+{h:"我在做行銷和產品文案。",p:"wǒ zài zuò xíngxiāo hé chǎnpǐn wén'àn",e:"I work in marketing and product copywriting."},
+{h:"我想把生活一步一步重新建立起來。",p:"wǒ xiǎng bǎ shēnghuó yíbù yíbù chóngxīn jiànlì qǐlái",e:"I want to rebuild my life step by step."},
+{h:"我對健身、音樂、科技和台灣文化有興趣。",p:"wǒ duì jiànshēn, yīnyuè, kējì hé táiwān wénhuà yǒu xìngqù",e:"I'm interested in fitness, music, technology, and Taiwan culture."},
+{h:"我昨天沒睡好，所以今天做短一點的練習。",p:"wǒ zuótiān méi shuì hǎo, suǒyǐ jīntiān zuò duǎn yìdiǎn de liànxí",e:"I didn't sleep well last night, so I'll do a shorter lesson today."},
+{h:"我想用更清楚的方式解釋技術產品。",p:"wǒ xiǎng yòng gèng qīngchǔ de fāngshì jiěshì jìshù chǎnpǐn",e:"I want to explain technical products in a clearer way."},
+{h:"我想變得更自律一點。",p:"wǒ xiǎng biàn de gèng zìlǜ yìdiǎn",e:"I'm trying to become a bit more disciplined."}
+];
+function seIdxToday(){return Math.floor(Date.parse(today())/DAY)%SELFEXPR.length}
+function sePractice(i){const s=SELFEXPR[i];practiceItem(s.h,s.p,s.e)}
+function seCardHTML(){const i=seIdxToday(),s=SELFEXPR[i];return '<div class="box" style="border-color:var(--teal)">'+
+'<h3 style="margin-bottom:4px">🗣 Today\'s self-expression</h3>'+
+'<p class="mut" style="font-size:13px">Say one true thing about your real life in Chinese — then practise it aloud.</p>'+
+'<div class="center hanzi" style="font-size:26px;margin-top:10px">'+T(s.h)+'</div>'+
+'<div class="pin">'+pinHTML(s.p)+'</div>'+
+'<div class="eng mut">'+esc(s.e)+'</div>'+
+'<div class="row" style="justify-content:center;margin-top:10px">'+
+'<button class="btn" onclick="speak(SELFEXPR['+i+'].h)">🔊 Listen</button>'+
+'<button class="btn acc" onclick="sePractice('+i+')">🎤 Practice aloud</button>'+
+'</div></div>';}
+function heatHTML(){
+let cells="";
+for(let d=83;d>=0;d--){
+const ds=new Date(now()-d*DAY).toISOString().slice(0,10);
+const t=st.doneToday[ds];
+const n=t?Object.values(t).reduce((a,b)=>a+b,0):0;
+const lv=n===0?0:n<10?1:n<30?2:n<60?3:4;
+cells+='<i class="h'+lv+'" title="'+ds+': '+n+' exercises"></i>';
+}
+return '<div class="heat">'+cells+'</div>';
+}
+function rHome(){
+const due=dueIds().length,nw=newIds().length,learned=Object.keys(st.cards).filter(isLearned).length;
+const proLearned=Object.keys(st.cards).filter(i=>isLearned(i)&&W[i][3]==="P").length;
+const li=lvlInfo();
+$("#main").innerHTML=
+'<div class="box center" style="border-color:var(--acc)">'+
+'<h2 style="margin-bottom:6px">Choose today\'s protocol 🇹🇼</h2>'+
+'<div class="modegrid">'+
+'<button class="btn acc" onclick="startSession(\'full\')">▶ Full · 60 min<small>'+MODES.full.desc+'</small></button>'+
+'<button class="btn" onclick="startSession(\'min\')">▶ Minimum · 30 min<small>'+MODES.min.desc+'</small></button>'+
+'<button class="btn" onclick="startSession(\'survival\')">▶ Survival · 10 min<small>'+MODES.survival.desc+'</small></button>'+
+'</div>'+
+'<div class="row" style="justify-content:center;margin-top:12px">'+
+(weakIds().length?'<button class="btn red sm" onclick="reviewWeak()">🎯 Review weak points ('+Math.min(20,weakIds().length)+')</button>':"")+
+((st.lessonLog&&st.lessonLog[0]&&st.lessonLog[0].review&&st.lessonLog[0].review.length)?'<span class="tag gold">📌 From last time: <span class="hanzi">'+st.lessonLog[0].review.join("、")+'</span></span>':"")+
+'</div>'+
+'<p class="mut" style="margin-top:10px;font-size:13px">Or pick any tab above and train freely.</p>'+
+'</div>'+
+'<div class="box center"><div class="row" style="justify-content:center">'+
+'<div class="stat"><b>'+due+'</b><span>reviews due</span></div>'+
+'<div class="stat"><b>'+nw+'</b><span>new today</span></div>'+
+'<div class="stat"><b>'+learned+'</b><span>words learned</span></div>'+
+'<div class="stat"><b>'+proLearned+'</b><span>work words</span></div>'+
+'<div class="stat"><b>'+W.length+'</b><span>in deck</span></div>'+
+'</div>'+
+'<div style="max-width:520px;margin:10px auto 0;text-align:left">'+
+'<div class="row" style="justify-content:space-between"><span>Level '+li.l+'</span><span class="mut" style="font-size:12px">'+li.need+' XP to Lv '+(li.l+1)+'</span></div>'+
+'<div class="xpbar"><i style="width:'+li.pct+'%"></i></div>'+
+'</div>'+
+'<h3 style="margin-top:14px;font-size:15px">Last 12 weeks</h3>'+heatHTML()+
+'</div>'+
+weakPanelHTML()+
+seCardHTML()+
+'<div class="box"><h3 style="margin-bottom:10px">Settings</h3>'+
+'<div class="row" style="gap:16px">'+
+'<span class="set">New words/day <input type="number" min="0" max="30" value="'+st.newPerDay+'" style="width:64px" onchange="st.newPerDay=+this.value;save();rHome()"></span>'+
+'<span class="set">Script <select onchange="st.script=this.value;save();renderScriptBtn();rHome()">'+
+'<option value="t"'+(st.script==="t"?" selected":"")+'>繁體 (Taiwan)</option>'+
+'<option value="s"'+(st.script==="s"?" selected":"")+'>简体</option></select></span>'+
+'<label class="set"><input type="checkbox"'+(st.taiwan?" checked":"")+' onchange="st.taiwan=this.checked;save();rHome()" style="accent-color:var(--teal)"> <span style="color:var(--teal)">台灣用語 Taiwan usage</span></label>'+
+'</div><div class="row" style="gap:16px;margin-top:10px">'+
+'<span class="set">Card front <select onchange="st.frontMode=this.value;save()">'+
+'<option value="hanzi"'+(st.frontMode==="hanzi"?" selected":"")+'>漢字 → meaning</option>'+
+'<option value="audio"'+(st.frontMode==="audio"?" selected":"")+'>Audio → meaning</option>'+
+'<option value="english"'+(st.frontMode==="english"?" selected":"")+'>English → 漢字</option></select></span>'+
+'<span class="set">Pinyin on cards <select onchange="st.pinyinShow=this.value;save()">'+
+'<option value="reveal"'+(st.pinyinShow==="reveal"?" selected":"")+'>After reveal</option>'+
+'<option value="always"'+(st.pinyinShow==="always"?" selected":"")+'>Always</option></select></span>'+
+'<label class="set"><input type="checkbox"'+(st.toneColors?" checked":"")+' onchange="st.toneColors=this.checked;save();rHome()" style="accent-color:var(--acc)"> Tone colors</label>'+
+'<label class="set"><input type="checkbox"'+(st.proIncluded?" checked":"")+' onchange="st.proIncluded=this.checked;save();rHome()" style="accent-color:var(--purple)"> <span style="color:var(--purple)">Work vocab</span></label>'+
+'<label class="set"><input type="checkbox"'+(st.bopomofo?" checked":"")+' onchange="st.bopomofo=this.checked;save();rHome()" style="accent-color:var(--teal)"> <span style="color:var(--teal)">ㄅㄆㄇ 注音 Bopomofo</span></label>'+
+'</div>'+
+'<div class="row" style="gap:20px;margin-top:10px;align-items:center;flex-wrap:wrap">'+
+'<span class="set">Voice <select id="voiceSel" style="max-width:220px" onchange="st.voiceName=this.value;save();pickVoice()"><option>Loading…</option></select>'+
+' <button class="btn sm" onclick="speak(\'你好，我在學中文\')">🔊 Test</button></span>'+
+'<span class="set">Pitch <input type="range" min="0.8" max="1.2" step="0.05" value="'+(+(st.pitch!=null?st.pitch:1)).toFixed(2)+'" style="width:80px;vertical-align:middle" oninput="st.pitch=+this.value;save();document.getElementById(\'pitchVal\').textContent=(+this.value).toFixed(2)"> <span id="pitchVal" class="mut" style="font-size:12px;min-width:28px;display:inline-block">'+(+(st.pitch!=null?st.pitch:1)).toFixed(2)+'</span></span>'+
+'<span class="set">Rate <input type="range" min="0.7" max="1.2" step="0.05" value="'+(+(st.rate||0.9)).toFixed(2)+'" style="width:80px;vertical-align:middle" oninput="st.rate=+this.value;save();document.getElementById(\'rateVal\').textContent=(+this.value).toFixed(2)"> <span id="rateVal" class="mut" style="font-size:12px;min-width:28px;display:inline-block">'+(+(st.rate||0.9)).toFixed(2)+'</span></span>'+
+'</div>'+
+'<p style="margin-top:10px;font-size:13px" class="mut">Tones: <span class="t1">1 flat</span> · <span class="t2">2 rising</span> · <span class="t3">3 dip</span> · <span class="t4">4 falling</span> · <span class="t5">neutral</span> &nbsp;|&nbsp; Speak tab needs Chrome/Edge + mic. For 漢字 typing add the Microsoft Bopomofo or Pinyin (Traditional) keyboard, Win+Space to switch.</p>'+
+'</div>';
+populateVoiceSelect();
+}
+/* ================= FLASHCARDS ================= */
+let queue=[],cur=null,revealed=false;
+function rCards(){
+if(weakQueue){queue=weakQueue.slice();weakQueue=null}
+else{
+const inSess=sess&&sess.blocks[sess.bi].id==="new";
+queue=inSess?newIds():weakDueFirst(dueIds()).concat(newIds());
+}
+nextCard();
+}
+function frontHTML(w,isNew){
+if(isNew||st.frontMode==="hanzi")
+return '<div class="bigh hanzi">'+T(wHanzi(w))+'</div>'+((st.pinyinShow==="always"&&!isNew)?'<div class="pin">'+pinHTML(wPin(w))+'</div>':"");
+if(st.frontMode==="audio")return '<div class="bigh">🔊</div><div class="center"><button class="btn" onclick="speak(wHanzi(W[cur]))">Play again</button> <button class="btn" onclick="speak(wHanzi(W[cur]),0.6)">🐢</button></div>';
+return '<div class="bigh" style="font-size:32px">“'+esc(w[2])+'”</div>';
+}
+function answerHTML(w){
+let h="";
+if(st.frontMode!=="hanzi")h+='<div class="center hanzi" style="font-size:40px">'+T(wHanzi(w))+'</div>';
+h+='<div class="pin">'+pinHTML(wPin(w))+'</div>'+bopoHTML(wPin(w));
+if(st.frontMode!=="english")h+='<div class="eng">'+esc(w[2])+'</div>';
+h+='<button class="btn sm" onclick="speak(wHanzi(W[cur]))">🔊</button> <button class="btn sm" onclick="speak(wHanzi(W[cur]),0.6)">🐢</button>';
+h+=noteHTML(w)+breakHTML(wHanzi(w));
+return h;
+}
+function nextCard(){
+revealed=false;
+if(!queue.length){
+$("#main").innerHTML='<div class="box center"><h2>✅ All done!</h2><p class="mut" style="margin-top:8px">'+(sess?"Hit Next block up top to continue your session.":"No cards due. Try Listening, Dialogues or Games.")+'</p><div style="margin-top:14px"><button class="btn" onclick="go(\'home\')">Home</button></div></div>';
+cur=null;return;
+}
+cur=queue[0];
+const w=W[cur],isNew=!isLearned(cur);
+const lvlTag=w[3]==="P"?'<span class="tag p">WORK</span>':(w[3]==="T"?'<span class="tag tw">TAIWAN</span>':'<span class="tag">HSK '+w[3]+'</span>');
+$("#main").innerHTML='<div class="box">'+
+'<div class="row"><span class="tag">'+queue.length+' left</span>'+(isNew?'<span class="tag" style="color:var(--gold)">NEW</span>':"")+lvlTag+'</div>'+
+frontHTML(w,isNew)+
+'<div id="ans" class="center" style="min-height:110px">'+
+(isNew?'<div class="pin">'+pinHTML(wPin(w))+'</div>'+bopoHTML(wPin(w))+'<div class="eng">'+esc(w[2])+'</div><button class="btn sm" onclick="speak(wHanzi(W[cur]))">🔊</button>'+noteHTML(w)+breakHTML(wHanzi(w)):'<button class="btn" style="margin-top:18px" onclick="reveal()">Show answer (Space)</button>')+
+'</div>'+
+'<div id="grades" class="row" style="justify-content:center;margin-top:16px;visibility:'+(isNew?"visible":"hidden")+'">'+
+'<button class="btn red" onclick="grade(0)">Again (1)</button>'+
+'<button class="btn" onclick="grade(1)">Hard (2)</button>'+
+'<button class="btn grn" onclick="grade(2)">Good (3)</button>'+
+'<button class="btn acc" onclick="grade(3)">Easy (4)</button>'+
+'</div></div>';
+if(isNew){revealed=true;speak(wHanzi(w))}
+else if(st.frontMode==="audio")speak(wHanzi(w));
+}
+function reveal(){if(revealed||cur===null)return;revealed=true;$("#ans").innerHTML=answerHTML(W[cur]);$("#grades").style.visibility="visible";speak(wHanzi(W[cur]))}
+function grade(g){
+const c=card(cur);c.reps++;
+if(g===0){c.lapses++;c.iv=0;c.due=now()+5*60*1e3;queue.push(cur);recordMiss("card",cur)}
+if(c.reps===1&&sess)sess.newW.push(wHanzi(W[cur]));
+else if(g===1){c.iv=Math.max(c.iv*1.2,0.5);c.due=now()+c.iv*DAY}
+else if(g===2){c.iv=c.iv<1?1:c.iv*2.3;c.due=now()+c.iv*DAY}
+else{c.iv=c.iv<1?3:c.iv*3.2;c.due=now()+c.iv*DAY}
+if(c.reps===1)bumpDone("newCount");
+bumpDone("review");touchStreak();save();
+queue.shift();nextCard();
+}
+document.addEventListener("keydown",e=>{
+if(tab!=="cards"||cur===null)return;
+if(e.code==="Space"){e.preventDefault();reveal()}
+if(revealed&&["1","2","3","4"].includes(e.key))grade(+e.key-1)
+});
+/* ================= LISTENING ================= */
+let lq=null,lScore={ok:0,n:0},lMode="word";
+function lPool(){const learned=W.map((w,i)=>i).filter(isLearned);return learned.length>=8?learned:W.map((w,i)=>i).filter(i=>W[i][3]===1)}
+function rListen(){
+$("#main").innerHTML='<div class="box">'+
+'<div class="row">'+
+'<button class="btn sm '+(lMode==="word"?"acc":"")+'" onclick="lMode=\'word\';newListen()">Words</button>'+
+'<button class="btn sm '+(lMode==="sent"?"acc":"")+'" onclick="lMode=\'sent\';newListen()">Sentences</button>'+
+'<span class="tag" style="margin-left:auto">Score: <span id="lsc">'+lScore.ok+'/'+lScore.n+'</span></span></div>'+
+'<div class="center" style="margin:22px 0">'+
+'<button class="btn acc big" onclick="playL()">🔊 Play</button> '+
+'<button class="btn" onclick="playL(0.6)">🐢 Slow</button></div>'+
+'<div id="lopts" class="opts"></div>'+
+'<div id="lfb" class="fb"></div>'+
+'<div class="center" style="margin-top:10px"><button class="btn" id="lnext" style="display:none" onclick="newListen()">Next →</button></div>'+
+'<p class="mut center" style="margin-top:8px;font-size:13px">After answering: replay and repeat aloud (shadowing).</p></div>';
+newListen();
+}
+function newListen(){
+$("#lfb").textContent="";$("#lnext").style.display="none";
+if(lMode==="word"){
+const pool=lPool();const qi=weightedLPick(pool);
+const dis=shuffle(pool.filter(i=>i!==qi&&W[i][2]!==W[qi][2])).slice(0,3);
+const opts=shuffle([{e:W[qi][2],ok:1},...dis.map(i=>({e:W[i][2],ok:0}))]);
+lq={text:wHanzi(W[qi]),pin:wPin(W[qi]),opts,wi:qi};
+}else{
+const qi=Math.floor(Math.random()*S.length);
+const dis=shuffle(S.filter((s,i)=>i!==qi)).slice(0,3);
+const opts=shuffle([{e:S[qi][2],ok:1},...dis.map(s=>({e:s[2],ok:0}))]);
+lq={text:S[qi][0],pin:S[qi][1],opts,wi:null};
+}
+$("#lopts").innerHTML=lq.opts.map((o,i)=>'<button class="btn" onclick="ansL('+i+')">'+esc(o.e)+'</button>').join("");
+playL();
+}
+function playL(r){if(lq)speak(lq.text,r)}
+function ansL(i){
+const ok=!!lq.opts[i].ok;lScore.n++;if(ok)lScore.ok++;
+if(!ok)recordMiss("listening",lq.wi,lq.wi==null?T(lq.text):null);
+document.querySelectorAll("#lopts .btn").forEach((b,j)=>{b.disabled=true;if(lq.opts[j].ok)b.classList.add("hit");else if(j===i)b.classList.add("miss")});
+$("#lfb").innerHTML='<span class="hanzi" style="font-size:23px">'+T(lq.text)+'</span><br>'+pinHTML(lq.pin)+bopoHTML(lq.pin);
+$("#lsc").textContent=lScore.ok+"/"+lScore.n;
+$("#lnext").style.display="inline-block";
+bumpDone("listen");touchStreak();
+}
+/* ================= SPEAKING ================= */
+let spT=null,spHide=false,spBusy=false,spKeep=false;
+function practiceItem(h,p,e){spT={h,p,e};spKeep=true;spHide=false;go("speak")}
+function spItems(){
+const items=S.map(s=>({h:s[0],p:s[1],e:s[2]}));
+D.forEach(d=>d.L.forEach(l=>items.push({h:l[1],p:l[2],e:l[3]})));
+return items;
+}
+function rSpeak(){
+const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+$("#main").innerHTML='<div class="box">'+
+'<h3>🎤 Speaking studio</h3>'+
+'<p class="mut" style="font-size:13px;margin-top:4px">Listen, then say the sentence. The app transcribes you and scores how close you got. '+(SR?"":"<b class='red-t'>Speech recognition not available in this browser — use Edge or Chrome (online).</b>")+'</p>'+
+'<div id="sptgt" style="margin-top:14px"></div>'+
+'<div class="row" style="justify-content:center;margin-top:14px">'+
+'<button class="btn" onclick="spPlay(0.85)">🔊 Listen</button>'+
+'<button class="btn" onclick="spPlay(0.6)">🐢 Slow</button>'+
+(SR?'<button class="btn acc big" id="spmic" onclick="spListen()">🎤 Speak</button>':"")+
+'<button class="btn" onclick="spToggle()">'+(spHide?"Show text":"Hide text")+'</button>'+
+'<button class="btn" onclick="newSp()">Next →</button>'+
+'</div>'+
+'<div id="spres" class="center" style="margin-top:16px;min-height:60px"></div>'+
+'</div>';
+if(spKeep&&spT){spKeep=false;spRender()}else newSp();
+}
+function newSp(){spT=rnd(spItems());spRender();const r=$("#spres");if(r)r.innerHTML=""}
+function spRender(){
+const el=$("#sptgt");if(!el||!spT)return;
+el.innerHTML='<div class="center hanzi" style="font-size:30px;'+(spHide?"filter:blur(9px);":"")+'">'+T(spT.h)+'</div>'+
+'<div class="pin" style="'+(spHide?"filter:blur(9px);":"")+'">'+pinHTML(spT.p)+'</div>'+
+'<div class="eng mut">'+esc(spT.e)+'</div>';
+}
+function spToggle(){spHide=!spHide;rSpeak()}
+function spPlay(r){if(spT)speak(spT.h,r)}
+function spListen(){
+if(spBusy)return;
+const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+if(!SR)return;
+stopAudio();
+const r=new SR();
+r.lang=st.script==="t"?"zh-TW":"zh-CN";
+r.interimResults=false;r.maxAlternatives=1;
+spBusy=true;$("#spmic").textContent="🎙 Listening…";
+r.onresult=ev=>{spScore(ev.results[0][0].transcript||"")};
+r.onerror=ev=>{$("#spres").innerHTML='<span class="red-t">Mic error: '+esc(ev.error)+'</span>'};
+r.onend=()=>{spBusy=false;const m=$("#spmic");if(m)m.textContent="🎤 Speak"};
+r.start();
+}
+function spScore(heard){
+const tgt=cleanHanzi(T(spT.h)),got=cleanHanzi(heard);
+const l=lcs([...tgt],[...got]);
+const pct=tgt.length?Math.round(l/tgt.length*100):0;
+const gset=new Set([...got]);
+const marked=[...tgt].map(c=>'<span class="'+(gset.has(c)?"ok":"bad")+'">'+c+'</span>').join("");
+const msg=pct>=85?"🌟 Excellent!":pct>=60?"👍 Good — almost there.":"💪 Keep trying — listen again and copy the rhythm.";
+$("#spres").innerHTML='<div class="spk-ch hanzi">'+marked+'</div>'+
+'<div style="margin-top:6px">Heard: <span class="hanzi">'+esc(heard||"–")+'</span></div>'+
+'<div style="margin-top:6px;font-size:20px"><b>'+pct+'%</b> — '+msg+'</div>';
+if(pct>=60){bumpDone("speak");touchStreak()}
+}
+/* ================= DIALOGUES ================= */
+let dlgOpen=null,dlgPin=true,dlgEng=true,dlgStep=-1,dq=null;
+function rDlg(){
+if(dlgOpen===null){
+$("#main").innerHTML='<div class="box"><h3>📖 Dialogues</h3><p class="mut" style="font-size:13px;margin-top:4px">Real scenarios from your Taipei life — launches, the expo floor, your interview, the night market.</p></div>'+
+D.map((d,i)=>'<div class="box dlgcard" onclick="openDlg('+i+')"><b class="hanzi">'+T(d.t)+'</b><br><span class="mut" style="font-size:14px">'+esc(d.scene)+' · '+d.L.length+' lines</span></div>').join("");
+return;
+}
+const d=D[dlgOpen];
+dq=dq&&dq.di===dlgOpen?dq:{di:dlgOpen,qi:0,ok:0,done:false,answered:false};
+$("#main").innerHTML='<div class="box">'+
+'<div class="row"><button class="btn sm" onclick="closeDlg()">← All dialogues</button><b style="margin-left:6px" class="hanzi">'+T(d.t)+'</b></div>'+
+'<p class="mut" style="font-size:13px;margin-top:4px">'+esc(d.scene)+'</p>'+
+'<div class="row" style="margin-top:10px">'+
+'<button class="btn sm acc" onclick="playDlg()">▶ Play all</button>'+
+'<button class="btn sm" onclick="stopAudio()">⏹ Stop</button>'+
+'<button class="btn sm" onclick="dlgStepFwd()">Step ▸</button>'+
+'<label class="set" style="font-size:13px"><input type="checkbox"'+(dlgPin?" checked":"")+' onchange="dlgPin=this.checked;rDlg()"> pinyin</label>'+
+'<label class="set" style="font-size:13px"><input type="checkbox"'+(dlgEng?" checked":"")+' onchange="dlgEng=this.checked;rDlg()"> english</label>'+
+'</div>'+
+'<div style="margin-top:14px;display:flex;flex-direction:column">'+
+d.L.map((l,i)=>'<div class="bub '+(l[0]===0?"a":"b")+(dlgStep===i?" cur":"")+'" onclick="speak(D['+dlgOpen+'].L['+i+'][1]);dlgStep='+i+';rDlg()">'+
+'<span class="hanzi">'+T(l[1])+'</span>'+
+(dlgPin?'<span class="bp">'+pinHTML(l[2])+'</span>':"")+
+(dlgEng?'<span class="be">'+esc(l[3])+'</span>':"")+
+'</div>').join("")+
+'</div>'+
+'<p class="mut" style="font-size:12px;margin-top:8px">Tip: click any bubble to hear it. For role-play, hide english, play A lines and say B lines aloud before clicking them.</p>'+
+'</div>'+dlgQuizHTML(d);
+}
+function dlgQuizHTML(d){
+if(dq.done)return '<div class="box center"><b>Comprehension: '+dq.ok+'/'+d.Q.length+'</b> '+(dq.ok===d.Q.length?"🌟":"")+' <button class="btn sm" style="margin-left:10px" onclick="dq={di:dlgOpen,qi:0,ok:0,done:false,answered:false};rDlg()">Retry</button></div>';
+const q=d.Q[dq.qi];
+return '<div class="box"><b>Q'+(dq.qi+1)+'/'+d.Q.length+':</b> <span class="hanzi" style="font-size:19px">'+T(q[0])+'</span> <button class="btn sm" onclick="speak(D['+dlgOpen+'].Q['+dq.qi+'][0])">🔊</button>'+
+'<div class="opts" id="dqopts">'+q[1].map((o,i)=>'<button class="btn hanzi" onclick="ansDq('+i+')">'+T(o)+'</button>').join("")+'</div>'+
+'<div id="dqfb" class="fb"></div></div>';
+}
+function ansDq(i){
+if(dq.answered)return;dq.answered=true;
+const d=D[dlgOpen],q=d.Q[dq.qi],ok=i===q[2];
+if(ok)dq.ok++;else recordMiss("dialogue",null,T(d.t));
+document.querySelectorAll("#dqopts .btn").forEach((b,j)=>{b.disabled=true;if(j===q[2])b.classList.add("hit");else if(j===i)b.classList.add("miss")});
+$("#dqfb").innerHTML=ok?'<span class="grn-t">✓ 對了！</span>':'<span class="red-t">✗</span>';
+bumpDone("quiz");touchStreak();
+setTimeout(()=>{dq.qi++;dq.answered=false;if(dq.qi>=d.Q.length)dq.done=true;rDlg()},900);
+}
+function openDlg(i){dlgOpen=i;dlgStep=-1;dq=null;rDlg()}
+function closeDlg(){dlgOpen=null;dq=null;stopAudio();rDlg()}
+function playDlg(){speakSeq(D[dlgOpen].L.map(l=>l[1]))}
+function dlgStepFwd(){dlgStep=(dlgStep+1)%D[dlgOpen].L.length;speak(D[dlgOpen].L[dlgStep][1]);rDlg()}
+/* ================= GAMES ================= */
+let gMode="sb",sb=null,sbScore={ok:0,n:0},nd=null,ndScore={ok:0,n:0},ndMode="number";
+function rGames(){
+$("#main").innerHTML='<div class="box"><div class="row">'+
+'<button class="btn sm '+(gMode==="sb"?"acc":"")+'" onclick="gMode=\'sb\';rGames()">🧩 Sentence builder</button>'+
+'<button class="btn sm '+(gMode==="nd"?"acc":"")+'" onclick="gMode=\'nd\';rGames()">🔢 Number dojo (NT$)</button>'+
+'</div></div><div id="game"></div>';
+if(gMode==="sb")newSb();else newNd();
+}
+function newSb(){
+const q=rnd(SB);
+sb={q,placed:[],used:new Array(q.s.length).fill(false),order:shuffle(q.s.map((w,i)=>i)),done:false};
+drawSb();
+}
+function drawSb(){
+const q=sb.q;
+$("#game").innerHTML='<div class="box">'+
+'<div class="row"><span class="tag">Arrange the sentence</span><span class="tag" style="margin-left:auto">Score: '+sbScore.ok+'/'+sbScore.n+'</span></div>'+
+'<p class="eng" style="margin-top:12px">“'+esc(q.e)+'”</p>'+
+'<div class="slotline" id="sbline">'+sb.placed.map((ti,k)=>'<span class="tile hanzi" onclick="sbRemove('+k+')">'+T(q.s[ti])+'</span>').join("")+'</div>'+
+'<div class="tiles">'+sb.order.map(ti=>'<span class="tile hanzi'+(sb.used[ti]?" ghost":"")+'" onclick="sbTap('+ti+')">'+T(q.s[ti])+'</span>').join("")+'</div>'+
+'<div class="row" style="justify-content:center">'+
+'<button class="btn grn" onclick="sbCheck()" '+(sb.placed.length===q.s.length?"":"disabled")+'>Check</button>'+
+'<button class="btn" onclick="speak(sb.q.s.join(\'\'))">🔊 Hint</button>'+
+'<button class="btn" onclick="newSb()">Skip →</button>'+
+'</div><div id="sbfb" class="fb"></div></div>';
+}
+function sbTap(ti){if(sb.done||sb.used[ti])return;sb.used[ti]=true;sb.placed.push(ti);drawSb()}
+function sbRemove(k){if(sb.done)return;const ti=sb.placed.splice(k,1)[0];sb.used[ti]=false;drawSb()}
+function sbCheck(){
+if(sb.done)return;
+const ans=sb.placed.map(i=>sb.q.s[i]).join(""),tgt=sb.q.s.join("");
+const ok=ans===tgt;sb.done=true;sbScore.n++;if(ok)sbScore.ok++;
+$("#sbfb").innerHTML=(ok?'<span class="grn-t">✓ 對了！</span> ':'<span class="red-t">✗ Correct order:</span> ')+'<span class="hanzi" style="font-size:21px">'+T(tgt)+'</span><br>'+pinHTML(sb.q.p)+'<br><button class="btn sm" style="margin-top:8px" onclick="newSb()">Next →</button>';
+speak(tgt);
+bumpDone("game");touchStreak();
+}
+function newNd(){
+let hz,ans,hint;
+if(ndMode==="number"){const n=Math.floor(Math.random()*9999)+1;hz=numHanzi(n);ans=String(n);hint="Type the number"}
+else if(ndMode==="price"){const n=Math.floor(Math.random()*995)+5;hz=numHanzi(n)+"块";ans=String(n);hint="NT$ price — type the number of 塊"}
+else{const h=Math.floor(Math.random()*12)+1,m=Math.floor(Math.random()*12)*5;hz=numHanzi(h)+"点"+(m===0?"":(m<10?"零":"")+numHanzi(m)+"分");ans=h+":"+String(m).padStart(2,"0");hint="Time — type like 3:15 (or 3:00)"}
+nd={hz,ans,done:false};
+$("#game").innerHTML='<div class="box">'+
+'<div class="row">'+
+'<button class="btn sm '+(ndMode==="number"?"acc":"")+'" onclick="ndMode=\'number\';newNd()">Numbers</button>'+
+'<button class="btn sm '+(ndMode==="price"?"acc":"")+'" onclick="ndMode=\'price\';newNd()">Prices 塊</button>'+
+'<button class="btn sm '+(ndMode==="time"?"acc":"")+'" onclick="ndMode=\'time\';newNd()">Times 點</button>'+
+'<span class="tag" style="margin-left:auto">Score: '+ndScore.ok+'/'+ndScore.n+'</span></div>'+
+'<div class="center" style="margin:20px 0"><button class="btn acc big" onclick="speak(nd.hz)">🔊 Play</button> <button class="btn" onclick="speak(nd.hz,0.6)">🐢</button></div>'+
+'<p class="mut center" style="font-size:13px">'+hint+'</p>'+
+'<input type="text" id="ndin" autocomplete="off" style="text-align:center;font-size:22px" onkeydown="if(event.key===\'Enter\')ndCheck()">'+
+'<div id="ndfb" class="fb"></div>'+
+'<div class="row" style="justify-content:center;margin-top:10px"><button class="btn grn" onclick="ndCheck()">Check (Enter)</button><button class="btn" onclick="newNd()">Skip →</button></div>'+
+'</div>';
+speak(hz);
+const inp=$("#ndin");if(inp)inp.focus();
+}
+function ndCheck(){
+if(nd.done)return;
+let v=($("#ndin").value||"").trim().replace(/：/g,":");
+if(!v)return;
+let ok;
+if(ndMode==="time"){
+const pa=v.split(":"),pb=nd.ans.split(":");
+ok=pa.length===2&&+pa[0]===+pb[0]&&+pa[1]===+pb[1];
+}else ok=v.replace(/[^\d]/g,"")===nd.ans;
+nd.done=true;ndScore.n++;if(ok)ndScore.ok++;
+if(!ok)recordMiss("number",null,T(nd.hz));
+$("#ndfb").innerHTML=(ok?'<span class="grn-t">✓ 對了！</span> ':'<span class="red-t">✗ It was '+esc(nd.ans)+'.</span> ')+'<span class="hanzi" style="font-size:21px">'+T(nd.hz)+'</span><br><button class="btn sm" style="margin-top:8px" onclick="newNd()">Next →</button>';
+bumpDone("num");touchStreak();
+}
+/* ================= WRITING ================= */
+let writers=[],wWord=null,wIdx=-1;
+function rWrite(){
+$("#main").innerHTML='<div class="box">'+
+'<div class="row">'+
+'<input type="text" id="winput" class="hanzi" placeholder="Type or pick a word… e.g. 學習" style="flex:1;min-width:160px">'+
+'<button class="btn" onclick="loadW($(\'#winput\').value)">Load</button>'+
+'<button class="btn acc" onclick="randW()">🎲 Random</button>'+
+'</div>'+
+'<div id="winfo" class="center" style="margin-top:10px"></div>'+
+'<div class="wchars" id="wchars"></div>'+
+'<div class="row" style="justify-content:center">'+
+'<button class="btn" onclick="animW()">▶ Watch strokes</button>'+
+'<button class="btn grn" onclick="quizW(false)">✍ Trace</button>'+
+'<button class="btn acc" onclick="quizW(true)">🧠 From memory</button>'+
+'</div>'+
+'<p class="mut center" style="margin-top:12px;font-size:13px">Draw with mouse/finger. Traditional forms follow your script setting. Needs internet for stroke data.</p></div>';
+randW();
+}
+function randW(){
+const pool=W.map((w,i)=>i).filter(isLearned);
+const list=pool.length?pool:W.map((w,i)=>i).filter(i=>W[i][3]===1);
+loadW(wHanzi(W[rnd(list)]));
+}
+function loadW(txt){
+txt=cleanHanzi(txt||"");if(!txt)return;
+const wd=W.find(w=>w[0]===txt||T(w[0])===txt||(w[4]&&w[4].tw&&(w[4].tw[0]===txt||T(w[4].tw[0])===txt)));
+wWord=wd?wHanzi(wd):txt;
+wIdx=wd?W.indexOf(wd):-1;
+const disp=T(wWord);
+$("#winfo").innerHTML=(wd?'<span class="pin">'+pinHTML(wPin(wd))+'</span> <span class="eng mut">'+esc(wd[2])+'</span> ':"")+'<button class="btn sm" onclick="speak(wWord)">🔊</button>'+(wd?breakHTML(wHanzi(wd)):"");
+const box=$("#wchars");box.innerHTML="";writers=[];
+const size=Math.min(150,Math.floor((box.clientWidth||600)/disp.length)-16)||150;
+[...disp].forEach(ch=>{
+const d=document.createElement("div");d.className="wbox";box.appendChild(d);
+try{writers.push(HanziWriter.create(d,ch,{width:size,height:size,padding:6,strokeColor:"#1a2030",outlineColor:"#c9c2b4",drawingColor:"#e4593b",showCharacter:true,delayBetweenStrokes:120}))}catch(e){d.innerHTML="<p style='color:#333;padding:20px'>offline?</p>"}
+});
+}
+function animW(){let i=0;const step=()=>{if(i<writers.length)writers[i].animateCharacter({onComplete:()=>{i++;step()}})};writers.forEach(w=>w.showCharacter());step()}
+function quizW(hard){
+let i=0,misses=0;
+const step=()=>{
+if(i>=writers.length){
+bumpDone("write");touchStreak();speak(wWord);
+if(sess)sess.chars.push(T(wWord));
+if(misses>2&&wIdx>=0)recordMiss("writing",wIdx);
+return}
+writers[i].quiz({showOutline:!hard,showHintAfterMisses:2,onMistake:()=>{misses++},onComplete:()=>{i++;step()}});
+};
+writers.forEach(w=>w.hideCharacter());
+step();
+}
+/* ================= TYPING ================= */
+let tq=null,tMode="pinyin",tScore={ok:0,n:0};
+function rType(){
+$("#main").innerHTML='<div class="box">'+
+'<div class="row">'+
+'<button class="btn sm '+(tMode==="pinyin"?"acc":"")+'" onclick="tMode=\'pinyin\';newType()">Pinyin mode</button>'+
+'<button class="btn sm '+(tMode==="hanzi"?"acc":"")+'" onclick="tMode=\'hanzi\';newType()">漢字 mode (IME)</button>'+
+'<span class="tag" style="margin-left:auto">Score: <span id="tsc">'+tScore.ok+'/'+tScore.n+'</span></span></div>'+
+'<div id="tprompt" class="center" style="margin:20px 0"></div>'+
+'<input type="text" id="tinput" autocomplete="off" onkeydown="if(event.key===\'Enter\')checkT()">'+
+'<div id="tfb" class="fb"></div>'+
+'<div class="row" style="justify-content:center;margin-top:10px">'+
+'<button class="btn grn" onclick="checkT()">Check (Enter)</button>'+
+'<button class="btn" id="tnext" style="display:none" onclick="newType()">Next →</button>'+
+'<button class="btn sm" onclick="speak(tq.h)">🔊 Replay</button></div>'+
+'<p class="mut center" style="margin-top:12px;font-size:13px">Pinyin: tones optional — <i>xuexi</i> or <i>xue2xi2</i>; v = ü. 漢字: Win+Space to your Chinese keyboard; both TW and mainland words accepted.</p></div>';
+newType();
+}
+function newType(){
+$("#tfb").textContent="";$("#tnext").style.display="none";
+const i=rnd(lPool());
+const w=W[i];
+tq={h:wHanzi(w),p:wPin(w),hAlt:w[0],pAlt:w[1],e:w[2],wi:i};
+$("#tprompt").innerHTML='<div class="eng" style="font-size:24px">“'+esc(tq.e)+'”</div>';
+const inp=$("#tinput");inp.value="";inp.placeholder=tMode==="pinyin"?"type pinyin (tones optional)":"輸入漢字…";inp.focus();
+speak(tq.h);
+}
+function pinMatch(u,p){
+if(/\d/.test(u)){
+const a=numPinyin(p,true),b=numPinyin(p,false);
+return u===a||u===b||u.replace(/v/g,"u")===a.replace(/v/g,"u")||u.replace(/v/g,"u")===b.replace(/v/g,"u");
+}
+const t=plainPinyin(p);
+return u===t||u.replace(/v/g,"u")===t.replace(/v/g,"u");
+}
+function checkT(){
+if(!tq||$("#tnext").style.display!=="none")return;
+const v=$("#tinput").value.trim();if(!v)return;
+let ok;
+if(tMode==="pinyin"){
+const u=v.toLowerCase().replace(/[\s'’]/g,"").replace(/u:/g,"v").replace(/ü/g,"v").replace(/0/g,"5");
+ok=pinMatch(u,tq.p)||pinMatch(u,tq.pAlt);
+}else{
+const c=cleanHanzi(v);
+ok=[tq.h,tq.hAlt].some(h=>c===cleanHanzi(h)||c===cleanHanzi(T(h)));
+}
+tScore.n++;if(ok)tScore.ok++;
+if(!ok)recordMiss("typing",tq.wi);
+$("#tsc").textContent=tScore.ok+"/"+tScore.n;
+$("#tfb").innerHTML=(ok?'<span class="grn-t">✓ Correct!</span> ':'<span class="red-t">✗ Not quite.</span> ')+'<span class="hanzi" style="font-size:22px">'+T(tq.h)+'</span> '+pinHTML(tq.p);
+$("#tnext").style.display="inline-block";
+bumpDone("type");touchStreak();
+}
+/* ================= PINYIN LAB ================= */
+const TONE_DEMO=[["妈","mā","tone 1: high &amp; flat",1],["麻","má","tone 2: rising ↗",2],["马","mǎ","tone 3: dip ↘↗",3],["骂","mà","tone 4: falling ↘",4],["吗","ma","neutral: light",5]];
+let pq=null,pScore={ok:0,n:0},pAns=false;
+function rPinyin(){
+$("#main").innerHTML='<div class="box"><h3 style="margin-bottom:10px">The four tones</h3><div class="row" style="gap:8px">'+
+TONE_DEMO.map(d=>'<button class="btn" style="flex:1;min-width:105px" onclick="speak(\''+d[0]+'\')"><span class="hanzi" style="font-size:25px">'+T(d[0])+'</span><br><span class="t'+d[3]+'" style="font-size:19px">'+d[1]+'</span>'+(st.bopomofo?'<br><span class="bopo t'+d[3]+'" style="font-size:14px">'+pinToBopo(d[1])+'</span>':'')+'<br><span class="mut" style="font-size:11px">'+d[2]+'</span></button>').join("")+
+'</div></div>'+
+'<div class="box"><h3>Tone-ear trainer</h3>'+
+'<p class="mut" style="font-size:14px;margin:6px 0">What is the tone of the <b>first</b> syllable? <span class="tag" style="margin-left:8px">Score: <span id="psc">'+pScore.ok+'/'+pScore.n+'</span></span></p>'+
+'<div class="center" style="margin:14px 0"><button class="btn acc big" onclick="playP()">🔊 Play</button> <button class="btn" onclick="playP(0.6)">🐢</button></div>'+
+'<div class="tonegrid">'+
+'<button class="btn" onclick="ansP(1)"><span class="t1">Tone 1 ¯</span></button>'+
+'<button class="btn" onclick="ansP(2)"><span class="t2">Tone 2 ´</span></button>'+
+'<button class="btn" onclick="ansP(3)"><span class="t3">Tone 3 ˇ</span></button>'+
+'<button class="btn" onclick="ansP(4)"><span class="t4">Tone 4 ˋ</span></button>'+
+'<button class="btn" onclick="ansP(5)"><span class="t5">Neutral</span></button>'+
+'</div><div id="pfb" class="fb"></div>'+
+'<div class="center" style="margin-top:8px"><button class="btn" id="pnext" style="display:none" onclick="newP()">Next →</button></div></div>'+
+'<div class="box"><h3 style="margin-bottom:8px">Quick tips (Taiwan flavor)</h3><p style="font-size:15px;line-height:1.7">'+
+'• <b>ü</b> after j/q/x/y is written <b>u</b> but sounds like ü (去 qù).<br>'+
+'• <b>Tone-3 sandhi</b>: 3rd + 3rd → say 2nd + 3rd: 你好 nǐ hǎo → <i>ní hǎo</i>.<br>'+
+'• <b>不 bù</b> → <i>bú</i> before 4th tone; <b>一 yī</b> → <i>yí</i> before 4th, <i>yì</i> elsewhere.<br>'+
+'• Taiwan accent: zh/ch/sh soften toward z/c/s, no -r endings (哪裡 not 哪兒), 和 often <i>hàn</i>, 誰 = <i>shuí</i>.<br>'+
+'• Taiwan schools use 注音 Bopomofo (ㄅㄆㄇㄈ) instead of pinyin — you will see it on keyboards everywhere.</p></div>';
+newP();
+}
+function newP(){
+pAns=false;
+$("#pfb").textContent="";$("#pnext").style.display="none";
+const i=rnd(lPool());
+pq={h:wHanzi(W[i]),p:wPin(W[i]),t:tone(syls(wPin(W[i]))[0]||""),wi:i};
+playP();
+}
+function playP(r){if(pq)speak(pq.h,r)}
+function ansP(t){
+if(!pq||pAns)return;pAns=true;
+const ok=t===pq.t;pScore.n++;if(ok)pScore.ok++;
+if(!ok)recordMiss("tone",pq.wi);
+$("#psc").textContent=pScore.ok+"/"+pScore.n;
+$("#pfb").innerHTML=(ok?'<span class="grn-t">✓ Yes!</span> ':'<span class="red-t">✗ It was '+(pq.t===5?"neutral":"tone "+pq.t)+'.</span> ')+'<span class="hanzi" style="font-size:22px">'+T(pq.h)+'</span> '+pinHTML(pq.p)+bopoHTML(pq.p);
+$("#pnext").style.display="inline-block";
+bumpDone("listen");touchStreak();
+}
+/* ================= RADICALS ================= */
+let radMode="learn",rq=null,rqAns=false,rScore={ok:0,n:0};
+function radParts(g){return g.split(" / ").map(s=>s.trim())}
+function rRad(){
+$("#main").innerHTML='<div class="box"><div class="row">'+
+'<button class="btn sm '+(radMode==="learn"?"acc":"")+'" onclick="radMode=\'learn\';rRad()">📚 Learn radicals</button>'+
+'<button class="btn sm '+(radMode==="quiz"?"acc":"")+'" onclick="radMode=\'quiz\';rRad()">🎯 Radical quiz</button>'+
+(radMode==="quiz"?'<span class="tag" style="margin-left:auto">Score: <span id="rsc">'+rScore.ok+'/'+rScore.n+'</span></span>':"")+
+'</div></div><div id="radbody"></div>';
+if(radMode==="learn")radLearn();else newRadQ();
+}
+function radLearn(){
+$("#radbody").innerHTML='<div class="box"><p class="mut" style="font-size:14px">Radicals are the building blocks — spot them and unfamiliar characters start telling you their story. Click any example to hear it.</p></div>'+
+RAD.map(r=>'<div class="box radcard">'+
+'<div class="radglyph hanzi">'+r[0]+'</div>'+
+'<div><b>'+esc(r[1])+'</b><p style="font-size:14px;margin:4px 0" class="mut">'+esc(r[2])+'</p>'+
+'<div class="row" style="gap:6px">'+[...r[3]].map(c=>'<button class="btn sm hanzi" style="font-size:19px" onclick="speak(\''+c+'\')">'+T(c)+'</button>').join("")+'</div>'+
+'</div></div>').join("");
+}
+function newRadQ(){
+rqAns=false;
+const ri=Math.floor(Math.random()*RAD.length);
+const ch=rnd([...RAD[ri][3]]);
+const dis=shuffle(RAD.map((r,i)=>i).filter(i=>{
+if(i===ri)return false;
+if(RAD[i][3].includes(ch))return false;
+return !radParts(RAD[i][0]).some(p=>T(ch).includes(p)||ch.includes(p));
+})).slice(0,3);
+const opts=shuffle([{i:ri,ok:1},...dis.map(i=>({i,ok:0}))]);
+rq={ri,ch,opts};
+$("#radbody").innerHTML='<div class="box center">'+
+'<p class="mut" style="font-size:14px">Which radical is hiding inside this character?</p>'+
+'<div class="bigh hanzi" style="margin:10px 0">'+T(ch)+'</div>'+
+'<button class="btn sm" onclick="speak(rq.ch)">🔊</button>'+
+'<div class="opts" style="margin-top:14px" id="ropts">'+opts.map((o,k)=>'<button class="btn" onclick="ansR('+k+')"><span class="hanzi" style="font-size:22px;color:var(--gold)">'+RAD[o.i][0]+'</span> &nbsp;'+esc(RAD[o.i][1])+'</button>').join("")+'</div>'+
+'<div id="rfb" class="fb"></div>'+
+'<div style="margin-top:8px"><button class="btn" id="rnext" style="display:none" onclick="newRadQ()">Next →</button></div>'+
+'</div>';
+}
+function ansR(k){
+if(rqAns)return;rqAns=true;
+const ok=!!rq.opts[k].ok;rScore.n++;if(ok)rScore.ok++;
+if(!ok)recordMiss("radical",null,T(rq.ch));
+document.querySelectorAll("#ropts .btn").forEach((b,j)=>{b.disabled=true;if(rq.opts[j].ok)b.classList.add("hit");else if(j===k)b.classList.add("miss")});
+const story=CHARRAD[rq.ch];
+$("#rfb").innerHTML=(ok?'<span class="grn-t">✓ 對了！</span>':'<span class="red-t">✗</span>')+(story?'<div class="brk" style="margin-top:10px"><b class="hanzi">'+T(rq.ch)+'</b> &nbsp;'+esc(story)+'</div>':"");
+const sc=$("#rsc");if(sc)sc.textContent=rScore.ok+"/"+rScore.n;
+$("#rnext").style.display="inline-block";
+bumpDone("rad");touchStreak();
+}
+/* ================= BOSS QUIZ ================= */
+let bq=null;
+function genBoss(n){
+const qs=[];const pool=lPool();
+for(let k=0;k<n;k++){
+const ty=rnd(["aw","eh","tn","as"]);
+if(ty==="aw"){const qi=rnd(pool);const dis=shuffle(pool.filter(i=>i!==qi&&W[i][2]!==W[qi][2])).slice(0,3);
+const opts=shuffle([{l:W[qi][2],ok:1},...dis.map(i=>({l:W[i][2],ok:0}))]);
+qs.push({ty,prompt:"🔊 Listen — what does it mean?",audio:wHanzi(W[qi]),hz:wHanzi(W[qi]),pin:wPin(W[qi]),opts,qi});}
+else if(ty==="eh"){const qi=rnd(pool);const dis=shuffle(pool.filter(i=>i!==qi&&wHanzi(W[i])!==wHanzi(W[qi]))).slice(0,3);
+const opts=shuffle([{l:wHanzi(W[qi]),ok:1,hz:1},...dis.map(i=>({l:wHanzi(W[i]),ok:0,hz:1}))]);
+qs.push({ty,prompt:'Which is “'+W[qi][2]+'”?',audio:null,hz:wHanzi(W[qi]),pin:wPin(W[qi]),opts,qi});}
+else if(ty==="tn"){const qi=rnd(pool);const t=tone(syls(wPin(W[qi]))[0]||"");
+const opts=[1,2,3,4,5].map(x=>({l:x===5?"neutral":"tone "+x,ok:x===t?1:0}));
+qs.push({ty,prompt:"🔊 Tone of the first syllable?",audio:wHanzi(W[qi]),hz:wHanzi(W[qi]),pin:wPin(W[qi]),opts,qi});}
+else{const qi=Math.floor(Math.random()*S.length);const dis=shuffle(S.filter((s,i)=>i!==qi)).slice(0,3);
+const opts=shuffle([{l:S[qi][2],ok:1},...dis.map(s=>({l:s[2],ok:0}))]);
+qs.push({ty,prompt:"🔊 Listen to the sentence — what does it mean?",audio:S[qi][0],hz:S[qi][0],pin:S[qi][1],opts});}
+}
+return qs;
+}
+function rQuiz(){bq={qs:genBoss(10),i:0,ok:0,answered:false};drawBoss()}
+function drawBoss(){
+if(bq.i>=bq.qs.length){
+const pct=Math.round(bq.ok/bq.qs.length*100);
+const bonus=bq.ok*5;st.xp+=bonus;save();renderHud();
+$("#main").innerHTML='<div class="box center"><h2>'+(pct>=80?"🏆":pct>=50?"👍":"💪")+' '+bq.ok+'/'+bq.qs.length+'</h2>'+
+'<p style="margin-top:8px">Bonus: <b class="gold">+'+bonus+' XP</b></p>'+
+'<div class="row" style="justify-content:center;margin-top:14px"><button class="btn acc" onclick="rQuiz()">Again</button><button class="btn" onclick="go(\'home\')">Home</button></div></div>';
+return;
+}
+const q=bq.qs[bq.i];
+$("#main").innerHTML='<div class="box">'+
+'<div class="row"><span class="tag">Boss quiz '+(bq.i+1)+'/'+bq.qs.length+'</span><span class="tag" style="margin-left:auto">'+bq.ok+' correct</span></div>'+
+'<p class="center" style="font-size:19px;margin:18px 0">'+q.prompt+'</p>'+
+(q.audio?'<div class="center" style="margin-bottom:8px"><button class="btn acc" onclick="speak(bq.qs['+bq.i+'].audio)">🔊 Play</button> <button class="btn" onclick="speak(bq.qs['+bq.i+'].audio,0.6)">🐢</button></div>':"")+
+'<div class="opts" id="bopts">'+q.opts.map((o,i)=>'<button class="btn'+(o.hz?" hanzi":"")+'" onclick="ansB('+i+')" '+(o.hz?'style="font-size:24px"':"")+'>'+(o.hz?T(o.l):esc(o.l))+'</button>').join("")+'</div>'+
+'<div id="bfb" class="fb"></div></div>';
+if(q.audio)speak(q.audio);
+}
+function ansB(i){
+if(bq.answered)return;bq.answered=true;
+const q=bq.qs[bq.i],ok=!!q.opts[i].ok;
+if(ok)bq.ok++;
+if(!ok)recordMiss(q.ty==="tn"?"tone":"quiz",q.qi!=null?q.qi:null,q.qi==null?T(q.hz):null);
+document.querySelectorAll("#bopts .btn").forEach((b,j)=>{b.disabled=true;if(q.opts[j].ok)b.classList.add("hit");else if(j===i)b.classList.add("miss")});
+$("#bfb").innerHTML='<span class="hanzi" style="font-size:21px">'+T(q.hz)+'</span> '+pinHTML(q.pin);
+bumpDone("quiz");touchStreak();
+setTimeout(()=>{bq.i++;bq.answered=false;drawBoss()},1100);
+}
+/* ================= WORD LIST ================= */
+let wSel=null;
+function rWords(){
+$("#main").innerHTML='<div class="box">'+
+'<div class="row"><input type="text" id="wsearch" placeholder="Search hanzi / pinyin / english…" oninput="wSel=null;filterWords()" style="flex:1">'+
+'<select id="wfilt" onchange="wSel=null;filterWords()"><option value="">All</option><option value="1">HSK 1</option><option value="2">HSK 2</option><option value="P">Work pack</option><option value="T">Taiwan pack</option></select></div>'+
+'<div id="wdetail"></div>'+
+'<div style="max-height:58vh;overflow:auto;margin-top:12px">'+
+'<table><thead><tr><th></th><th>'+(st.script==="t"?"漢字":"汉字")+'</th><th>Pinyin</th><th>English</th><th>Set</th><th></th></tr></thead><tbody id="wtbody"></tbody></table>'+
+'</div><p class="mut" style="font-size:12px;margin-top:6px">Click a row for radical breakdown &amp; cultural notes.</p></div>';
+filterWords();
+}
+function wInfo(i){wSel=i;
+const w=W[i];
+$("#wdetail").innerHTML='<div class="box" style="margin:10px 0 0;background:#141927">'+
+'<div class="row"><span class="hanzi" style="font-size:30px">'+T(wHanzi(w))+'</span><span style="font-size:18px">'+pinHTML(wPin(w))+'</span><span class="mut">'+esc(w[2])+'</span>'+
+'<button class="btn sm" onclick="speak(wHanzi(W['+i+']))">🔊</button>'+
+'<button class="btn sm" style="margin-left:auto" onclick="wSel=null;$(\'#wdetail\').innerHTML=\'\'">✕</button></div>'+
+bopoHTML(wPin(w))+noteHTML(w)+breakHTML(wHanzi(w))+
+'</div>';
+}
+function filterWords(){
+const q=($("#wsearch").value||"").toLowerCase();
+const f=$("#wfilt").value;
+$("#wtbody").innerHTML=W.map((w,i)=>({w,i}))
+.filter(({w})=>(!f||String(w[3])===f)&&(!q||wHanzi(w).includes(q)||T(wHanzi(w)).includes(q)||w[0].includes(q)||wPin(w).toLowerCase().includes(q)||plainPinyin(wPin(w)).includes(q)||w[2].toLowerCase().includes(q)))
+.map(({w,i})=>'<tr class="wrow" onclick="wInfo('+i+')"><td>'+(isLearned(i)?"✅":"")+(w[4]&&(w[4].n||w[4].tw)?" 💡":"")+'</td><td class="hanzi" style="font-size:20px">'+T(wHanzi(w))+'</td><td>'+pinHTML(wPin(w))+'</td><td>'+esc(w[2])+'</td><td>'+(w[3]==="P"?'<span class="tag p">WORK</span>':(w[3]==="T"?'<span class="tag tw">TW</span>':'<span class="mut">'+w[3]+'</span>'))+'</td><td><button class="btn sm" onclick="event.stopPropagation();speak(wHanzi(W['+i+']))">🔊</button></td></tr>').join("");
+}
+/* ================= HUNT — CAREER MANDARIN ================= */
+let huntOpen=0;
+function rHunt(){
+$("#main").innerHTML='<div class="box"><h3><i class="glyph">ᚨ</i>Hunt — Career Mandarin</h3>'+
+'<p class="mut" style="font-size:13px;margin-top:4px">Interview season ammo: your story, your products, your specs — in natural Taiwan Mandarin. 🎤 sends any line to the Voice studio for mic practice.</p>'+
+'<div class="row" style="margin-top:10px">'+CAREER.map((s,i)=>'<button class="chip'+(huntOpen===i?" on":"")+'" onclick="huntOpen='+i+';rHunt()">'+s.g+' '+esc(s.t)+'</button>').join("")+'</div></div>'+
+huntSecHTML(CAREER[huntOpen],huntOpen);
+}
+function huntSecHTML(s,si){
+return '<div class="box"><b><i class="glyph">'+s.g+'</i>'+esc(s.t)+'</b><p class="mut" style="font-size:13px;margin:4px 0 8px">'+esc(s.intro)+'</p>'+
+s.items.map((it,ii)=>'<div class="career-it">'+
+'<div class="hanzi" style="font-size:19px">'+T(it.h)+'</div>'+
+'<div style="font-size:14px">'+pinHTML(it.p)+'</div>'+
+'<div class="mut" style="font-size:13px">'+esc(it.e)+'</div>'+
+'<div class="row" style="margin-top:5px;gap:6px">'+
+'<button class="btn sm" onclick="speak(CAREER['+si+'].items['+ii+'].h)">🔊</button>'+
+'<button class="btn sm" onclick="speak(CAREER['+si+'].items['+ii+'].h,0.6)">🐢</button>'+
+'<button class="btn sm acc" onclick="practiceItem(CAREER['+si+'].items['+ii+'].h,CAREER['+si+'].items['+ii+'].p,CAREER['+si+'].items['+ii+'].e)">🎤 Practice</button>'+
+'</div></div>').join("")+
+'<div class="center" style="margin-top:10px"><button class="btn" onclick="speakSeq(CAREER['+si+'].items.map(x=>x.h))">▶ Play section</button> <button class="btn sm" onclick="stopAudio()">⏹</button></div>'+
+'</div>';
+}
+/* ================= CORE — PERSONAL SENTENCE BANK ================= */
+let coreCat="",coreAdd=false;
+function bankAll(){return PSB.concat(st.myBank||[])}
+function rCore(){
+const list=bankAll().filter(x=>!coreCat||x.c===coreCat);
+$("#main").innerHTML='<div class="box"><h3><i class="glyph">ᛟ</i>Core — Personal sentence bank</h3>'+
+'<p class="mut" style="font-size:13px;margin-top:4px">Sentences that are actually about YOUR life. Say one out loud every time you visit.</p>'+
+'<div style="margin-top:8px"><span class="chip'+(coreCat===""?" on":"")+'" onclick="coreCat=\'\';rCore()">All ('+bankAll().length+')</span>'+
+PSBCATS.map(c=>'<span class="chip'+(coreCat===c[0]?" on":"")+'" onclick="coreCat=\''+c[0]+'\';rCore()">'+c[1]+'</span>').join("")+'</div>'+
+'<div class="row" style="margin-top:8px"><button class="btn sm '+(coreAdd?"acc":"")+'" onclick="coreAdd=!coreAdd;rCore()">＋ Add your own</button></div>'+
+(coreAdd?coreFormHTML():"")+
+'</div>'+
+'<div class="box">'+(list.length?list.map((x,k)=>coreRowHTML(x)).join(""):'<p class="mut center">Nothing in this category yet.</p>')+'</div>';
+}
+function coreRowHTML(x){
+const gi=bankAll().indexOf(x);
+const cat=PSBCATS.find(c=>c[0]===x.c);
+return '<div class="psbrow">'+
+'<div class="hz hanzi">'+T(x.h)+'</div>'+
+'<div class="pp">'+pinHTML(x.p)+'</div>'+
+'<div class="ee">'+esc(x.e)+'</div>'+
+'<div class="row" style="margin-top:5px;gap:6px">'+
+'<span class="tag">'+(cat?cat[1]:x.c)+'</span><span class="diff">'+"★".repeat(x.d||1)+'</span>'+
+'<button class="btn sm" onclick="speak(bankAll()['+gi+'].h)">🔊</button>'+
+'<button class="btn sm" onclick="speak(bankAll()['+gi+'].h,0.6)">🐢</button>'+
+'<button class="btn sm acc" onclick="practiceItem(bankAll()['+gi+'].h,bankAll()['+gi+'].p,bankAll()['+gi+'].e)">🎤</button>'+
+(x.mine?'<button class="btn sm red" onclick="delMine('+(gi-PSB.length)+')">🗑</button>':"")+
+'</div></div>';
+}
+function coreFormHTML(){
+return '<div class="box" style="background:#141927;margin-top:10px">'+
+'<div class="row"><input type="text" id="nbH" class="hanzi" placeholder="漢字 sentence" style="flex:2;min-width:150px"><input type="text" id="nbP" placeholder="pinyin" style="flex:2;min-width:120px"></div>'+
+'<div class="row" style="margin-top:8px"><input type="text" id="nbE" placeholder="English" style="flex:2;min-width:150px">'+
+'<select id="nbC">'+PSBCATS.map(c=>'<option value="'+c[0]+'">'+c[1]+'</option>').join("")+'</select>'+
+'<select id="nbD"><option value="1">★</option><option value="2">★★</option><option value="3">★★★</option></select>'+
+'<button class="btn grn sm" onclick="addMine()">Save</button></div></div>';
+}
+function addMine(){
+const h=$("#nbH").value.trim(),p=$("#nbP").value.trim(),e=$("#nbE").value.trim();
+if(!h){alert("Need at least the Chinese sentence!");return}
+st.myBank.push({h,p:p||"",e:e||"",c:$("#nbC").value,d:+$("#nbD").value,mine:1});
+save();coreAdd=false;rCore();
+}
+function delMine(k){st.myBank.splice(k,1);save();rCore()}
+/* ================= ARCHIVE — LOGS, WEAK POINTS, EXPORT ================= */
+function dl(name,text,mime){const b=new Blob([text],{type:mime||"text/plain;charset=utf-8"});const a=document.createElement("a");a.href=URL.createObjectURL(b);a.download=name;document.body.appendChild(a);a.click();a.remove()}
+function exportJSON(){dl("zh-coach-progress-"+today()+".json",JSON.stringify(st,null,1),"application/json")}
+function importJSON(ev){
+const f=ev.target.files[0];if(!f)return;
+const r=new FileReader();
+r.onload=()=>{try{const o=JSON.parse(r.result);if(!o||typeof o!=="object"||!o.cards)throw 0;st={...DEFAULTS,...o};save();alert("Progress imported!");location.reload()}catch(e){alert("Invalid backup file.")}};
+r.readAsText(f);
+}
+function csv(rows){return "﻿"+rows.map(r=>r.map(c=>'"'+String(c==null?"":c).replace(/"/g,'""')+'"').join(",")).join("\r\n")}
+function exportVocabCSV(){
+const rows=[["simplified","traditional","taiwan_form","pinyin","english","set","learned","misses"]];
+W.forEach((w,i)=>rows.push([w[0],T(w[0])===w[0]&&st.script!=="t"?"":T(w[0]),(w[4]&&w[4].tw)?w[4].tw[0]:"",wPin(w),w[2],w[3],isLearned(i)?"yes":"no",(st.mistakes["w"+i]||{}).n||0]));
+dl("zh-vocab-"+today()+".csv",csv(rows),"text/csv");
+}
+function exportBankCSV(){
+const rows=[["chinese","traditional","pinyin","english","category","difficulty","mine"]];
+bankAll().forEach(x=>rows.push([x.h,T(x.h),x.p,x.e,x.c,x.d,x.mine?"yes":""]));
+dl("zh-sentence-bank-"+today()+".csv",csv(rows),"text/csv");
+}
+function clearMistakes(){if(confirm("Clear the whole mistake log?")){st.mistakes={};save();rArchive()}}
+/* ===== File System Sync ===== */
+function openSyncDB(){return new Promise((res,rej)=>{const req=indexedDB.open("zhCoachSync",1);req.onupgradeneeded=e=>e.target.result.createObjectStore("handles");req.onsuccess=e=>res(e.target.result);req.onerror=()=>rej()})}
+function getSyncHandle(){return openSyncDB().then(db=>new Promise(res=>{const req=db.transaction("handles","readonly").objectStore("handles").get("syncDir");req.onsuccess=e=>res(e.target.result||null);req.onerror=()=>res(null)})).catch(()=>null)}
+function setSyncHandle(h){return openSyncDB().then(db=>new Promise(res=>{const tx=db.transaction("handles","readwrite");tx.objectStore("handles").put(h,"syncDir");tx.oncomplete=res;tx.onerror=res})).catch(()=>{})}
+async function syncProgress(){
+const btn=document.getElementById("syncBtn");
+const rst=()=>{if(btn){btn.textContent="☁ Sync progress";btn.className="btn sm"}};
+if(!window.showDirectoryPicker){if(btn){btn.textContent="⚠ Not supported — use JSON export";setTimeout(rst,3500)}return}
+try{
+let handle=await getSyncHandle();
+if(handle){const perm=await handle.queryPermission({mode:"readwrite"});if(perm==="prompt"){const g=await handle.requestPermission({mode:"readwrite"});if(g!=="granted")handle=null}else if(perm!=="granted")handle=null}
+if(!handle){handle=await window.showDirectoryPicker({mode:"readwrite"});await setSyncHandle(handle)}
+const fh=await handle.getFileHandle("progress-export.json",{create:true});
+const wr=await fh.createWritable();await wr.write(JSON.stringify(st,null,1));await wr.close();
+if(btn){btn.textContent="Synced ✓";btn.className="btn sm grn";setTimeout(rst,2500)}
+}catch(e){if(e&&e.name==="AbortError")return;if(btn){btn.textContent="Sync failed ✗";btn.className="btn sm red";setTimeout(rst,3000)}}
+}
+function rArchive(){
+const log=st.lessonLog||[];
+const misses=Object.values(st.mistakes).sort((a,b)=>b.n-a.n).slice(0,30);
+$("#main").innerHTML=
+'<div class="box"><h3><i class="glyph">ᛞ</i>Archive</h3>'+
+'<p class="mut" style="font-size:13px;margin-top:4px">Lesson log · mistake log · backups. The record of the work.</p>'+
+'<div class="row" style="margin-top:10px">'+
+'<button class="btn sm acc" onclick="reviewWeak()">🎯 Review weak points</button>'+
+'<button class="btn sm" id="syncBtn" onclick="syncProgress()">☁ Sync progress</button>'+
+'<button class="btn sm" onclick="exportJSON()">⬇ Export progress (JSON)</button>'+
+'<label class="btn sm" style="cursor:pointer">⬆ Import JSON<input type="file" accept=".json" style="display:none" onchange="importJSON(event)"></label>'+
+'<button class="btn sm" onclick="exportVocabCSV()">⬇ Vocab CSV</button>'+
+'<button class="btn sm" onclick="exportBankCSV()">⬇ Sentence bank CSV</button>'+
+'</div></div>'+
+'<div class="box"><h3>🎯 Mistake log <span class="tag" style="margin-left:6px">'+Object.keys(st.mistakes).length+' items</span>'+(Object.keys(st.mistakes).length?'<button class="btn sm red" style="float:right" onclick="clearMistakes()">Clear</button>':"")+'</h3>'+
+(misses.length?'<div style="max-height:40vh;overflow:auto;margin-top:8px"><table class="misstab"><thead><tr><th>Item</th><th>Missed</th><th>Where</th><th>Last</th></tr></thead><tbody>'+
+misses.map(m=>'<tr><td class="hanzi" style="font-size:18px">'+(m.wi!=null?T(wHanzi(W[m.wi]))+' <span class="mut" style="font-size:12px">'+esc(W[m.wi][2])+'</span>':esc(m.label||"?"))+'</td><td><b class="red-t">'+m.n+'×</b></td><td class="mut" style="font-size:12px">'+esc(Object.entries(m.kinds).map(([k,v])=>k+" "+v).join(", "))+'</td><td class="mut" style="font-size:12px">'+m.last+'</td></tr>').join("")+
+'</tbody></table></div>':'<p class="mut" style="margin-top:8px">No mistakes logged yet. They will appear here as you train — mistakes are the curriculum.</p>')+
+'</div>'+
+'<div class="box"><h3>📔 Lesson log <span class="tag" style="margin-left:6px">'+log.length+' sessions</span></h3>'+
+(log.length?log.slice(0,20).map(e=>'<div class="box logcard" style="margin:10px 0 0;background:#141927">'+
+'<div class="row"><b>'+e.date+'</b><span class="tag">'+esc((MODES[e.mode]||{}).label||e.mode)+' · '+e.mins+' min</span><span class="tag gold">+'+e.xp+' XP</span>'+(e.aborted?'<span class="tag">ended early</span>':"")+'</div>'+
+'<p style="font-size:14px;margin-top:6px">Topic: <span class="hanzi">'+esc(e.topic||"—")+'</span></p>'+
+(e.newWords&&e.newWords.length?'<p style="font-size:13px;margin-top:4px">New words: <span class="hanzi">'+e.newWords.map(T).join("、")+'</span></p>':"")+
+(e.chars&&e.chars.length?'<p style="font-size:13px;margin-top:4px">Handwriting: <span class="hanzi">'+e.chars.join("、")+'</span></p>':"")+
+(e.weak&&e.weak.length?'<p style="font-size:13px;margin-top:4px" class="mut">Weak: <span class="hanzi red-t">'+e.weak.join("、")+'</span></p>':"")+
+(e.review&&e.review.length?'<p style="font-size:13px;margin-top:4px" class="gold">📌 Review: <span class="hanzi">'+e.review.join("、")+'</span></p>':"")+
+'</div>').join(""):'<p class="mut" style="margin-top:8px">Finish a session and it will be logged here automatically.</p>')+
+'</div>'+
+'<div class="box"><h3>ᚠ Forgebound legend</h3><p style="font-size:14px;line-height:1.9" class="mut">'+
+'<i class="glyph">ᚹ</i>Voice — speaking &amp; tones · <i class="glyph">ᛖ</i>Echo — listening · <i class="glyph">ᛊ</i>Script — reading/cards · <i class="glyph">ᚺ</i>Hand — handwriting · <i class="glyph">ᚠ</i>Forge — sentence building &amp; correction · <i class="glyph">ᛟ</i>Core — personal expression · <i class="glyph">ᚨ</i>Hunt — career Mandarin · <i class="glyph">ᚲ</i>Circuit — tech Mandarin (inside Hunt &amp; Core) · <i class="glyph">♻</i>Pulse — fitness Mandarin (inside Core) · <i class="glyph">ᚷ</i>Gate — Taiwan daily life · <i class="glyph">ᛞ</i>Archive — logs &amp; banks</p></div>';
+}
+/* ================= INIT ================= */
+renderNav();renderScriptBtn();renderHud();render();
+</script>
+</body>
+</html>
