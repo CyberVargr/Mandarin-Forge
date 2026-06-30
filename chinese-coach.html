@@ -1816,6 +1816,7 @@ const bar='<div style="display:flex;align-items:center;gap:10px;margin-bottom:14
 '</div>';
 if(marksMode==="hand")rWrite();else rRad();
 const m=$("#main");m.innerHTML=bar+m.innerHTML;
+if(marksMode==="hand")randW();
 }
 /* ================= FLASHCARDS ================= */
 let queue=[],cur=null,revealed=false;
@@ -2167,7 +2168,6 @@ $("#main").innerHTML=
 '</div>'+
 '<p class="write-hint">Draw with mouse or finger. Needs internet for stroke data.</p>'+
 '</div>';
-randW();
 }
 function randW(){
 const pool=W.map((w,i)=>i).filter(isLearned);
