@@ -215,11 +215,11 @@ tr.wrow:hover td{background:var(--c-iron)}
 /* Container — matches .chamber-card but with frost top border */
 .voice-chamber{background:var(--c-ash);border:1px solid var(--c-steel);border-top:2px solid rgba(61,188,184,0.3);border-radius:var(--r-md);padding:28px 24px 24px;margin-bottom:12px;box-shadow:var(--shadow-card)}
 /* Target sentence display in Speak mode */
-.voice-hz{font-family:'Noto Serif TC','Microsoft JhengHei','PingFang TC',serif;font-size:48px;line-height:1.1;color:var(--c-bone);text-align:center;margin:12px 0 6px}
+.voice-hz{font-family:'Noto Serif TC','Microsoft JhengHei','PingFang TC',serif;font-size:clamp(24px,4.5vw,36px);line-height:1.3;color:var(--c-bone);text-align:center;margin:12px 0 6px;padding:0 8px;word-break:break-word}
 .voice-pin{font-size:17px;text-align:center;color:var(--c-smoke);letter-spacing:0.04em;margin:4px 0}
 .voice-eng{font-size:13px;text-align:center;color:var(--c-rune);margin:2px 0 12px}
-/* Controls row in Speak mode */
-.voice-controls{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:18px}
+/* Controls column in Speak mode — secondary pair above primary */
+.voice-controls{display:flex;flex-direction:column;align-items:center;gap:12px;margin-top:20px}
 /* Frost mic button — primary CTA in Voice */
 .btn-mic{background:var(--c-frost);border:none;color:var(--c-void);font-weight:700;font-size:14px;font-family:'Inter',system-ui,sans-serif;letter-spacing:0.05em;padding:14px 28px;border-radius:var(--r-md);cursor:pointer;box-shadow:var(--glow-frost);transition:background var(--t-fast)}
 .btn-mic:hover{background:var(--c-frost-lo)}
@@ -238,10 +238,10 @@ tr.wrow:hover td{background:var(--c-iron)}
 .tone-demo .btn{display:flex;flex-direction:column;align-items:center;gap:3px;padding:12px 6px}
 /* Tone trainer answer grid */
 .tone-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:12px 0}
-.tone-grid .btn{padding:13px;text-align:center}
-/* Taiwan notes list */
-.tone-tips{list-style:none;padding:0;margin:0;font-size:14px;line-height:1.8;color:var(--c-bone)}
-.tone-tips li{padding:3px 0;border-bottom:1px solid var(--c-steel)}
+.tone-grid .btn{padding:10px 8px;font-size:13px;text-align:center}
+/* Taiwan notes list — reference panel, not hero */
+.tone-tips{list-style:none;padding:0;margin:0;font-size:13px;line-height:1.65;color:var(--c-smoke)}
+.tone-tips li{padding:2px 0;border-bottom:1px solid var(--c-steel)}
 .tone-tips li:last-child{border-bottom:none}
 @media(max-width:600px){.tone-demo{grid-template-columns:repeat(3,1fr)}.tone-grid{grid-template-columns:1fr}}
 </style>
@@ -1915,8 +1915,10 @@ $("#main").innerHTML=
 (!SR?'<p style="text-align:center;font-size:13px;color:var(--c-fail);margin-bottom:16px">Speech recognition requires Chrome or Edge (online).</p>':"")+
 '<div id="sptgt" style="margin-bottom:4px"></div>'+
 '<div class="voice-controls">'+
+'<div style="display:flex;gap:8px">'+
 '<button class="btn" onclick="spPlay(0.85)">🔊 Listen</button>'+
 '<button class="btn" onclick="spPlay(0.6)">🐢 Slow</button>'+
+'</div>'+
 (SR?'<button class="btn-mic" id="spmic" onclick="spListen()">🎤 Speak</button>':"")+
 '</div>'+
 '<div style="display:flex;gap:10px;justify-content:center;margin-top:10px">'+
@@ -1935,7 +1937,7 @@ el.innerHTML=
 '<div class="voice-pin" style="'+(spHide?"filter:blur(9px);":"")+'">'+pinHTML(spT.p)+'</div>'+
 '<div class="voice-eng">'+esc(spT.e)+'</div>';
 }
-function spToggle(){spHide=!spHide;rSpeak()}
+function spToggle(){spHide=!spHide;spKeep=true;rSpeak()}
 function spPlay(r){if(spT)speak(spT.h,r)}
 function spListen(){
 if(spBusy)return;
@@ -1957,13 +1959,14 @@ const l=lcs([...tgt],[...got]);
 const pct=tgt.length?Math.round(l/tgt.length*100):0;
 const gset=new Set([...got]);
 const marked=[...tgt].map(c=>'<span class="'+(gset.has(c)?"ok":"bad")+'">'+c+'</span>').join("");
-const msg=pct>=85?"Excellent":pct>=60?"Almost there":"Listen again — copy the rhythm";
+const msg=pct>=85?"Recognized cleanly":pct>=60?"Mostly recognized":"Keep trying — listen again";
 const scoreColor=pct>=85?"var(--c-ok)":pct>=60?"var(--c-gold)":"var(--c-smoke)";
 $("#spres").innerHTML=
 '<div class="spk-ch score-hz hanzi">'+marked+'</div>'+
-'<div class="score-pct" style="color:'+scoreColor+'">'+pct+'%</div>'+
+'<div class="score-pct" style="color:'+scoreColor+'">'+pct+'% <span style="font-size:13px;font-weight:400;color:var(--c-smoke)">character match</span></div>'+
 '<div class="score-msg">'+esc(msg)+'</div>'+
-'<div class="score-heard">Heard: <span class="hanzi">'+esc(heard||"–")+'</span></div>';
+'<div class="score-heard">Heard: <span class="hanzi">'+esc(heard||"–")+'</span></div>'+
+'<p style="font-size:11px;color:var(--c-rune);margin-top:10px">Tone accuracy is not measured here — use Tones mode to train tone recognition.</p>';
 if(pct>=60){bumpDone("speak");touchStreak()}
 }
 /* ================= DIALOGUES ================= */
