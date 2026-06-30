@@ -1136,7 +1136,7 @@ const missSet=new Set(sess.miss);
 return W.map((w,i)=>i).filter(i=>missSet.has(T(wHanzi(W[i]))));
 }
 let weakQueue=null;
-function reviewWeak(){const ids=weakIds().slice(0,20);if(!ids.length){alert("No weak words logged yet — go make some mistakes first!");return}weakQueue=ids;go("cards")}
+function reviewWeak(){const ids=weakIds().slice(0,20);if(!ids.length){alert("No weak words logged yet — go make some mistakes first!");return}weakQueue=ids;codexMode="train";go("codex")}
 function level(){return Math.floor(Math.sqrt((st.xp||0)/50))+1}
 function lvlInfo(){const l=level();const cur=(l-1)*(l-1)*50,next=l*l*50;return{l,pct:Math.min(100,Math.round((st.xp-cur)/(next-cur)*100)),need:next-st.xp}}
 /* ===== Taiwan-aware accessors ===== */
@@ -1271,26 +1271,27 @@ started=true;
 return s;
 }
 /* ================= NAV / HUD ================= */
-const TABS=[["home","⌂ Home"],["cards","<i class='glyph'>ᛊ</i>Script"],["listen","<i class='glyph'>ᛖ</i>Echo"],["speak","<i class='glyph'>ᚹ</i>Voice"],["pinyin","<i class='glyph'>ᛁ</i>Tones"],["dlg","<i class='glyph'>ᚷ</i>Gate"],["games","<i class='glyph'>ᚠ</i>Forge"],["write","<i class='glyph'>ᚺ</i>Hand"],["type","<i class='glyph'>ᛏ</i>Keys"],["rad","<i class='glyph'>ᚱ</i>Runes"],["hunt","<i class='glyph'>ᚨ</i>Hunt"],["core","<i class='glyph'>ᛟ</i>Core"],["quiz","<i class='glyph'>ᚦ</i>Boss"],["words","<i class='glyph'>ᛚ</i>Lexicon"],["archive","<i class='glyph'>ᛞ</i>Archive"]];
-const TABTITLE={home:"Dashboard & start a session",cards:"Reading & flashcards (spaced repetition)",listen:"Listening comprehension",speak:"Speaking & pronunciation (mic)",pinyin:"Tones & pinyin lab",dlg:"Dialogues — real Taiwan scenes",games:"Sentence builder & number games",write:"Handwriting — stroke order",type:"Typing practice (漢字 / pinyin)",rad:"Radicals & character components",hunt:"Career Mandarin — interviews, products",core:"Your personal sentence bank",quiz:"Mixed boss quiz",words:"Vocabulary list",archive:"Logs, mistakes & review history"};
-let tab="home";
+let codexMode="train",voiceMode="speak",drillMode="sent",marksMode="hand";
+const TABS=[["forge","⌂ Forge"],["codex","<i class='glyph'>ᛊ</i>Codex"],["voice","<i class='glyph'>ᚹ</i>Voice"],["gate","<i class='glyph'>ᚷ</i>Gate"],["drill","<i class='glyph'>ᚠ</i>Drill"],["marks","<i class='glyph'>ᚺ</i>Marks"],["hunt","<i class='glyph'>ᚨ</i>Hunt"],["core","<i class='glyph'>ᛟ</i>Core"],["archive","<i class='glyph'>ᛞ</i>Archive"]];
+const TABTITLE={forge:"Dashboard — session launcher & Forge Report",codex:"Codex — flashcards & vocabulary reference",voice:"Voice — speaking, listening & tones",gate:"Gate — Taiwan life dialogues",drill:"Drill — sentence builder, numbers & typing",marks:"Marks — handwriting & radicals",hunt:"Hunt — career Mandarin",core:"Core — personal sentence bank",archive:"Archive — logs, mistakes & backups"};
+let tab="forge";
 function renderNav(){$("#nav").innerHTML=TABS.map(([id,l])=>'<button class="'+(tab===id?"on":"")+'" title="'+(TABTITLE[id]||"")+'" onclick="go(\''+id+'\')">'+l+'</button>').join("")}
 function go(t){tab=t;renderNav();render()}
 function renderHud(){
 const li=lvlInfo();
 $("#hud").innerHTML=(st.streak>0?"🔥 "+st.streak+" &nbsp;":"")+"⭐ Lv "+li.l+" · "+(st.xp||0)+" XP";
 }
-function render(){stopAudio();({home:rHome,cards:rCards,listen:rListen,speak:rSpeak,dlg:rDlg,games:rGames,write:rWrite,type:rType,pinyin:rPinyin,rad:rRad,quiz:rQuiz,words:rWords,hunt:rHunt,core:rCore,archive:rArchive})[tab]()}
+function render(){stopAudio();({forge:rForge,codex:rCodex,voice:rVoice,gate:rDlg,drill:rDrill,marks:rMarks,hunt:rHunt,core:rCore,archive:rArchive,quiz:rQuiz,home:rForge})[tab]()}
 /* ================= SESSION ENGINE ================= */
 const SBLOCKS=[
-{id:"warm",label:"Warm-up · flashcard reviews",min:8,tab:"cards"},
-{id:"new",label:"New words",min:6,tab:"cards"},
-{id:"listen",label:"Listening quiz",min:7,tab:"listen"},
-{id:"dlg",label:"Dialogue of the day",min:8,tab:"dlg"},
-{id:"game",label:"Games · sentences & numbers",min:6,tab:"games"},
-{id:"speak",label:"Speaking studio",min:7,tab:"speak"},
-{id:"write",label:"Handwriting",min:6,tab:"write"},
-{id:"rad",label:"Radical recognition",min:5,tab:"rad"},
+{id:"warm",label:"Warm-up · flashcard reviews",min:8,tab:"codex"},
+{id:"new",label:"New words",min:6,tab:"codex"},
+{id:"listen",label:"Listening quiz",min:7,tab:"voice"},
+{id:"dlg",label:"Dialogue of the day",min:8,tab:"gate"},
+{id:"game",label:"Games · sentences & numbers",min:6,tab:"drill"},
+{id:"speak",label:"Speaking studio",min:7,tab:"voice"},
+{id:"write",label:"Handwriting",min:6,tab:"marks"},
+{id:"rad",label:"Radical recognition",min:5,tab:"marks"},
 {id:"quiz",label:"Boss quiz",min:7,tab:"quiz"}
 ];
 const MODES={
@@ -1322,7 +1323,12 @@ function startBlock(){
 const b=sess.blocks[sess.bi];
 sess.endAt=now()+b.min*60*1000;
 if(b.id==="dlg"){dlgOpen=Math.floor(Math.random()*D.length);sess.dlgT=T(D[dlgOpen].t)}
-if(b.id==="rad")radMode="quiz";
+if(b.id==="rad"){radMode="quiz";marksMode="runes"}
+if(b.id==="write")marksMode="hand";
+if(b.id==="listen")voiceMode="echo";
+if(b.id==="speak")voiceMode="speak";
+if(b.id==="warm"||b.id==="new")codexMode="train";
+if(b.id==="game"){drillMode="sent";gMode="sb"}
 tab=b.tab;renderNav();render();
 renderSessBar();
 if(sessTimer)clearInterval(sessTimer);
@@ -1355,7 +1361,7 @@ newWords:[...new Set(sess.newW)],chars:[...new Set(sess.chars)],dialogue:sess.dl
 weak:weak.slice(0,12),review:weak.slice(0,6),aborted:!!aborted};
 st.lessonLog.unshift(entry);st.lessonLog=st.lessonLog.slice(0,90);save();
 sess=null;renderSessBar();touchStreak();
-tab="home";renderNav();
+tab="forge";renderNav();
 $("#main").innerHTML='<div class="box center">'+
 '<h2>'+(aborted?"Session ended":"🏆 Session complete!")+'</h2>'+
 '<div class="row" style="justify-content:center;margin-top:14px">'+
@@ -1370,7 +1376,7 @@ $("#main").innerHTML='<div class="box center">'+
 (entry.weak.length?'<p style="margin-top:8px;font-size:14px" class="mut">Weak points: <span class="hanzi red-t" style="font-size:16px">'+entry.weak.join("、")+'</span></p>':"")+
 (entry.review.length?'<p style="margin-top:8px;font-size:14px" class="gold">📌 Review tomorrow: <span class="hanzi" style="font-size:16px">'+entry.review.join("、")+'</span></p>':"")+
 '<p class="mut" style="margin-top:12px">'+(aborted?"Every minute counts — logged anyway. See you tomorrow.":"Logged to your Archive. Consistency beats intensity. 加油！")+'</p>'+
-'<div class="row" style="margin-top:14px;justify-content:center"><button class="btn" onclick="go(\'archive\')">▤ View log</button><button class="btn" onclick="go(\'home\')">Home</button></div>'+
+'<div class="row" style="margin-top:14px;justify-content:center"><button class="btn" onclick="go(\'archive\')">▤ View log</button><button class="btn" onclick="go(\'forge\')">Home</button></div>'+
 '</div>';
 }
 /* ================= HOME ================= */
@@ -1525,6 +1531,106 @@ forgeReportHTML()+
 '</div>';
 populateVoiceSelect();
 }
+/* ================= FORGE (new home) ================= */
+function rForge(){
+const due=dueIds().length,nw=newIds().length,learned=Object.keys(st.cards).filter(isLearned).length;
+const proLearned=Object.keys(st.cards).filter(i=>isLearned(i)&&W[i][3]==="P").length;
+const li=lvlInfo();
+$("#main").innerHTML=
+forgeReportHTML()+
+'<div class="box center" style="border-color:var(--acc)">'+
+'<h2 style="margin-bottom:6px">Choose today\'s protocol 🇹🇼</h2>'+
+'<div class="modegrid">'+
+'<button class="btn acc" onclick="startSession(\'full\')">▶ Full · 60 min<small>'+MODES.full.desc+'</small></button>'+
+'<button class="btn" onclick="startSession(\'min\')">▶ Minimum · 30 min<small>'+MODES.min.desc+'</small></button>'+
+'<button class="btn" onclick="startSession(\'survival\')">▶ Survival · 10 min<small>'+MODES.survival.desc+'</small></button>'+
+'</div>'+
+'<div class="row" style="justify-content:center;margin-top:12px">'+
+(weakIds().length?'<button class="btn red sm" onclick="reviewWeak()">🎯 Weak points ('+Math.min(20,weakIds().length)+')</button>':"")+
+'<button class="btn acc sm" onclick="go(\'quiz\')">⚔ Boss Trial</button>'+
+((st.lessonLog&&st.lessonLog[0]&&st.lessonLog[0].review&&st.lessonLog[0].review.length)?'<span class="tag gold">📌 From last time: <span class="hanzi">'+st.lessonLog[0].review.join("、")+'</span></span>':"")+
+'</div>'+
+'<p class="mut" style="margin-top:10px;font-size:13px">Or pick any tab above and train freely.</p>'+
+'</div>'+
+'<div class="box center"><div class="row" style="justify-content:center">'+
+'<div class="stat"><b>'+due+'</b><span>reviews due</span></div>'+
+'<div class="stat"><b>'+nw+'</b><span>new today</span></div>'+
+'<div class="stat"><b>'+learned+'</b><span>words learned</span></div>'+
+'<div class="stat"><b>'+proLearned+'</b><span>work words</span></div>'+
+'<div class="stat"><b>'+W.length+'</b><span>in deck</span></div>'+
+'</div>'+
+'<div style="max-width:520px;margin:10px auto 0;text-align:left">'+
+'<div class="row" style="justify-content:space-between"><span>Level '+li.l+'</span><span class="mut" style="font-size:12px">'+li.need+' XP to Lv '+(li.l+1)+'</span></div>'+
+'<div class="xpbar"><i style="width:'+li.pct+'%"></i></div>'+
+'</div>'+
+'<h3 style="margin-top:14px;font-size:15px">Last 12 weeks</h3>'+heatHTML()+
+'</div>'+
+weakPanelHTML()+
+seCardHTML()+
+'<div class="box"><h3 style="margin-bottom:10px">Settings</h3>'+
+'<div class="row" style="gap:16px">'+
+'<span class="set">New words/day <input type="number" min="0" max="30" value="'+st.newPerDay+'" style="width:64px" onchange="st.newPerDay=+this.value;save();rForge()"></span>'+
+'<span class="set">Script <select onchange="st.script=this.value;save();renderScriptBtn();rForge()">'+
+'<option value="t"'+(st.script==="t"?" selected":"")+'>繁體 (Taiwan)</option>'+
+'<option value="s"'+(st.script==="s"?" selected":"")+'>简体</option></select></span>'+
+'<label class="set"><input type="checkbox"'+(st.taiwan?" checked":"")+' onchange="st.taiwan=this.checked;save();rForge()" style="accent-color:var(--teal)"> <span style="color:var(--teal)">台灣用語 Taiwan usage</span></label>'+
+'</div><div class="row" style="gap:16px;margin-top:10px">'+
+'<span class="set">Card front <select onchange="st.frontMode=this.value;save()">'+
+'<option value="hanzi"'+(st.frontMode==="hanzi"?" selected":"")+'>漢字 → meaning</option>'+
+'<option value="audio"'+(st.frontMode==="audio"?" selected":"")+'>Audio → meaning</option>'+
+'<option value="english"'+(st.frontMode==="english"?" selected":"")+'>English → 漢字</option></select></span>'+
+'<span class="set">Pinyin on cards <select onchange="st.pinyinShow=this.value;save()">'+
+'<option value="reveal"'+(st.pinyinShow==="reveal"?" selected":"")+'>After reveal</option>'+
+'<option value="always"'+(st.pinyinShow==="always"?" selected":"")+'>Always</option></select></span>'+
+'<label class="set"><input type="checkbox"'+(st.toneColors?" checked":"")+' onchange="st.toneColors=this.checked;save();rForge()" style="accent-color:var(--acc)"> Tone colors</label>'+
+'<label class="set"><input type="checkbox"'+(st.proIncluded?" checked":"")+' onchange="st.proIncluded=this.checked;save();rForge()" style="accent-color:var(--purple)"> <span style="color:var(--purple)">Work vocab</span></label>'+
+'<label class="set"><input type="checkbox"'+(st.bopomofo?" checked":"")+' onchange="st.bopomofo=this.checked;save();rForge()" style="accent-color:var(--teal)"> <span style="color:var(--teal)">ㄅㄆㄇ 注音 Bopomofo</span></label>'+
+'</div>'+
+'<div class="row" style="gap:20px;margin-top:10px;align-items:center;flex-wrap:wrap">'+
+'<span class="set">Voice <select id="voiceSel" style="max-width:220px" onchange="st.voiceName=this.value;save();pickVoice()"><option>Loading…</option></select>'+
+' <button class="btn sm" onclick="speak(\'你好，我在學中文\')">🔊 Test</button></span>'+
+'<span class="set">Pitch <input type="range" min="0.8" max="1.2" step="0.05" value="'+(+(st.pitch!=null?st.pitch:1)).toFixed(2)+'" style="width:80px;vertical-align:middle" oninput="st.pitch=+this.value;save();document.getElementById(\'pitchVal\').textContent=(+this.value).toFixed(2)"> <span id="pitchVal" class="mut" style="font-size:12px;min-width:28px;display:inline-block">'+(+(st.pitch!=null?st.pitch:1)).toFixed(2)+'</span></span>'+
+'<span class="set">Rate <input type="range" min="0.7" max="1.2" step="0.05" value="'+(+(st.rate||0.9)).toFixed(2)+'" style="width:80px;vertical-align:middle" oninput="st.rate=+this.value;save();document.getElementById(\'rateVal\').textContent=(+this.value).toFixed(2)"> <span id="rateVal" class="mut" style="font-size:12px;min-width:28px;display:inline-block">'+(+(st.rate||0.9)).toFixed(2)+'</span></span>'+
+'</div>'+
+'<p style="margin-top:10px;font-size:13px" class="mut">Tones: <span class="t1">1 flat</span> · <span class="t2">2 rising</span> · <span class="t3">3 dip</span> · <span class="t4">4 falling</span> · <span class="t5">neutral</span> &nbsp;|&nbsp; Voice tab needs Chrome/Edge + mic. For 漢字 typing add the Microsoft Bopomofo or Pinyin (Traditional) keyboard, Win+Space to switch.</p>'+
+'</div>';
+populateVoiceSelect();
+}
+/* ===== sub-mode wrappers ===== */
+function rCodex(){
+const bar='<div class="row" style="margin-bottom:8px"><b style="font-size:12px;color:var(--mut);letter-spacing:1px;margin-right:8px">CODEX</b>'+
+'<button class="btn sm '+(codexMode==="train"?"acc":"")+'" onclick="codexMode=\'train\';rCodex()">Train cards</button>'+
+'<button class="btn sm '+(codexMode==="ref"?"acc":"")+'" onclick="codexMode=\'ref\';rCodex()">Reference</button>'+
+'</div>';
+if(codexMode==="train")rCards();else rWords();
+const m=$("#main");m.innerHTML=bar+m.innerHTML;
+}
+function rVoice(){
+const bar='<div class="row" style="margin-bottom:8px"><b style="font-size:12px;color:var(--mut);letter-spacing:1px;margin-right:8px">VOICE</b>'+
+'<button class="btn sm '+(voiceMode==="speak"?"acc":"")+'" onclick="voiceMode=\'speak\';rVoice()">Speak</button>'+
+'<button class="btn sm '+(voiceMode==="echo"?"acc":"")+'" onclick="voiceMode=\'echo\';rVoice()">Echo</button>'+
+'<button class="btn sm '+(voiceMode==="tones"?"acc":"")+'" onclick="voiceMode=\'tones\';rVoice()">Tones</button>'+
+'</div>';
+if(voiceMode==="speak")rSpeak();else if(voiceMode==="echo")rListen();else rPinyin();
+const m=$("#main");m.innerHTML=bar+m.innerHTML;
+}
+function rDrill(){
+const bar='<div class="row" style="margin-bottom:8px"><b style="font-size:12px;color:var(--mut);letter-spacing:1px;margin-right:8px">DRILL</b>'+
+'<button class="btn sm '+(drillMode==="sent"?"acc":"")+'" onclick="drillMode=\'sent\';gMode=\'sb\';rDrill()">Sentences</button>'+
+'<button class="btn sm '+(drillMode==="num"?"acc":"")+'" onclick="drillMode=\'num\';gMode=\'nd\';rDrill()">Numbers</button>'+
+'<button class="btn sm '+(drillMode==="type"?"acc":"")+'" onclick="drillMode=\'type\';rDrill()">Typing</button>'+
+'</div>';
+if(drillMode==="type")rType();else{gMode=drillMode==="num"?"nd":"sb";rGames();}
+const m=$("#main");m.innerHTML=bar+m.innerHTML;
+}
+function rMarks(){
+const bar='<div class="row" style="margin-bottom:8px"><b style="font-size:12px;color:var(--mut);letter-spacing:1px;margin-right:8px">MARKS</b>'+
+'<button class="btn sm '+(marksMode==="hand"?"acc":"")+'" onclick="marksMode=\'hand\';rMarks()">Handwriting</button>'+
+'<button class="btn sm '+(marksMode==="runes"?"acc":"")+'" onclick="marksMode=\'runes\';rMarks()">Radicals</button>'+
+'</div>';
+if(marksMode==="hand")rWrite();else rRad();
+const m=$("#main");m.innerHTML=bar+m.innerHTML;
+}
 /* ================= FLASHCARDS ================= */
 let queue=[],cur=null,revealed=false;
 function rCards(){
@@ -1553,7 +1659,7 @@ return h;
 function nextCard(){
 revealed=false;
 if(!queue.length){
-$("#main").innerHTML='<div class="box center"><h2>✅ All done!</h2><p class="mut" style="margin-top:8px">'+(sess?"Hit Next block up top to continue your session.":"No cards due. Try Listening, Dialogues or Games.")+'</p><div style="margin-top:14px"><button class="btn" onclick="go(\'home\')">Home</button></div></div>';
+$("#main").innerHTML='<div class="box center"><h2>✅ All done!</h2><p class="mut" style="margin-top:8px">'+(sess?"Hit Next block up top to continue your session.":"No cards due. Try Listening, Dialogues or Games.")+'</p><div style="margin-top:14px"><button class="btn" onclick="go(\'forge\')">Home</button></div></div>';
 cur=null;return;
 }
 cur=queue[0];
@@ -1639,7 +1745,7 @@ bumpDone("listen");touchStreak();
 }
 /* ================= SPEAKING ================= */
 let spT=null,spHide=false,spBusy=false,spKeep=false;
-function practiceItem(h,p,e){spT={h,p,e};spKeep=true;spHide=false;go("speak")}
+function practiceItem(h,p,e){spT={h,p,e};spKeep=true;spHide=false;voiceMode="speak";go("voice")}
 function spItems(){
 const items=S.map(s=>({h:s[0],p:s[1],e:s[2]}));
 D.forEach(d=>d.L.forEach(l=>items.push({h:l[1],p:l[2],e:l[3]})));
@@ -1751,8 +1857,8 @@ function dlgStepFwd(){dlgStep=(dlgStep+1)%D[dlgOpen].L.length;speak(D[dlgOpen].L
 let gMode="sb",sb=null,sbScore={ok:0,n:0},nd=null,ndScore={ok:0,n:0},ndMode="number";
 function rGames(){
 $("#main").innerHTML='<div class="box"><div class="row">'+
-'<button class="btn sm '+(gMode==="sb"?"acc":"")+'" onclick="gMode=\'sb\';rGames()">🧩 Sentence builder</button>'+
-'<button class="btn sm '+(gMode==="nd"?"acc":"")+'" onclick="gMode=\'nd\';rGames()">🔢 Number dojo (NT$)</button>'+
+'<button class="btn sm '+(gMode==="sb"?"acc":"")+'" onclick="drillMode=\'sent\';gMode=\'sb\';rGames()">🧩 Sentence builder</button>'+
+'<button class="btn sm '+(gMode==="nd"?"acc":"")+'" onclick="drillMode=\'num\';gMode=\'nd\';rGames()">🔢 Number dojo (NT$)</button>'+
 '</div></div><div id="game"></div>';
 if(gMode==="sb")newSb();else newNd();
 }
@@ -2051,7 +2157,7 @@ const pct=Math.round(bq.ok/bq.qs.length*100);
 const bonus=bq.ok*5;st.xp+=bonus;save();renderHud();
 $("#main").innerHTML='<div class="box center"><h2>'+(pct>=80?"🏆":pct>=50?"👍":"💪")+' '+bq.ok+'/'+bq.qs.length+'</h2>'+
 '<p style="margin-top:8px">Bonus: <b class="gold">+'+bonus+' XP</b></p>'+
-'<div class="row" style="justify-content:center;margin-top:14px"><button class="btn acc" onclick="rQuiz()">Again</button><button class="btn" onclick="go(\'home\')">Home</button></div></div>';
+'<div class="row" style="justify-content:center;margin-top:14px"><button class="btn acc" onclick="rQuiz()">Again</button><button class="btn" onclick="go(\'forge\')">Home</button></div></div>';
 return;
 }
 const q=bq.qs[bq.i];
