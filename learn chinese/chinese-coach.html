@@ -127,7 +127,9 @@ tr.wrow{cursor:pointer}
 tr.wrow:hover td{background:var(--c-iron)}
 /* ── HANDWRITING ─────────────────────────────────────── */
 .wchars{display:flex;gap:14px;flex-wrap:wrap;justify-content:center;margin:16px 0}
-.wbox{background:#f7f3ec;border-radius:var(--r-md)}
+.wbox{position:relative;background:#f7f3ec;border-radius:var(--r-md)}
+.wguide{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);color:rgba(60,70,85,0.35);pointer-events:none;user-select:none;font-family:'Noto Serif TC','Microsoft JhengHei','PingFang TC',serif;line-height:1;display:none}
+.wguide.visible{display:block}
 /* ── TAGS ────────────────────────────────────────────── */
 .tag{font-size:10px;background:var(--c-iron);color:var(--c-smoke);border-radius:var(--r-sm);padding:2px 6px;letter-spacing:0.04em;text-transform:uppercase}
 .tag.p{color:#9a6fe0;border:1px solid rgba(154,111,224,0.35)}
@@ -348,25 +350,24 @@ tr.wrow:hover td{background:var(--c-iron)}
 .tone-tips li{padding:2px 0;border-bottom:1px solid var(--c-steel)}
 .tone-tips li:last-child{border-bottom:none}
 @media(max-width:600px){.tone-demo{grid-template-columns:repeat(3,1fr)}.tone-grid{grid-template-columns:1fr}}
-/* ── BRAIN NODE (Stage 7.2) ─────────────────────────── */
-#bn{position:fixed;right:4px;top:50%;transform:translateY(-50%);z-index:200}
-.bn-tab{width:30px;height:52px;background:var(--c-iron);border:1px solid var(--c-steel);border-right:none;border-radius:6px 0 0 6px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;cursor:pointer;box-shadow:-3px 0 12px rgba(0,0,0,0.8);transition:box-shadow var(--t-normal),border-color var(--t-normal),background var(--t-normal)}
-.bn-tab:hover{background:var(--c-forge);border-color:var(--c-smoke)}
-.bn-rune{font-size:13px;color:var(--c-smoke);transition:color var(--t-normal);line-height:1;font-family:'Noto Serif TC',serif;user-select:none}
-.bn-dot{width:5px;height:5px;border-radius:50%;background:var(--c-smoke);transition:background var(--t-normal),box-shadow var(--t-normal)}
-.bn-tab.bn-observing{border-color:rgba(61,188,184,0.3)}.bn-tab.bn-observing .bn-rune{color:var(--c-frost)}.bn-tab.bn-observing .bn-dot{background:var(--c-frost);box-shadow:0 0 5px rgba(61,188,184,0.5);animation:bn-pulse 2s ease-in-out infinite}
-.bn-tab.bn-advisory{border-color:rgba(184,150,46,0.35)}.bn-tab.bn-advisory .bn-rune{color:var(--c-gold)}.bn-tab.bn-advisory .bn-dot{background:var(--c-gold);box-shadow:0 0 5px rgba(184,150,46,0.4)}
-.bn-tab.bn-pressure{border-color:rgba(200,105,42,0.4)}.bn-tab.bn-pressure .bn-rune{color:var(--c-ember)}.bn-tab.bn-pressure .bn-dot{background:var(--c-ember);box-shadow:0 0 6px rgba(200,105,42,0.45);animation:bn-flicker 1.6s ease-in-out infinite}
+/* ── BRAIN NODE (Stage 7.2) ──────────────────── */
+.bn-btn{flex-shrink:0;background:var(--c-iron);border:1px solid var(--c-steel);border-radius:var(--r-sm);width:30px;height:28px;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;transition:background var(--t-fast),border-color var(--t-fast)}
+.bn-btn:hover{background:var(--c-forge);border-color:var(--c-smoke)}
+.bn-rune{font-size:12px;color:var(--c-smoke);transition:color var(--t-normal);line-height:1;font-family:'Noto Serif TC',serif;user-select:none}
+.bn-dot{width:4px;height:4px;border-radius:50%;background:var(--c-smoke);transition:background var(--t-normal),box-shadow var(--t-normal)}
+.bn-btn.bn-observing{border-color:rgba(61,188,184,0.4)}.bn-btn.bn-observing .bn-rune{color:var(--c-frost)}.bn-btn.bn-observing .bn-dot{background:var(--c-frost);box-shadow:0 0 4px rgba(61,188,184,0.6);animation:bn-pulse 2s ease-in-out infinite}
+.bn-btn.bn-advisory{border-color:rgba(184,150,46,0.45)}.bn-btn.bn-advisory .bn-rune{color:var(--c-gold)}.bn-btn.bn-advisory .bn-dot{background:var(--c-gold);box-shadow:0 0 4px rgba(184,150,46,0.5)}
+.bn-btn.bn-pressure{border-color:rgba(200,105,42,0.5)}.bn-btn.bn-pressure .bn-rune{color:var(--c-ember)}.bn-btn.bn-pressure .bn-dot{background:var(--c-ember);box-shadow:0 0 5px rgba(200,105,42,0.55);animation:bn-flicker 1.6s ease-in-out infinite}
 @keyframes bn-pulse{0%,100%{opacity:1}50%{opacity:.35}}
 @keyframes bn-flicker{0%,100%{opacity:1}35%{opacity:.5}70%{opacity:.8}}
-#bnPanel{position:fixed;right:38px;top:50%;transform:translateY(-50%);width:214px;background:var(--c-ash);border:1px solid var(--c-steel);border-radius:var(--r-md) 0 0 var(--r-md);padding:14px 16px;box-shadow:var(--shadow-card);display:none;z-index:199}
+#bnPanel{position:fixed;top:48px;right:16px;width:214px;background:var(--c-ash);border:1px solid var(--c-steel);border-radius:var(--r-md);padding:14px 16px;box-shadow:var(--shadow-card);display:none;z-index:199}
 #bnPanel.open{display:block}
 .bn-ph{display:flex;align-items:center;margin-bottom:10px}
 .bn-eyebrow{font-size:9px;letter-spacing:0.15em;text-transform:uppercase;color:var(--c-rune);font-weight:600}
 .bn-dismiss{margin-left:auto;cursor:pointer;color:var(--c-rune);font-size:10px;letter-spacing:0.05em;text-transform:uppercase;transition:color var(--t-fast)}
 .bn-dismiss:hover{color:var(--c-smoke)}
 .bn-msg{font-size:12px;color:var(--c-bone);line-height:1.65}
-@media(max-width:600px){#bn{top:auto;bottom:68px;transform:none}#bnPanel{top:auto;bottom:120px;transform:none;width:214px;max-width:calc(100vw - 50px)}}
+@media(max-width:480px){#bnPanel{top:auto;bottom:16px;right:8px;left:8px;width:auto}}
 </style>
 </head>
 <body>
@@ -376,6 +377,7 @@ tr.wrow:hover td{background:var(--c-iron)}
 <nav id="nav"></nav>
 <button id="scriptBtn" onclick="toggleScript()"></button>
 <div id="hud"></div>
+<button id="vantaBtn" class="bn-btn" onclick="toggleBrainPanel()" title="Vanta Node"><span class="bn-rune">ᛉ</span><span class="bn-dot"></span></button>
 </header>
 <div id="sessbar"></div>
 <main id="main"></main>
@@ -2303,6 +2305,7 @@ $("#main").innerHTML=
 '<button id="btnWatch" class="btn" onclick="animW()">Watch strokes</button>'+
 '<button id="btnTrace" class="btn" onclick="quizW(false)">Trace</button>'+
 '<button id="btnMem" class="btn" onclick="quizW(true)">From memory</button>'+
+'<button id="btnPeek" class="btn sm" onclick="peekGuide()" style="display:none">Peek guide</button>'+
 '</div>'+
 '<div id="wstatus" style="min-height:18px;margin-top:8px;text-align:center"></div>'+
 '<p class="write-hint">Draw with mouse or finger. Needs internet for stroke data.</p>'+
@@ -2313,12 +2316,22 @@ const pool=W.map((w,i)=>i).filter(isLearned);
 const list=pool.length?pool:W.map((w,i)=>i).filter(i=>W[i][3]===1);
 loadW(wHanzi(W[rnd(list)]));
 }
+function rebuildWriters(showOutline,showChar){
+if(!wWord)return;
+const disp=T(wWord);
+const box=$("#wchars");if(!box)return;
+box.innerHTML="";writers=[];
+const size=Math.min(150,Math.floor((box.clientWidth||600)/disp.length)-16)||150;
+[...disp].forEach(function(ch){
+const d=document.createElement("div");d.className="wbox";box.appendChild(d);
+try{writers.push(HanziWriter.create(d,ch,{width:size,height:size,padding:6,strokeColor:"#1a2030",outlineColor:"#7a8090",drawingColor:"#e4593b",showCharacter:showChar,showOutline:showOutline,delayBetweenStrokes:120}));const g=document.createElement("span");g.className="wguide";g.textContent=ch;g.style.fontSize=(size-14)+"px";d.appendChild(g);}catch(e){d.innerHTML="<p style='color:#333;padding:20px'>offline?</p>"}
+});
+}
 function loadW(txt){
 txt=cleanHanzi(txt||"");if(!txt)return;
 const wd=W.find(w=>w[0]===txt||T(w[0])===txt||(w[4]&&w[4].tw&&(w[4].tw[0]===txt||T(w[4].tw[0])===txt)));
 wWord=wd?wHanzi(wd):txt;
 wIdx=wd?W.indexOf(wd):-1;
-const disp=T(wWord);
 $("#winfo").innerHTML=wd?
 '<div class="write-word">'+
 '<div class="write-word-pin">'+pinHTML(wPin(wd))+'</div>'+
@@ -2329,12 +2342,7 @@ breakHTML(wHanzi(wd))
 :
 '<div style="text-align:center;padding:8px 0"><button class="btn sm" onclick="speak(wWord)">🔊</button></div>';
 const ws=$("#wstatus");if(ws)ws.innerHTML="";
-const box=$("#wchars");box.innerHTML="";writers=[];
-const size=Math.min(150,Math.floor((box.clientWidth||600)/disp.length)-16)||150;
-[...disp].forEach(ch=>{
-const d=document.createElement("div");d.className="wbox";box.appendChild(d);
-try{writers.push(HanziWriter.create(d,ch,{width:size,height:size,padding:6,strokeColor:"#1a2030",outlineColor:"#c9c2b4",drawingColor:"#e4593b",showCharacter:true,delayBetweenStrokes:120}))}catch(e){d.innerHTML="<p style='color:#333;padding:20px'>offline?</p>"}
-});
+rebuildWriters(true,true);
 setWMode("idle","");
 }
 function setWMode(mode,msg){
@@ -2342,31 +2350,42 @@ wMode=mode;
 ["btnWatch","btnTrace","btnMem"].forEach(function(id){const b=document.getElementById(id);if(b)b.classList.remove("wbtn-active");});
 const bmap={watch:"btnWatch",trace:"btnTrace",memory:"btnMem"};
 if(bmap[mode]){const b=document.getElementById(bmap[mode]);if(b)b.classList.add("wbtn-active")}
+const peek=document.getElementById("btnPeek");if(peek)peek.style.display=(mode==="memory")?"":"none";
 const ws=$("#wstatus");
 if(ws)ws.innerHTML=msg?'<span style="font-size:13px;color:var(--c-smoke)">'+msg+'</span>':"";
 }
+function peekGuide(){
+if(wMode!=="memory")return;
+const guides=document.querySelectorAll(".wguide");
+guides.forEach(function(g){g.classList.add("visible");});
+const ws=$("#wstatus");
+const prev=ws?ws.innerHTML:"";
+if(ws)ws.innerHTML='<span style="font-size:13px;color:var(--c-smoke)">Guide shown briefly. Stay in memory mode.</span>';
+setTimeout(function(){guides.forEach(function(g){g.classList.remove("visible");});if(wMode==="memory"&&ws)ws.innerHTML=prev;},1800);
+}
 function animW(){
-if(!writers.length){const ws=$("#wstatus");if(ws)ws.innerHTML='<span style="font-size:13px;color:var(--c-rune)">Load a character first.</span>';return}
-writers.forEach(function(w){try{w.cancelQuiz()}catch(e){}});
+if(!wWord){const ws=$("#wstatus");if(ws)ws.innerHTML='<span style="font-size:13px;color:var(--c-rune)">Load a character first.</span>';return}
+rebuildWriters(true,true);
 setWMode("watch","");
 const ws=$("#wstatus");
 let i=0;
-const step=()=>{
+const step=function(){
 if(i<writers.length){
 const msg=writers.length>1?"Character "+(i+1)+" of "+writers.length+".":"Watching stroke order.";
 if(ws)ws.innerHTML='<span style="font-size:13px;color:var(--c-smoke)">'+msg+'</span>';
-writers[i].animateCharacter({onComplete:()=>{i++;step()}});
+writers[i].animateCharacter({onComplete:function(){i++;step()}});
 }else{setWMode("idle","")}
 };
-writers.forEach(function(w){w.showCharacter()});step();
+step();
 }
 function quizW(hard){
 const ws=$("#wstatus");
-if(!writers.length){if(ws)ws.innerHTML='<span style="font-size:13px;color:var(--c-rune)">Load a character first.</span>';return}
+if(!wWord){if(ws)ws.innerHTML='<span style="font-size:13px;color:var(--c-rune)">Load a character first.</span>';return}
+rebuildWriters(!hard,false);
+document.querySelectorAll(".wguide").forEach(function(g){if(!hard)g.classList.add("visible");else g.classList.remove("visible");});
 setWMode(hard?"memory":"trace","");
-writers.forEach(function(w){try{w.cancelQuiz()}catch(e){}});
 let i=0,misses=0;
-const step=()=>{
+const step=function(){
 if(i>=writers.length){
 bumpDone("write");touchStreak();speak(wWord);
 if(sess)sess.chars.push(T(wWord));
@@ -2374,11 +2393,12 @@ if(misses>2&&wIdx>=0)recordMiss("writing",wIdx);
 setWMode("idle","");
 if(ws)ws.innerHTML='<span style="font-size:13px;color:var(--c-smoke)">'+T(wWord)+' — complete.</span>';
 return}
-writers.forEach(function(w){w.hideCharacter();if(hard)w.hideOutline();else w.showOutline();});
-const prog=writers.length>1?" \xb7 "+(i+1)+"/"+writers.length:"";
+const prog=writers.length>1?" · "+(i+1)+"/"+writers.length:"";
 const statusMsg=hard?"Memory mode active"+prog+". Draw the character from memory.":"Trace mode active"+prog+". Follow the guide strokes.";
 if(ws)ws.innerHTML='<span style="font-size:13px;color:var(--c-smoke)">'+statusMsg+'</span>';
-writers[i].quiz({showOutline:!hard,showHintAfterMisses:2,onMistake:()=>{misses++},onComplete:()=>{i++;step()}});
+var w=writers[i];
+w.quiz({showOutline:!hard,showHintAfterMisses:2,onMistake:function(){misses++},onComplete:function(){i++;step()}});
+if(!hard){w.showOutline();setTimeout(function(){w.showOutline();},150);}
 };
 step();
 }
@@ -2897,9 +2917,9 @@ return "Pattern is stable. Push into Gate scenarios or harder vocabulary.";
 }catch(e){return "No pattern yet. Complete a session first."}
 }
 function updateBrainNode(){
-const tabEl=document.querySelector(".bn-tab");
-if(!tabEl)return;
-tabEl.className="bn-tab bn-"+getBrainPresenceState();
+const btn=document.getElementById("vantaBtn");
+if(!btn)return;
+btn.className="bn-btn bn-"+getBrainPresenceState();
 if(bnOpen){const msgEl=document.querySelector("#bnPanel .bn-msg");if(msgEl)msgEl.textContent=getBrainPresenceMsg();}
 }
 function toggleBrainPanel(){
@@ -2910,12 +2930,8 @@ if(bnOpen){const msgEl=panel.querySelector(".bn-msg");if(msgEl)msgEl.textContent
 else{panel.classList.remove("open");}
 }
 function renderBrainNode(){
-const old=document.getElementById("bn");if(old)old.remove();
+const oldBn=document.getElementById("bn");if(oldBn)oldBn.remove();
 const oldP=document.getElementById("bnPanel");if(oldP)oldP.remove();
-const node=document.createElement("div");node.id="bn";
-const t=document.createElement("div");t.className="bn-tab bn-idle";t.onclick=toggleBrainPanel;
-t.innerHTML='<span class="bn-rune">&#x16C9;</span><span class="bn-dot"></span>';
-node.appendChild(t);document.body.appendChild(node);
 const panel=document.createElement("div");panel.id="bnPanel";panel.className="bn-panel";
 panel.innerHTML='<div class="bn-ph"><span class="bn-eyebrow">Vanta Node</span><span class="bn-dismiss" onclick="toggleBrainPanel()">close</span></div><div class="bn-msg"></div>';
 document.body.appendChild(panel);
