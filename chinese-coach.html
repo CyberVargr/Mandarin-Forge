@@ -200,6 +200,20 @@ tr.wrow:hover td{background:var(--c-iron)}
 .hunt-eng{font-size:12px;color:var(--c-rune);line-height:1.4;margin-bottom:8px}
 .hunt-actions{display:flex;gap:6px;align-items:center}
 .hunt-footer{padding:14px 18px;border-top:1px solid var(--c-steel);display:flex;gap:8px;align-items:center}
+/* ── CORE CHAMBER (Stage 6B) ─────────────────────── */
+.core-header{background:var(--c-ash);border:1px solid var(--c-steel);border-top:2px solid rgba(200,105,42,0.3);border-radius:var(--r-md);padding:20px 20px 16px;margin-bottom:10px;box-shadow:var(--shadow-card)}
+.core-eyebrow{font-size:10px;letter-spacing:0.15em;text-transform:uppercase;color:var(--c-rune);font-weight:600;margin-bottom:8px}
+.core-sub{font-size:13px;color:var(--c-smoke);line-height:1.5;margin-bottom:12px}
+.core-chips{display:flex;gap:4px;flex-wrap:wrap;padding-top:12px;border-top:1px solid var(--c-steel)}
+.core-list{background:var(--c-ash);border:1px solid var(--c-steel);border-radius:var(--r-md);overflow:hidden;margin-bottom:10px;box-shadow:var(--shadow-card)}
+.core-line{padding:18px 18px;border-bottom:1px solid var(--c-steel)}
+.core-line:last-child{border-bottom:none}
+.core-hz{font-family:'Noto Serif TC','Microsoft JhengHei','PingFang TC',serif;font-size:24px;line-height:1.35;color:var(--c-bone);margin-bottom:5px}
+.core-pin{font-size:13px;color:var(--c-smoke);letter-spacing:0.04em;margin-bottom:3px}
+.core-eng{font-size:12px;color:var(--c-rune);line-height:1.4;margin-bottom:10px}
+.core-meta{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.core-form{background:var(--c-iron);border:1px solid var(--c-steel);border-radius:var(--r-md);padding:16px;margin-top:10px}
+.core-empty{text-align:center;padding:32px 20px;color:var(--c-rune);font-size:13px}
 /* ── SENTENCE BUILDER ────────────────────────────────── */
 .tiles{display:flex;gap:6px;flex-wrap:wrap;justify-content:center;margin:10px 0;min-height:50px}
 .tile{background:var(--c-iron);border:1px solid var(--c-steel);border-radius:var(--r-sm);padding:9px 13px;font-size:20px;cursor:pointer;font-family:'Noto Serif TC','Microsoft JhengHei',serif;transition:border-color var(--t-fast)}
@@ -1140,7 +1154,7 @@ const SB=[
 {s:["下个","礼拜","我","有","面试"],p:"Xià ge lǐbài wǒ yǒu miànshì.",e:"I have an interview next week."}
 ];
 /* ============ PERSONAL SENTENCE BANK (Core ᛟ) — {h,p,e,c,d} ============ */
-const PSBCATS=[["daily","ᚷ Daily life"],["work","ᚨ Work / job hunt"],["mkt","✒ Marketing / copy"],["tech","ᚲ Circuit · Gaming / AI PC"],["fit","♻ Pulse · Fitness"],["tw","☀ Taiwan life"],["soc","☺ Social"],["grow","↑ Personal growth"],["vargr","ᛟ VARGR / Forgebound"]];
+const PSBCATS=[["daily","Daily life"],["work","Work / job hunt"],["mkt","Marketing / copy"],["tech","Circuit · Gaming / AI PC"],["fit","Pulse · Fitness"],["tw","Taiwan life"],["soc","Social"],["grow","Personal growth"],["vargr","VARGR / Forgebound"]];
 const PSB=[
 {h:"我每天早上六点半起床。",p:"Wǒ měitiān zǎoshang liù diǎn bàn qǐchuáng.",e:"I get up at 6:30 every morning.",c:"daily",d:1},
 {h:"我先洗澡，然后吃早餐。",p:"Wǒ xiān xǐzǎo, ránhòu chī zǎocān.",e:"I shower first, then eat breakfast.",c:"daily",d:2},
@@ -2586,37 +2600,46 @@ let coreCat="",coreAdd=false;
 function bankAll(){return PSB.concat(st.myBank||[])}
 function rCore(){
 const list=bankAll().filter(x=>!coreCat||x.c===coreCat);
-$("#main").innerHTML='<div class="box"><h3><i class="glyph">ᛟ</i>Core — Personal sentence bank</h3>'+
-'<p class="mut" style="font-size:13px;margin-top:4px">Sentences that are actually about YOUR life. Say one out loud every time you visit.</p>'+
-'<div style="margin-top:8px"><span class="chip'+(coreCat===""?" on":"")+'" onclick="coreCat=\'\';rCore()">All ('+bankAll().length+')</span>'+
-PSBCATS.map(c=>'<span class="chip'+(coreCat===c[0]?" on":"")+'" onclick="coreCat=\''+c[0]+'\';rCore()">'+c[1]+'</span>').join("")+'</div>'+
-'<div class="row" style="margin-top:8px"><button class="btn sm '+(coreAdd?"acc":"")+'" onclick="coreAdd=!coreAdd;rCore()">＋ Add your own</button></div>'+
+$("#main").innerHTML=
+'<div class="core-header">'+
+'<div class="core-eyebrow"><i class="glyph">ᛟ</i>Core · Personal Sentence Bank</div>'+
+'<div class="core-sub">The sentences you actually want to say — your life, your voice, in Mandarin.</div>'+
+'<div class="core-chips">'+
+'<span class="chip'+(coreCat===""?" on-m":"")+'" onclick="coreCat=\'\';rCore()">All ('+bankAll().length+')</span>'+
+PSBCATS.map(c=>'<span class="chip'+(coreCat===c[0]?" on-m":"")+'" onclick="coreCat=\''+c[0]+'\';rCore()">'+c[1]+'</span>').join("")+
+'</div>'+
+'<div style="margin-top:12px">'+
+'<button class="btn sm" style="'+(coreAdd?"border-color:var(--c-bone)":"")+'" onclick="coreAdd=!coreAdd;rCore()">＋ Add your own</button>'+
+'</div>'+
 (coreAdd?coreFormHTML():"")+
 '</div>'+
-'<div class="box">'+(list.length?list.map((x,k)=>coreRowHTML(x)).join(""):'<p class="mut center">Nothing in this category yet.</p>')+'</div>';
+'<div class="core-list">'+(list.length?list.map(x=>coreRowHTML(x)).join(""):'<div class="core-empty">Add the sentences you actually want to be able to say.</div>')+'</div>';
 }
 function coreRowHTML(x){
 const gi=bankAll().indexOf(x);
 const cat=PSBCATS.find(c=>c[0]===x.c);
-return '<div class="psbrow">'+
-'<div class="hz hanzi">'+T(x.h)+'</div>'+
-'<div class="pp">'+pinHTML(x.p)+'</div>'+
-'<div class="ee">'+esc(x.e)+'</div>'+
-'<div class="row" style="margin-top:5px;gap:6px">'+
-'<span class="tag">'+(cat?cat[1]:x.c)+'</span><span class="diff">'+"★".repeat(x.d||1)+'</span>'+
+return '<div class="core-line">'+
+'<div class="core-hz">'+T(x.h)+'</div>'+
+'<div class="core-pin">'+pinHTML(x.p)+'</div>'+
+'<div class="core-eng">'+esc(x.e)+'</div>'+
+'<div class="core-meta">'+
+'<span class="tag">'+(cat?cat[1]:x.c)+'</span>'+
+'<span class="diff">'+"★".repeat(x.d||1)+'</span>'+
 '<button class="btn sm" onclick="speak(bankAll()['+gi+'].h)">🔊</button>'+
 '<button class="btn sm" onclick="speak(bankAll()['+gi+'].h,0.6)">🐢</button>'+
-'<button class="btn sm acc" onclick="practiceItem(bankAll()['+gi+'].h,bankAll()['+gi+'].p,bankAll()['+gi+'].e)">🎤</button>'+
+'<button class="btn sm" style="border-color:var(--c-bone)" title="Send this line to Voice for speaking practice." onclick="practiceItem(bankAll()['+gi+'].h,bankAll()['+gi+'].p,bankAll()['+gi+'].e)">🎤 Practice in Voice</button>'+
 (x.mine?'<button class="btn sm red" onclick="delMine('+(gi-PSB.length)+')">🗑</button>':"")+
-'</div></div>';
+'</div>'+
+'</div>';
 }
 function coreFormHTML(){
-return '<div class="box" style="background:#141927;margin-top:10px">'+
+return '<div class="core-form">'+
 '<div class="row"><input type="text" id="nbH" class="hanzi" placeholder="漢字 sentence" style="flex:2;min-width:150px"><input type="text" id="nbP" placeholder="pinyin" style="flex:2;min-width:120px"></div>'+
 '<div class="row" style="margin-top:8px"><input type="text" id="nbE" placeholder="English" style="flex:2;min-width:150px">'+
 '<select id="nbC">'+PSBCATS.map(c=>'<option value="'+c[0]+'">'+c[1]+'</option>').join("")+'</select>'+
 '<select id="nbD"><option value="1">★</option><option value="2">★★</option><option value="3">★★★</option></select>'+
-'<button class="btn grn sm" onclick="addMine()">Save</button></div></div>';
+'<button class="btn grn sm" onclick="addMine()">Save</button></div>'+
+'</div>';
 }
 function addMine(){
 const h=$("#nbH").value.trim(),p=$("#nbP").value.trim(),e=$("#nbE").value.trim();
