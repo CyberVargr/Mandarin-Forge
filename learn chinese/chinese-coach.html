@@ -2355,10 +2355,10 @@ if(misses>2&&wIdx>=0)recordMiss("writing",wIdx);
 setWMode("idle","");
 if(ws)ws.innerHTML='<span style="font-size:13px;color:var(--c-smoke)">'+T(wWord)+' — complete.</span>';
 return}
-writers.forEach(function(w){w.hideCharacter();w.hideOutline();});
-const prog=writers.length>1?" · "+(i+1)+"/"+writers.length:"";
-const modeMsg=hard?" — draw from memory.":" — follow the guide.";
-if(ws)ws.innerHTML='<span style="font-size:13px;color:var(--c-smoke)">'+(hard?"Memory":"Trace")+prog+modeMsg+'</span>';
+writers.forEach(function(w){w.hideCharacter();if(hard)w.hideOutline();else w.showOutline();});
+const prog=writers.length>1?" \xb7 "+(i+1)+"/"+writers.length:"";
+const statusMsg=hard?"Memory mode active"+prog+". Draw the character from memory.":"Trace mode active"+prog+". Follow the guide strokes.";
+if(ws)ws.innerHTML='<span style="font-size:13px;color:var(--c-smoke)">'+statusMsg+'</span>';
 writers[i].quiz({showOutline:!hard,showHintAfterMisses:2,onMistake:()=>{misses++},onComplete:()=>{i++;step()}});
 };
 step();
@@ -2782,12 +2782,15 @@ $("#main").innerHTML=
 '<div class="arc-eyebrow"><i class="glyph">ᛞ</i>Archive \xb7 Training Records</div>'+
 '<div class="arc-sub">Your practice logs, mistake history, and session data — the permanent record of the work.</div>'+
 '<div class="arc-tools">'+
-'<button class="btn sm" style="border-color:var(--c-bone)" onclick="reviewWeak()">🎯 Review weak points</button>'+
-'<button class="btn sm" id="syncBtn" onclick="syncProgress()">☁ Sync</button>'+
-'<button class="btn sm" onclick="exportJSON()">⬇ Export JSON</button>'+
-'<label class="btn sm" style="cursor:pointer">⬆ Import JSON<input type="file" accept=".json" style="display:none" onchange="importJSON(event)"></label>'+
-'<button class="btn sm" onclick="exportVocabCSV()">⬇ Vocab CSV</button>'+
-'<button class="btn sm" onclick="exportBankCSV()">⬇ Sentences CSV</button>'+
+(weakIds().length?
+'<button class="btn sm" style="border-color:var(--c-bone)" onclick="reviewWeak()">Review weak points</button>':
+'<button class="btn sm" style="opacity:0.5" onclick="document.getElementById(\'arc-wk-msg\').style.display=\'block\'">Review weak points</button>')+
+'<button class="btn sm" id="syncBtn" onclick="syncProgress()">Sync</button>'+
+'<button class="btn sm" onclick="exportJSON()">Export JSON</button>'+
+'<label class="btn sm" style="cursor:pointer">Import JSON<input type="file" accept=".json" style="display:none" onchange="importJSON(event)"></label>'+
+'<button class="btn sm" onclick="exportVocabCSV()">Vocab CSV</button>'+
+'<button class="btn sm" onclick="exportBankCSV()">Sentences CSV</button>'+
+'<div id="arc-wk-msg" style="font-size:12px;color:var(--c-rune);padding:6px 0;width:100%;display:none">No weak points logged yet. Train first; the Archive will record what slips.</div>'+
 '</div>'+
 '</div>'+
 forgeReportHTML()+
