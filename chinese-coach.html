@@ -183,6 +183,23 @@ tr.wrow:hover td{background:var(--c-iron)}
 .rad-quiz-prompt{font-size:10px;letter-spacing:0.12em;text-transform:uppercase;color:var(--c-rune);margin-bottom:14px}
 .rad-quiz-hz{font-family:'Noto Serif TC','Microsoft JhengHei','PingFang TC',serif;font-size:72px;line-height:1.1;color:var(--c-bone);margin:0 0 12px}
 .wbtn-active{background:rgba(232,226,212,0.08);border-color:var(--c-smoke)}
+/* ── HUNT CHAMBER (Stage 6A) ─────────────────────── */
+.hunt-header{background:var(--c-ash);border:1px solid var(--c-steel);border-top:2px solid rgba(200,105,42,0.3);border-radius:var(--r-md);padding:20px 20px 16px;margin-bottom:10px;box-shadow:var(--shadow-card)}
+.hunt-eyebrow{font-size:10px;letter-spacing:0.15em;text-transform:uppercase;color:var(--c-rune);font-weight:600;margin-bottom:8px}
+.hunt-sub{font-size:13px;color:var(--c-smoke);line-height:1.5;margin-bottom:12px}
+.hunt-chips{display:flex;gap:4px;flex-wrap:wrap;padding-top:12px;border-top:1px solid var(--c-steel)}
+.hunt-section{background:var(--c-ash);border:1px solid var(--c-steel);border-radius:var(--r-md);overflow:hidden;margin-bottom:10px;box-shadow:var(--shadow-card)}
+.hunt-sec-head{padding:16px 18px 14px;border-bottom:1px solid var(--c-steel)}
+.hunt-sec-title{font-size:14px;font-weight:600;color:var(--c-bone);margin-bottom:4px}
+.hunt-sec-intro{font-size:12px;color:var(--c-rune);line-height:1.5}
+.hunt-lines{padding:0 18px}
+.hunt-line{padding:16px 0;border-bottom:1px solid var(--c-steel)}
+.hunt-line:last-child{border-bottom:none}
+.hunt-hz{font-family:'Noto Serif TC','Microsoft JhengHei','PingFang TC',serif;font-size:24px;line-height:1.35;color:var(--c-bone);margin-bottom:5px}
+.hunt-pin{font-size:14px;color:var(--c-smoke);letter-spacing:0.02em;margin-bottom:3px}
+.hunt-eng{font-size:12px;color:var(--c-rune);line-height:1.4;margin-bottom:8px}
+.hunt-actions{display:flex;gap:6px;align-items:center}
+.hunt-footer{padding:14px 18px;border-top:1px solid var(--c-steel);display:flex;gap:8px;align-items:center}
 /* ── SENTENCE BUILDER ────────────────────────────────── */
 .tiles{display:flex;gap:6px;flex-wrap:wrap;justify-content:center;margin:10px 0;min-height:50px}
 .tile{background:var(--c-iron);border:1px solid var(--c-steel);border-radius:var(--r-sm);padding:9px 13px;font-size:20px;cursor:pointer;font-family:'Noto Serif TC','Microsoft JhengHei',serif;transition:border-color var(--t-fast)}
@@ -2517,24 +2534,52 @@ $("#wtbody").innerHTML=rows.map(({w,i})=>'<div class="lex-row" onclick="wInfo('+
 /* ================= HUNT — CAREER MANDARIN ================= */
 let huntOpen=0;
 function rHunt(){
-$("#main").innerHTML='<div class="box"><h3><i class="glyph">ᚨ</i>Hunt — Career Mandarin</h3>'+
-'<p class="mut" style="font-size:13px;margin-top:4px">Interview season ammo: your story, your products, your specs — in natural Taiwan Mandarin. 🎤 sends any line to the Voice studio for mic practice.</p>'+
-'<div class="row" style="margin-top:10px">'+CAREER.map((s,i)=>'<button class="chip'+(huntOpen===i?" on":"")+'" onclick="huntOpen='+i+';rHunt()">'+s.g+' '+esc(s.t)+'</button>').join("")+'</div></div>'+
-huntSecHTML(CAREER[huntOpen],huntOpen);
+const s=CAREER[huntOpen];
+$("#main").innerHTML=
+'<div class="hunt-header">'+
+'<div class="hunt-eyebrow"><i class="glyph">ᚨ</i>Hunt · Career Mandarin</div>'+
+'<div class="hunt-sub">Your story, your products, your specs — ready for Taiwan\'s job market. 🎤 sends any line to the Voice studio for mic practice.</div>'+
+'<div class="hunt-chips">'+
+CAREER.map(function(c,i){return '<span class="chip'+(huntOpen===i?' on-m':'')+'" onclick="huntOpen='+i+';rHunt()">'+esc(c.t)+'</span>'}).join("")+
+'</div>'+
+'</div>'+
+huntSecHTML(s,huntOpen);
 }
 function huntSecHTML(s,si){
-return '<div class="box"><b><i class="glyph">'+s.g+'</i>'+esc(s.t)+'</b><p class="mut" style="font-size:13px;margin:4px 0 8px">'+esc(s.intro)+'</p>'+
-s.items.map((it,ii)=>'<div class="career-it">'+
-'<div class="hanzi" style="font-size:19px">'+T(it.h)+'</div>'+
-'<div style="font-size:14px">'+pinHTML(it.p)+'</div>'+
-'<div class="mut" style="font-size:13px">'+esc(it.e)+'</div>'+
-'<div class="row" style="margin-top:5px;gap:6px">'+
+return '<div class="hunt-section">'+
+'<div class="hunt-sec-head">'+
+'<div class="hunt-sec-title"><i class="glyph">'+esc(s.g)+'</i>'+esc(s.t)+'</div>'+
+'<div class="hunt-sec-intro">'+esc(s.intro)+'</div>'+
+'</div>'+
+'<div class="hunt-lines">'+
+s.items.map(function(it,ii){return '<div class="hunt-line">'+
+'<div class="hunt-hz">'+T(it.h)+'</div>'+
+'<div class="hunt-pin">'+huntPinHTML(it.p)+'</div>'+
+'<div class="hunt-eng">'+esc(it.e)+'</div>'+
+'<div class="hunt-actions">'+
 '<button class="btn sm" onclick="speak(CAREER['+si+'].items['+ii+'].h)">🔊</button>'+
 '<button class="btn sm" onclick="speak(CAREER['+si+'].items['+ii+'].h,0.6)">🐢</button>'+
-'<button class="btn sm acc" onclick="practiceItem(CAREER['+si+'].items['+ii+'].h,CAREER['+si+'].items['+ii+'].p,CAREER['+si+'].items['+ii+'].e)">🎤 Practice</button>'+
-'</div></div>').join("")+
-'<div class="center" style="margin-top:10px"><button class="btn" onclick="speakSeq(CAREER['+si+'].items.map(x=>x.h))">▶ Play section</button> <button class="btn sm" onclick="stopAudio()">⏹</button></div>'+
+'<button class="btn sm" style="border-color:var(--c-bone)" title="Send this line to Voice for speaking practice." onclick="practiceItem(CAREER['+si+'].items['+ii+'].h,CAREER['+si+'].items['+ii+'].p,CAREER['+si+'].items['+ii+'].e)">🎤 Practice in Voice</button>'+
+'</div>'+
+'</div>'}).join("")+
+'</div>'+
+'<div class="hunt-footer">'+
+'<button class="btn" style="border-color:var(--c-bone)" onclick="speakSeq(CAREER['+si+'].items.map(x=>x.h))">▶ Play section</button>'+
+'<button class="btn sm" onclick="stopAudio()">⏹</button>'+
+'</div>'+
 '</div>';
+}
+function huntPinHTML(p){
+if(!st.toneColors)return esc(p);
+return p.split(/([^a-zA-Zāáǎàēéěèīíǐìōóǒòūúǔùǖǘǚǜüv‘’]+)/).map(function(chunk){
+if(!chunk)return "";
+if(/^[A-Z][A-Za-z]+$/.test(chunk))return esc(chunk);
+if(/[a-zāáǎàēéěèīíǐìōóǒòūúǔùǖǘǚǜü]/i.test(chunk)){
+const m=chunk.match(SYL);
+if(m)return m.map(function(s){return '<span class="t'+tone(s)+'">'+esc(s)+'</span>'}).join("");
+}
+return esc(chunk);
+}).join("");
 }
 /* ================= CORE — PERSONAL SENTENCE BANK ================= */
 let coreCat="",coreAdd=false;
