@@ -358,6 +358,7 @@ tr.wrow:hover td{background:var(--c-iron)}
 .bn-btn.bn-observing{border-color:rgba(61,188,184,0.4)}.bn-btn.bn-observing .bn-rune{color:var(--c-frost)}.bn-btn.bn-observing .bn-dot{background:var(--c-frost);box-shadow:0 0 4px rgba(61,188,184,0.6);animation:bn-pulse 2s ease-in-out infinite}
 .bn-btn.bn-advisory{border-color:rgba(184,150,46,0.45)}.bn-btn.bn-advisory .bn-rune{color:var(--c-gold)}.bn-btn.bn-advisory .bn-dot{background:var(--c-gold);box-shadow:0 0 4px rgba(184,150,46,0.5)}
 .bn-btn.bn-pressure{border-color:rgba(200,105,42,0.5)}.bn-btn.bn-pressure .bn-rune{color:var(--c-ember)}.bn-btn.bn-pressure .bn-dot{background:var(--c-ember);box-shadow:0 0 5px rgba(200,105,42,0.55);animation:bn-flicker 1.6s ease-in-out infinite}
+.bn-btn.bn-idle{border-color:var(--c-rune)}
 @keyframes bn-pulse{0%,100%{opacity:1}50%{opacity:.35}}
 @keyframes bn-flicker{0%,100%{opacity:1}35%{opacity:.5}70%{opacity:.8}}
 #bnPanel{position:fixed;top:48px;right:16px;width:214px;background:var(--c-ash);border:1px solid var(--c-steel);border-radius:var(--r-md);padding:14px 16px;box-shadow:var(--shadow-card);display:none;z-index:199}
@@ -1146,7 +1147,7 @@ L:[
 [1,"我是你们的粉丝，我也看你们的直播！","Wǒ shì nǐmen de fěnsī, wǒ yě kàn nǐmen de zhíbō!","I'm a fan — I watch your livestreams too!"],
 [0,"谢谢！请关注我们的社群媒体。","Xièxie! Qǐng guānzhù wǒmen de shèqún méitǐ.","Thanks! Follow our socials."]],
 Q:[["这是什么产品？",["掌机","笔电","滑鼠","键盘"],0],["电玩展的价格是多少？",["两万五千块","五千块","两千块","两万块"],0]]},
-{t:"面試 — The Job Interview",scene:"Your real story, in Chinese you can actually say — practice this before July!",
+{t:"面試 — The Job Interview",scene:"Your real story, in Chinese you can actually say — use this before every interview.",
 L:[
 [0,"你好，请坐。请介绍一下你自己。","Nǐ hǎo, qǐng zuò. Qǐng jièshào yíxià nǐ zìjǐ.","Hello, please sit. Tell me about yourself."],
 [1,"你好！我叫Clark，我在台北工作十年了。","Nǐ hǎo! Wǒ jiào Clark, wǒ zài Táiběi gōngzuò shí nián le.","Hello! I'm Clark — I've worked in Taipei for ten years."],
@@ -1284,7 +1285,7 @@ const CAREER=[
 {h:"我们可以先线上聊一聊。",p:"Wǒmen kěyǐ xiān xiànshàng liáo yi liáo.",e:"We could chat online first. (TW: 線上.)"},
 {h:"请把职位说明寄给我。",p:"Qǐng bǎ zhíwèi shuōmíng jì gěi wǒ.",e:"Please send me the job description."},
 {h:"我目前在看新的机会。",p:"Wǒ mùqián zài kàn xīn de jīhuì.",e:"I'm currently exploring new opportunities."}]},
-{g:"ᚨ",t:"Freelance pitch 接案",intro:"接案 jiē'àn = taking freelance work — useful after July.",items:[
+{g:"ᚨ",t:"Freelance pitch 接案",intro:"接案 jiē'àn = taking freelance work — useful for your job search.",items:[
 {h:"我可以帮你写英文和中文的文案。",p:"Wǒ kěyǐ bāng nǐ xiě Yīngwén hé Zhōngwén de wén'àn.",e:"I can write English and Chinese copy for you."},
 {h:"我的专长是科技产品的内容。",p:"Wǒ de zhuāncháng shì kējì chǎnpǐn de nèiróng.",e:"My specialty is tech product content."},
 {h:"这是我的作品集。",p:"Zhè shì wǒ de zuòpǐnjí.",e:"This is my portfolio."},
@@ -1756,7 +1757,7 @@ function seIdxToday(){return Math.floor(Date.parse(today())/DAY)%SELFEXPR.length
 function sePractice(i){const s=SELFEXPR[i];practiceItem(s.h,s.p,s.e)}
 function seCardHTML(){const i=seIdxToday(),s=SELFEXPR[i];return '<div class="box" style="border-color:var(--teal)">'+
 '<h3 style="margin-bottom:4px">🗣 Today\'s self-expression</h3>'+
-'<p class="mut" style="font-size:13px">Say one true thing about your real life in Chinese — then practise it aloud.</p>'+
+'<p class="mut" style="font-size:13px">Say one true thing about your real life in Chinese — then practice it aloud.</p>'+
 '<div class="center hanzi" style="font-size:26px;margin-top:10px">'+T(s.h)+'</div>'+
 '<div class="pin">'+pinHTML(s.p)+'</div>'+
 '<div class="eng mut">'+esc(s.e)+'</div>'+
@@ -2824,7 +2825,7 @@ $("#main").innerHTML=
 (weakIds().length?
 '<button class="btn sm" style="border-color:var(--c-bone)" onclick="reviewWeak()">Review weak points</button>':
 '<button class="btn sm" style="opacity:0.5" onclick="document.getElementById(\'arc-wk-msg\').style.display=\'block\'">Review weak points</button>')+
-'<button class="btn sm" id="syncBtn" onclick="syncProgress()">Sync</button>'+
+'<button class="btn sm" id="syncBtn" onclick="syncProgress()">☁ Sync</button>'+
 '<button class="btn sm" onclick="exportJSON()">Export JSON</button>'+
 '<label class="btn sm" style="cursor:pointer">Import JSON<input type="file" accept=".json" style="display:none" onchange="importJSON(event)"></label>'+
 '<button class="btn sm" onclick="exportVocabCSV()">Vocab CSV</button>'+
