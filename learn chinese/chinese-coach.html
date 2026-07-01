@@ -348,6 +348,25 @@ tr.wrow:hover td{background:var(--c-iron)}
 .tone-tips li{padding:2px 0;border-bottom:1px solid var(--c-steel)}
 .tone-tips li:last-child{border-bottom:none}
 @media(max-width:600px){.tone-demo{grid-template-columns:repeat(3,1fr)}.tone-grid{grid-template-columns:1fr}}
+/* ── BRAIN NODE (Stage 7.2) ─────────────────────────── */
+#bn{position:fixed;right:4px;top:50%;transform:translateY(-50%);z-index:200}
+.bn-tab{width:30px;height:52px;background:var(--c-iron);border:1px solid var(--c-steel);border-right:none;border-radius:6px 0 0 6px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;cursor:pointer;box-shadow:-3px 0 12px rgba(0,0,0,0.8);transition:box-shadow var(--t-normal),border-color var(--t-normal),background var(--t-normal)}
+.bn-tab:hover{background:var(--c-forge);border-color:var(--c-smoke)}
+.bn-rune{font-size:13px;color:var(--c-smoke);transition:color var(--t-normal);line-height:1;font-family:'Noto Serif TC',serif;user-select:none}
+.bn-dot{width:5px;height:5px;border-radius:50%;background:var(--c-smoke);transition:background var(--t-normal),box-shadow var(--t-normal)}
+.bn-tab.bn-observing{border-color:rgba(61,188,184,0.3)}.bn-tab.bn-observing .bn-rune{color:var(--c-frost)}.bn-tab.bn-observing .bn-dot{background:var(--c-frost);box-shadow:0 0 5px rgba(61,188,184,0.5);animation:bn-pulse 2s ease-in-out infinite}
+.bn-tab.bn-advisory{border-color:rgba(184,150,46,0.35)}.bn-tab.bn-advisory .bn-rune{color:var(--c-gold)}.bn-tab.bn-advisory .bn-dot{background:var(--c-gold);box-shadow:0 0 5px rgba(184,150,46,0.4)}
+.bn-tab.bn-pressure{border-color:rgba(200,105,42,0.4)}.bn-tab.bn-pressure .bn-rune{color:var(--c-ember)}.bn-tab.bn-pressure .bn-dot{background:var(--c-ember);box-shadow:0 0 6px rgba(200,105,42,0.45);animation:bn-flicker 1.6s ease-in-out infinite}
+@keyframes bn-pulse{0%,100%{opacity:1}50%{opacity:.35}}
+@keyframes bn-flicker{0%,100%{opacity:1}35%{opacity:.5}70%{opacity:.8}}
+#bnPanel{position:fixed;right:38px;top:50%;transform:translateY(-50%);width:214px;background:var(--c-ash);border:1px solid var(--c-steel);border-radius:var(--r-md) 0 0 var(--r-md);padding:14px 16px;box-shadow:var(--shadow-card);display:none;z-index:199}
+#bnPanel.open{display:block}
+.bn-ph{display:flex;align-items:center;margin-bottom:10px}
+.bn-eyebrow{font-size:9px;letter-spacing:0.15em;text-transform:uppercase;color:var(--c-rune);font-weight:600}
+.bn-dismiss{margin-left:auto;cursor:pointer;color:var(--c-rune);font-size:10px;letter-spacing:0.05em;text-transform:uppercase;transition:color var(--t-fast)}
+.bn-dismiss:hover{color:var(--c-smoke)}
+.bn-msg{font-size:12px;color:var(--c-bone);line-height:1.65}
+@media(max-width:600px){#bn{top:auto;bottom:68px;transform:none}#bnPanel{top:auto;bottom:120px;transform:none;width:214px;max-width:calc(100vw - 50px)}}
 </style>
 </head>
 <body>
@@ -1516,7 +1535,7 @@ const TABS=[["forge","⌂ Forge"],["codex","<i class='glyph'>ᛊ</i>Codex"],["vo
 const TABTITLE={forge:"Dashboard — session launcher & Forge Report",codex:"Codex — flashcards & vocabulary reference",voice:"Voice — speaking, listening & tones",gate:"Gate — Taiwan life dialogues",drill:"Drill — sentence builder, numbers & typing",marks:"Marks — handwriting & radicals",hunt:"Hunt — career Mandarin",core:"Core — personal sentence bank",archive:"Archive — logs, mistakes & backups"};
 let tab="forge";
 function renderNav(){$("#nav").innerHTML=TABS.map(([id,l])=>'<button class="'+(tab===id?"on":"")+'" title="'+(TABTITLE[id]||"")+'" onclick="go(\''+id+'\')">'+l+'</button>').join("")}
-function go(t){tab=t;renderNav();render()}
+function go(t){tab=t;renderNav();render();updateBrainNode();}
 function renderHud(){
 const li=lvlInfo();
 $("#hud").innerHTML=(st.streak>0?"🔥 "+st.streak+" &nbsp;":"")+"⭐ Lv "+li.l+" · "+(st.xp||0)+" XP";
@@ -2839,8 +2858,70 @@ return '<div class="arc-log-item">'+
 '<div class="arc-empty">Your records will appear here after you complete sessions.<br>Logs accumulate automatically as you train.</div>')+
 '</div>';
 }
+/* ── BRAIN NODE ─────────────────────────────────────── */
+let bnOpen=false;
+function getBrainPresenceState(){
+try{
+const brain=computeBrain();
+if(brain.trend==="declining"&&(brain.weakTones.length||brain.atRiskWords.length))return "pressure";
+if(brain.weakTones.length||brain.weakTypes.length||brain.atRiskWords.length)return "advisory";
+if(["voice","gate","hunt"].indexOf(tab)>=0)return "observing";
+return "idle";
+}catch(e){return "idle"}
+}
+function getBrainPresenceMsg(){
+const hasData=Object.keys(st.mistakes||{}).length>0||(st.lessonLog||[]).length>0;
+if(!hasData)return "No pattern yet. Train longer and I'll have something real to read.";
+try{
+const brain=computeBrain();
+const top3=weakIds().slice(0,3);
+if(brain.trend==="declining"&&top3.length)return "Accuracy dropped. Your weakest words are due. Stabilize before adding more.";
+if(brain.trend==="declining")return "Do not add more. Stabilize what is slipping.";
+if(brain.weakTones.length>=2)return "Multiple tones are flagged. Drill contrast pairs before anything else.";
+if(brain.weakTones.indexOf(3)!==-1)return "Tone 3 is unstable. Drill contrast with Tone 2 before moving on.";
+if(brain.weakTones.indexOf(2)!==-1)return "Tone 2 needs more ear time. Prioritize listening in your next session.";
+if(brain.weakTones.length===1&&brain.weakTones[0]===4)return "Tone 4 keeps dropping. Emphatic repetition only — do not add material.";
+if(brain.weakTones.length===1&&brain.weakTones[0]===1)return "Tone 1 is flagged. It should be flat and held — check your pitch.";
+if(top3.length)return "These words have slipped before and are due. Review them before anything else today.";
+const wt=brain.weakTypes[0];
+if(wt==="listen")return "Recognition is behind recall. More Echo time before you add new cards.";
+if(wt==="card")return "Card recall is your weakest channel. Shorter reviews, higher frequency.";
+if(wt==="type")return "Typed input keeps failing. Slow down — do not guess.";
+if(wt==="speak")return "Output accuracy is low. More Voice practice before your next session.";
+if(wt==="tone")return "Tone identification is flagged. Use Echo with slow audio.";
+if(tab==="voice")return "I'm watching your recall. Keep the next round short.";
+if(tab==="gate")return "You're ready for pressure here. Keep audio on.";
+if(tab==="hunt")return "Career context loaded. Use this for real sentence patterns.";
+if(brain.trend==="improving")return "Accuracy improved this week. You are ready for harder sentences.";
+return "Pattern is stable. Push into Gate scenarios or harder vocabulary.";
+}catch(e){return "No pattern yet. Complete a session first."}
+}
+function updateBrainNode(){
+const tabEl=document.querySelector(".bn-tab");
+if(!tabEl)return;
+tabEl.className="bn-tab bn-"+getBrainPresenceState();
+if(bnOpen){const msgEl=document.querySelector("#bnPanel .bn-msg");if(msgEl)msgEl.textContent=getBrainPresenceMsg();}
+}
+function toggleBrainPanel(){
+bnOpen=!bnOpen;
+const panel=document.getElementById("bnPanel");
+if(!panel)return;
+if(bnOpen){const msgEl=panel.querySelector(".bn-msg");if(msgEl)msgEl.textContent=getBrainPresenceMsg();panel.classList.add("open");}
+else{panel.classList.remove("open");}
+}
+function renderBrainNode(){
+const old=document.getElementById("bn");if(old)old.remove();
+const oldP=document.getElementById("bnPanel");if(oldP)oldP.remove();
+const node=document.createElement("div");node.id="bn";
+const t=document.createElement("div");t.className="bn-tab bn-idle";t.onclick=toggleBrainPanel;
+t.innerHTML='<span class="bn-rune">&#x16C9;</span><span class="bn-dot"></span>';
+node.appendChild(t);document.body.appendChild(node);
+const panel=document.createElement("div");panel.id="bnPanel";panel.className="bn-panel";
+panel.innerHTML='<div class="bn-ph"><span class="bn-eyebrow">Vanta Node</span><span class="bn-dismiss" onclick="toggleBrainPanel()">close</span></div><div class="bn-msg"></div>';
+document.body.appendChild(panel);
+}
 /* ================= INIT ================= */
-renderNav();renderScriptBtn();renderHud();render();
+renderNav();renderScriptBtn();renderHud();render();renderBrainNode();updateBrainNode();
 </script>
 </body>
 </html>
