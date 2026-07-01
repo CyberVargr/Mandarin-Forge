@@ -182,6 +182,7 @@ tr.wrow:hover td{background:var(--c-iron)}
 .rad-quiz-card{background:var(--c-ash);border:1px solid var(--c-steel);border-radius:var(--r-md);padding:28px 20px 22px;text-align:center;box-shadow:var(--shadow-card)}
 .rad-quiz-prompt{font-size:10px;letter-spacing:0.12em;text-transform:uppercase;color:var(--c-rune);margin-bottom:14px}
 .rad-quiz-hz{font-family:'Noto Serif TC','Microsoft JhengHei','PingFang TC',serif;font-size:72px;line-height:1.1;color:var(--c-bone);margin:0 0 12px}
+.wbtn-active{background:rgba(232,226,212,0.08);border-color:var(--c-smoke)}
 /* ── SENTENCE BUILDER ────────────────────────────────── */
 .tiles{display:flex;gap:6px;flex-wrap:wrap;justify-content:center;margin:10px 0;min-height:50px}
 .tile{background:var(--c-iron);border:1px solid var(--c-steel);border-radius:var(--r-sm);padding:9px 13px;font-size:20px;cursor:pointer;font-family:'Noto Serif TC','Microsoft JhengHei',serif;transition:border-color var(--t-fast)}
@@ -1816,7 +1817,7 @@ const bar='<div style="display:flex;align-items:center;gap:10px;margin-bottom:14
 '</div>';
 if(marksMode==="hand")rWrite();else rRad();
 const m=$("#main");m.innerHTML=bar+m.innerHTML;
-if(marksMode==="hand")randW();
+if(marksMode==="hand")(wWord?loadW(wWord):randW());
 }
 /* ================= FLASHCARDS ================= */
 let queue=[],cur=null,revealed=false;
@@ -2150,7 +2151,7 @@ $("#ndfb").innerHTML=(ok?'<span class="grn-t">✓ 對了！</span> ':'<span clas
 bumpDone("num");touchStreak();
 }
 /* ================= WRITING ================= */
-let writers=[],wWord=null,wIdx=-1;
+let writers=[],wWord=null,wIdx=-1,wMode="idle";
 function rWrite(){
 $("#main").innerHTML=
 '<div class="write-chamber">'+
@@ -2159,13 +2160,15 @@ $("#main").innerHTML=
 '<button class="btn sm" onclick="loadW($(\'#winput\').value)">Load</button>'+
 '<button class="btn sm" style="color:var(--c-rune)" onclick="randW()">Random</button>'+
 '</div>'+
+'<div style="font-size:11px;color:var(--c-rune);text-align:right;margin:-6px 0 10px">Script: '+(st.script==="t"?"繁體":"简体")+'</div>'+
 '<div id="winfo"></div>'+
 '<div class="wchars" id="wchars"></div>'+
 '<div class="write-actions">'+
-'<button class="btn" onclick="animW()">Watch strokes</button>'+
-'<button class="btn" style="border-color:var(--c-bone)" onclick="quizW(false)">Trace</button>'+
-'<button class="btn" onclick="quizW(true)">From memory</button>'+
+'<button id="btnWatch" class="btn" onclick="animW()">Watch strokes</button>'+
+'<button id="btnTrace" class="btn" onclick="quizW(false)">Trace</button>'+
+'<button id="btnMem" class="btn" onclick="quizW(true)">From memory</button>'+
 '</div>'+
+'<div id="wstatus" style="min-height:18px;margin-top:8px;text-align:center"></div>'+
 '<p class="write-hint">Draw with mouse or finger. Needs internet for stroke data.</p>'+
 '</div>';
 }
@@ -2189,25 +2192,58 @@ $("#winfo").innerHTML=wd?
 breakHTML(wHanzi(wd))
 :
 '<div style="text-align:center;padding:8px 0"><button class="btn sm" onclick="speak(wWord)">🔊</button></div>';
+const ws=$("#wstatus");if(ws)ws.innerHTML="";
 const box=$("#wchars");box.innerHTML="";writers=[];
 const size=Math.min(150,Math.floor((box.clientWidth||600)/disp.length)-16)||150;
 [...disp].forEach(ch=>{
 const d=document.createElement("div");d.className="wbox";box.appendChild(d);
 try{writers.push(HanziWriter.create(d,ch,{width:size,height:size,padding:6,strokeColor:"#1a2030",outlineColor:"#c9c2b4",drawingColor:"#e4593b",showCharacter:true,delayBetweenStrokes:120}))}catch(e){d.innerHTML="<p style='color:#333;padding:20px'>offline?</p>"}
 });
+setWMode("idle","");
 }
-function animW(){let i=0;const step=()=>{if(i<writers.length)writers[i].animateCharacter({onComplete:()=>{i++;step()}})};writers.forEach(w=>w.showCharacter());step()}
+function setWMode(mode,msg){
+wMode=mode;
+["btnWatch","btnTrace","btnMem"].forEach(function(id){const b=document.getElementById(id);if(b)b.classList.remove("wbtn-active");});
+const bmap={watch:"btnWatch",trace:"btnTrace",memory:"btnMem"};
+if(bmap[mode]){const b=document.getElementById(bmap[mode]);if(b)b.classList.add("wbtn-active")}
+const ws=$("#wstatus");
+if(ws)ws.innerHTML=msg?'<span style="font-size:13px;color:var(--c-smoke)">'+msg+'</span>':"";
+}
+function animW(){
+if(!writers.length){const ws=$("#wstatus");if(ws)ws.innerHTML='<span style="font-size:13px;color:var(--c-rune)">Load a character first.</span>';return}
+writers.forEach(function(w){try{w.cancelQuiz()}catch(e){}});
+setWMode("watch","");
+const ws=$("#wstatus");
+let i=0;
+const step=()=>{
+if(i<writers.length){
+const msg=writers.length>1?"Character "+(i+1)+" of "+writers.length+".":"Watching stroke order.";
+if(ws)ws.innerHTML='<span style="font-size:13px;color:var(--c-smoke)">'+msg+'</span>';
+writers[i].animateCharacter({onComplete:()=>{i++;step()}});
+}else{setWMode("idle","")}
+};
+writers.forEach(function(w){w.showCharacter()});step();
+}
 function quizW(hard){
+const ws=$("#wstatus");
+if(!writers.length){if(ws)ws.innerHTML='<span style="font-size:13px;color:var(--c-rune)">Load a character first.</span>';return}
+setWMode(hard?"memory":"trace","");
+writers.forEach(function(w){try{w.cancelQuiz()}catch(e){}});
 let i=0,misses=0;
 const step=()=>{
 if(i>=writers.length){
 bumpDone("write");touchStreak();speak(wWord);
 if(sess)sess.chars.push(T(wWord));
 if(misses>2&&wIdx>=0)recordMiss("writing",wIdx);
+setWMode("idle","");
+if(ws)ws.innerHTML='<span style="font-size:13px;color:var(--c-smoke)">'+T(wWord)+' — complete.</span>';
 return}
+writers.forEach(function(w){w.hideCharacter();w.hideOutline();});
+const prog=writers.length>1?" · "+(i+1)+"/"+writers.length:"";
+const modeMsg=hard?" — draw from memory.":" — follow the guide.";
+if(ws)ws.innerHTML='<span style="font-size:13px;color:var(--c-smoke)">'+(hard?"Memory":"Trace")+prog+modeMsg+'</span>';
 writers[i].quiz({showOutline:!hard,showHintAfterMisses:2,onMistake:()=>{misses++},onComplete:()=>{i++;step()}});
 };
-writers.forEach(w=>w.hideCharacter());
 step();
 }
 /* ================= TYPING ================= */
