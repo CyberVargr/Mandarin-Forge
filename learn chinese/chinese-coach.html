@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-TW">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -7,106 +7,307 @@
 <script src="https://cdn.jsdelivr.net/npm/hanzi-writer@3.5/dist/hanzi-writer.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/opencc-js@1.0.5/dist/umd/full.js"></script>
 <style>
-:root{--bg:#10141c;--card:#1a2030;--card2:#222a3e;--txt:#e8ecf4;--mut:#8a94ab;--acc:#e4593b;--green:#3fae6a;--red:#d24545;--gold:#e0a93c;--blue:#4f8fe8;--purple:#9a6fe0;--teal:#3fb8ae}
+@import url('https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;500&family=Inter:wght@400;500;600&display=swap');
+/* ── DESIGN TOKENS ──────────────────────────────────── */
+:root{
+/* surfaces */
+--c-void:#08090B;--c-ash:#0F1115;--c-iron:#181B22;--c-steel:#232730;--c-forge:#2E3340;
+/* text */
+--c-bone:#E2DDD6;--c-smoke:#7A8090;--c-rune:#3D4250;
+/* accents */
+--c-ember:#C8692A;--c-ember-hi:#E07B35;--c-frost:#3DBCB8;--c-frost-lo:#2A8A87;--c-gold:#B8962E;
+/* semantic */
+--c-ok:#3D9E6A;--c-fail:#B84040;
+/* tone colors */
+--t1:#E07B35;--t2:#3DBCB8;--t3:#3D9E6A;--t4:#B84040;--t5:#7A8090;
+/* radii */
+--r-sm:3px;--r-md:5px;--r-lg:8px;
+/* depth */
+--shadow-card:0 2px 8px rgba(0,0,0,0.45);
+--glow-ember:0 0 18px rgba(200,105,42,0.22);
+--glow-frost:0 0 14px rgba(61,188,184,0.18);
+/* timing */
+--t-fast:150ms cubic-bezier(0.25,0,0.4,1);
+--t-normal:300ms cubic-bezier(0.25,0,0.4,1);
+/* ── legacy aliases — keep all JS-generated HTML working ── */
+--bg:var(--c-void);--card:var(--c-ash);--card2:var(--c-iron);
+--txt:var(--c-bone);--mut:var(--c-smoke);--acc:var(--c-ember);
+--green:var(--c-ok);--red:var(--c-fail);--gold:var(--c-gold);
+--teal:var(--c-frost);--blue:#4f8fe8;--purple:#9a6fe0;
+}
+/* ── RESET ──────────────────────────────────────────── */
 *{box-sizing:border-box;margin:0;padding:0}
-body{background:var(--bg);color:var(--txt);font-family:"Segoe UI",system-ui,sans-serif;min-height:100vh}
-.hanzi{font-family:"Microsoft JhengHei","Noto Sans TC","Microsoft YaHei","Noto Sans SC","PingFang TC",sans-serif}
-header{display:flex;align-items:center;gap:10px;padding:12px 18px;border-bottom:1px solid #2a3248;flex-wrap:wrap}
-header h1{font-size:19px;white-space:nowrap}
-header h1 span{color:var(--acc)}
-nav{display:flex;gap:5px;flex-wrap:wrap}
-nav button{background:none;border:1px solid #2a3248;color:var(--mut);padding:6px 10px;border-radius:8px;cursor:pointer;font-size:13px}
-nav button.on{background:var(--acc);border-color:var(--acc);color:#fff}
-#scriptBtn{background:var(--card2);border:1px solid #34405e;color:var(--gold);padding:6px 11px;border-radius:8px;cursor:pointer;font-size:13px}
-#hud{margin-left:auto;display:flex;gap:10px;align-items:center;font-size:13px;color:var(--gold);font-weight:600;white-space:nowrap}
-#sessbar{display:none;position:sticky;top:0;z-index:50;background:#23192b;border-bottom:2px solid var(--acc);padding:10px 18px}
-#sessbar b{color:var(--gold)}
+/* ── GLOBAL ─────────────────────────────────────────── */
+body{background:var(--c-void);color:var(--c-bone);font-family:'Inter',system-ui,sans-serif;font-size:15px;line-height:1.5;min-height:100vh}
+.hanzi{font-family:'Noto Serif TC','Microsoft JhengHei','PingFang TC',serif}
+/* ── HEADER ─────────────────────────────────────────── */
+header{display:flex;align-items:center;gap:10px;padding:9px 20px;border-bottom:1px solid var(--c-steel);flex-wrap:wrap;background:var(--c-ash)}
+header h1{font-size:14px;font-weight:500;white-space:nowrap;letter-spacing:0.03em;color:var(--c-bone)}
+header h1 span{color:var(--c-ember)}
+/* ── NAV ─────────────────────────────────────────────── */
+nav{display:flex;gap:0;flex-wrap:wrap;align-items:stretch}
+nav button{background:none;border:none;border-bottom:2px solid transparent;color:var(--c-rune);padding:6px 11px 5px;cursor:pointer;font-size:13px;font-family:inherit;line-height:1.2;transition:color var(--t-fast),border-color var(--t-fast)}
+nav button:hover{color:var(--c-smoke)}
+nav button.on{color:var(--c-bone);border-bottom-color:var(--c-ember)}
+/* ── HUD / SCRIPT ────────────────────────────────────── */
+#scriptBtn{background:var(--c-iron);border:1px solid var(--c-steel);color:var(--c-gold);padding:4px 9px;border-radius:var(--r-sm);cursor:pointer;font-size:13px}
+#hud{margin-left:auto;display:flex;gap:10px;align-items:center;font-size:13px;color:var(--c-gold);font-weight:600;white-space:nowrap}
+/* ── SESSION BAR ──────────────────────────────────────── */
+#sessbar{display:none;position:sticky;top:0;z-index:50;background:var(--c-iron);border-bottom:2px solid var(--c-ember);padding:10px 20px}
+#sessbar b{color:var(--c-gold)}
 #sessleft{font-variant-numeric:tabular-nums;font-size:18px;font-weight:700}
-#sessleft.over{color:var(--red);animation:blink 1s infinite}
+#sessleft.over{color:var(--c-fail);animation:blink 1s infinite}
 @keyframes blink{50%{opacity:.4}}
-.sbar{flex:1;height:8px;background:#3a2f45;border-radius:4px;overflow:hidden;min-width:80px}
-.sbar i{display:block;height:100%;background:var(--acc)}
-main{max-width:880px;margin:0 auto;padding:20px 16px 60px}
-.box{background:var(--card);border:1px solid #2a3248;border-radius:14px;padding:20px;margin-bottom:16px}
-.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
-.btn{background:var(--card2);border:1px solid #34405e;color:var(--txt);padding:10px 18px;border-radius:9px;cursor:pointer;font-size:15px}
-.btn:hover{border-color:var(--acc)}
-.btn.acc{background:var(--acc);border-color:var(--acc);color:#fff}
-.btn.grn{background:var(--green);border-color:var(--green);color:#fff}
-.btn.red{background:var(--red);border-color:var(--red);color:#fff}
-.btn.sm{padding:5px 10px;font-size:13px}
-.btn.big{font-size:20px;padding:14px 28px}
-.btn:disabled{opacity:.55;cursor:default}
-.bigh{font-size:60px;text-align:center;line-height:1.3;margin:14px 0}
-.pin{font-size:23px;text-align:center;color:var(--gold);margin:6px 0}
-.eng{font-size:18px;text-align:center;margin:6px 0}
-.mut{color:var(--mut)}.gold{color:var(--gold)}.grn-t{color:var(--green)}.red-t{color:var(--red)}
+.sbar{flex:1;height:3px;background:var(--c-steel);border-radius:2px;overflow:hidden;min-width:80px}
+.sbar i{display:block;height:100%;background:var(--c-ember);border-radius:2px}
+/* ── LAYOUT ──────────────────────────────────────────── */
+main{max-width:860px;margin:0 auto;padding:20px 16px 80px;position:relative}
+/* ── CARD TIERS ──────────────────────────────────────── */
+.box{background:var(--c-ash);border:1px solid var(--c-steel);border-radius:var(--r-md);padding:20px;margin-bottom:12px;box-shadow:var(--shadow-card)}
+/* Tier 1 — Forge hero */
+.chamber-card{position:relative;background:var(--c-ash);border:1px solid var(--c-steel);border-top:1px solid rgba(200,105,42,0.3);border-radius:var(--r-md);padding:28px 24px 24px;margin-bottom:12px;overflow:hidden;box-shadow:var(--shadow-card)}
+.rune-wm{position:absolute;top:12px;right:18px;font-size:80px;line-height:1;color:var(--c-bone);opacity:0.05;pointer-events:none;user-select:none;font-family:'Noto Serif TC',serif}
+/* ── BUTTONS ─────────────────────────────────────────── */
+.btn{background:transparent;border:1px solid var(--c-steel);color:var(--c-bone);padding:9px 16px;border-radius:var(--r-md);cursor:pointer;font-size:14px;font-family:'Inter',system-ui,sans-serif;transition:background var(--t-fast),border-color var(--t-fast)}
+.btn:hover{background:var(--c-forge);border-color:var(--c-smoke)}
+.btn:active{transform:scale(0.97)}
+.btn:disabled{opacity:.4;cursor:default;transform:none}
+.btn.acc{background:var(--c-ember);border-color:var(--c-ember);color:var(--c-void);font-weight:600;letter-spacing:0.04em;text-transform:uppercase;box-shadow:var(--glow-ember)}
+.btn.acc:hover{background:var(--c-ember-hi);border-color:var(--c-ember-hi)}
+.btn.grn{background:var(--c-ok);border-color:var(--c-ok);color:#fff}
+.btn.red{background:var(--c-fail);border-color:var(--c-fail);color:#fff}
+.btn.sm{padding:4px 9px;font-size:12px}
+.btn.big{font-size:18px;padding:13px 26px}
+/* ghost — text-only low-priority */
+.btn-ghost{background:none;border:none;color:var(--c-smoke);font-size:12px;font-family:'Inter',system-ui,sans-serif;cursor:pointer;padding:5px 0;letter-spacing:0.03em;transition:color var(--t-fast)}
+.btn-ghost:hover{color:var(--c-bone)}
+/* Forge session primary CTA */
+.btn-session-primary{display:block;width:100%;background:var(--c-ember);border:none;color:var(--c-void);font-weight:700;font-size:14px;font-family:'Inter',system-ui,sans-serif;letter-spacing:0.07em;text-transform:uppercase;padding:16px 20px;border-radius:var(--r-md);cursor:pointer;text-align:left;box-shadow:var(--glow-ember);transition:background var(--t-fast)}
+.btn-session-primary:hover{background:var(--c-ember-hi)}
+.btn-session-primary:active{transform:scale(0.98)}
+.btn-session-primary small{display:block;font-size:11px;font-weight:400;letter-spacing:0.01em;text-transform:none;opacity:0.65;margin-top:3px}
+/* ── FORGE HOME LAYOUT ───────────────────────────────── */
+.mode-stack{display:flex;flex-direction:column;gap:8px;margin-top:16px}
+.mode-alts{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.forge-tools{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:14px;padding-top:14px;border-top:1px solid var(--c-steel)}
+.stats-strip{display:flex;gap:0;padding:10px 16px;background:var(--c-ash);border:1px solid var(--c-steel);border-radius:var(--r-md);margin-bottom:12px;overflow-x:auto}
+.stat-item{flex:1;text-align:center;padding:4px 6px;border-right:1px solid var(--c-steel)}
+.stat-item:last-child{border-right:none}
+.stat-val{display:block;font-size:19px;font-weight:600;color:var(--c-bone);line-height:1.2}
+.stat-lbl{display:block;font-size:10px;color:var(--c-smoke);text-transform:uppercase;letter-spacing:0.08em;margin-top:1px}
+.label-caps{font-size:10px;letter-spacing:0.13em;text-transform:uppercase;color:var(--c-smoke);display:block;margin-bottom:4px}
+.forge-footer{text-align:center;padding:18px 0 6px;border-top:1px solid var(--c-steel);margin-top:8px}
+/* ── TYPOGRAPHY ──────────────────────────────────────── */
+.bigh{font-size:72px;text-align:center;line-height:1.2;margin:16px 0;font-family:'Noto Serif TC','Microsoft JhengHei','PingFang TC',serif}
+.pin{font-size:18px;text-align:center;color:var(--c-bone);margin:6px 0;letter-spacing:0.04em;opacity:0.85}
+.eng{font-size:15px;text-align:center;margin:6px 0;color:var(--c-smoke)}
+.mut{color:var(--c-smoke)}.gold{color:var(--c-gold)}.grn-t{color:var(--c-ok)}.red-t{color:var(--c-fail)}
 .center{text-align:center}
-.t1{color:#ff7066}.t2{color:#5dd47a}.t3{color:#5aa8ff}.t4{color:#c98bff}.t5{color:#9aa3b5}
-.opts{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px}
-.opts .btn{padding:15px;font-size:17px}
-.opts .btn.hit{background:var(--green);border-color:var(--green);color:#fff}
-.opts .btn.miss{background:var(--red);border-color:var(--red);color:#fff}
-input[type=text],input[type=number],select{background:var(--card2);border:1px solid #34405e;color:var(--txt);padding:10px 12px;border-radius:8px;font-size:17px}
+/* ── TONE COLORS ─────────────────────────────────────── */
+.t1{color:#E07B35}.t2{color:#3DBCB8}.t3{color:#3D9E6A}.t4{color:#B84040}.t5{color:#7A8090}
+/* ── MCQ ─────────────────────────────────────────────── */
+.opts{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:14px}
+.opts .btn{padding:13px;font-size:16px}
+.opts .btn.hit{background:var(--c-ok);border-color:var(--c-ok);color:#fff}
+.opts .btn.miss{background:var(--c-fail);border-color:var(--c-fail);color:#fff}
+/* ── FORMS ───────────────────────────────────────────── */
+input[type=text],input[type=number],select{background:var(--c-iron);border:1px solid var(--c-steel);color:var(--c-bone);padding:8px 11px;border-radius:var(--r-md);font-size:14px;font-family:'Inter',system-ui,sans-serif}
 input[type=text]{width:100%}
-.stat{display:inline-block;background:var(--card2);border-radius:10px;padding:11px 16px;margin:4px;text-align:center;min-width:92px}
-.stat b{display:block;font-size:24px}
-.stat span{font-size:11px;color:var(--mut)}
-.set{display:flex;gap:8px;align-items:center;font-size:14px}
-table{width:100%;border-collapse:collapse;font-size:16px}
-td,th{padding:8px 6px;border-bottom:1px solid #2a3248;text-align:left}
-th{color:var(--mut);font-size:13px}
+input[type=range]{accent-color:var(--c-ember)}
+/* ── STAT (used in session results + misc) ────────────── */
+.stat{display:inline-block;background:var(--c-iron);border:1px solid var(--c-steel);border-radius:var(--r-md);padding:10px 14px;margin:4px;text-align:center;min-width:80px}
+.stat b{display:block;font-size:21px;color:var(--c-bone)}
+.stat span{font-size:10px;color:var(--c-smoke);text-transform:uppercase;letter-spacing:0.06em}
+.set{display:flex;gap:8px;align-items:center;font-size:13px}
+/* ── TABLES ──────────────────────────────────────────── */
+table{width:100%;border-collapse:collapse;font-size:14px}
+td,th{padding:8px 6px;border-bottom:1px solid var(--c-steel);text-align:left}
+th{color:var(--c-smoke);font-size:11px;letter-spacing:0.06em;text-transform:uppercase}
 tr.wrow{cursor:pointer}
-tr.wrow:hover td{background:#1f2740}
+tr.wrow:hover td{background:var(--c-iron)}
+/* ── HANDWRITING ─────────────────────────────────────── */
 .wchars{display:flex;gap:14px;flex-wrap:wrap;justify-content:center;margin:16px 0}
-.wbox{background:#f7f3ec;border-radius:10px}
-.tag{font-size:11px;background:var(--card2);color:var(--mut);border-radius:6px;padding:2px 7px}
-.tag.p{color:var(--purple);border:1px solid var(--purple)}
-.tag.tw{color:var(--teal);border:1px solid var(--teal)}
-.fb{text-align:center;font-size:18px;margin-top:12px;min-height:26px}
-.tonegrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:10px;margin:14px 0}
-.heat{display:grid;grid-auto-flow:column;grid-template-rows:repeat(7,13px);gap:3px;justify-content:start;margin:10px 0}
-.heat i{width:13px;height:13px;border-radius:3px;background:#222a3e}
-.heat i.h1{background:#3a4a3f}.heat i.h2{background:#3f7a52}.heat i.h3{background:#3fae6a}.heat i.h4{background:#7ce0a3}
-.xpbar{height:10px;background:var(--card2);border-radius:5px;overflow:hidden;margin:6px 0}
-.xpbar i{display:block;height:100%;background:linear-gradient(90deg,var(--gold),var(--acc))}
-.bub{max-width:75%;padding:10px 14px;border-radius:14px;margin:6px 0;font-size:17px;line-height:1.6;cursor:pointer}
-.bub.a{background:var(--card2);border-bottom-left-radius:4px;margin-right:auto}
-.bub.b{background:#2b3a2e;border-bottom-right-radius:4px;margin-left:auto;text-align:right}
-.bub .bp{font-size:14px;display:block}
-.bub .be{font-size:13px;color:var(--mut);display:block}
-.bub.cur{outline:2px solid var(--acc)}
-.tiles{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin:12px 0;min-height:54px}
-.tile{background:var(--card2);border:1px solid #34405e;border-radius:9px;padding:10px 14px;font-size:22px;cursor:pointer}
-.tile:hover{border-color:var(--acc)}
-.tile.ghost{opacity:.25;pointer-events:none}
-.slotline{background:#141927;border:1px dashed #34405e;border-radius:10px;padding:10px;min-height:58px;display:flex;gap:8px;flex-wrap:wrap;justify-content:center}
-.dlgcard{cursor:pointer;transition:border-color .15s}
-.dlgcard:hover{border-color:var(--acc)}
-.spk-ch{font-size:26px;letter-spacing:2px}
-.spk-ch .ok{color:var(--green)}.spk-ch .bad{color:var(--red)}
-.note{font-size:13.5px;color:#c4cce0;background:#141927;border-left:3px solid var(--teal);border-radius:8px;padding:9px 12px;margin:8px auto;max-width:600px;text-align:left;line-height:1.55}
-.note.cult{border-left-color:var(--gold)}
-.brk{font-size:14px;background:#141927;border-left:3px solid var(--purple);border-radius:8px;padding:9px 12px;margin:8px auto;max-width:600px;text-align:left;line-height:1.6}
-.brk b{font-size:21px;color:var(--gold)}
+.wbox{background:#f7f3ec;border-radius:var(--r-md)}
+/* ── TAGS ────────────────────────────────────────────── */
+.tag{font-size:10px;background:var(--c-iron);color:var(--c-smoke);border-radius:var(--r-sm);padding:2px 6px;letter-spacing:0.04em;text-transform:uppercase}
+.tag.p{color:#9a6fe0;border:1px solid rgba(154,111,224,0.35)}
+.tag.tw{color:var(--c-frost);border:1px solid rgba(61,188,184,0.35)}
+/* ── FEEDBACK ────────────────────────────────────────── */
+.fb{text-align:center;font-size:17px;margin-top:12px;min-height:24px}
+/* ── PINYIN LAB ──────────────────────────────────────── */
+.tonegrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(100px,1fr));gap:8px;margin:12px 0}
+/* ── XP / HEAT ───────────────────────────────────────── */
+.xpbar{height:3px;background:var(--c-steel);border-radius:2px;overflow:hidden;margin:5px 0}
+.xpbar i{display:block;height:100%;background:linear-gradient(90deg,var(--c-gold),var(--c-ember))}
+.heat{display:grid;grid-auto-flow:column;grid-template-rows:repeat(7,11px);gap:2px;justify-content:start;margin:10px 0}
+.heat i{width:11px;height:11px;border-radius:2px;background:var(--c-steel)}
+.heat i.h1{background:rgba(61,158,106,0.22)}.heat i.h2{background:rgba(61,158,106,0.48)}.heat i.h3{background:rgba(61,158,106,0.74)}.heat i.h4{background:#3D9E6A}
+/* ── GATE CHAMBER (Stage 4) ──────────────────────────── */
+/* Scenario list cards */
+.gate-card{background:var(--c-ash);border:1px solid var(--c-steel);border-left:3px solid rgba(61,188,184,0.25);border-radius:var(--r-md);padding:16px 18px;margin-bottom:10px;cursor:pointer;transition:background var(--t-fast),border-left-color var(--t-fast);box-shadow:var(--shadow-card)}
+.gate-card:hover{background:var(--c-iron);border-left-color:var(--c-frost)}
+.gate-card-hz{font-family:'Noto Serif TC','Microsoft JhengHei','PingFang TC',serif;font-size:22px;color:var(--c-bone);margin-bottom:5px}
+.gate-card-scene{font-size:13px;color:var(--c-smoke);margin-bottom:6px}
+.gate-card-tag{font-size:11px;color:var(--c-rune);letter-spacing:0.08em;text-transform:uppercase}
+/* Open dialogue — scene header */
+.scene-header{background:var(--c-ash);border:1px solid var(--c-steel);border-top:2px solid rgba(61,188,184,0.3);border-radius:var(--r-md);padding:18px 18px 14px;margin-bottom:10px;box-shadow:var(--shadow-card)}
+.scene-eyebrow{font-size:10px;letter-spacing:0.15em;text-transform:uppercase;color:var(--c-frost);font-weight:600;margin-bottom:6px}
+.scene-title-hz{font-family:'Noto Serif TC','Microsoft JhengHei',serif;font-size:20px;color:var(--c-bone);margin-bottom:4px}
+.scene-desc{font-size:13px;color:var(--c-smoke);margin-bottom:12px}
+/* Screenplay line style — cinematic, not chat bubbles */
+.bub{width:100%;padding:10px 14px;border-left:3px solid transparent;margin:1px 0;font-size:17px;line-height:1.5;cursor:pointer;transition:background var(--t-fast),border-left-color var(--t-fast)}
+.bub:hover{background:var(--c-iron)}
+.bub.a{border-left-color:var(--c-steel)}
+.bub.b{border-left-color:rgba(61,188,184,0.35);background:rgba(61,188,184,0.03)}
+.bub.b:hover{background:var(--c-iron)}
+.bub .bp{font-size:12px;display:block;color:var(--c-rune);margin-top:3px}
+.bub .be{font-size:11px;color:var(--c-rune);opacity:0.65;display:block;margin-top:2px}
+.bub.cur{background:rgba(61,188,184,0.07);border-left-color:var(--c-frost);outline:none}
+/* ── MARKS CHAMBER (Stage 5) ─────────────────────── */
+.write-chamber{background:var(--c-ash);border:1px solid var(--c-steel);border-radius:var(--r-md);padding:20px 20px 16px;margin-bottom:10px;box-shadow:var(--shadow-card)}
+.write-controls{display:flex;gap:8px;align-items:center;padding-bottom:12px;border-bottom:1px solid var(--c-steel);margin-bottom:14px}
+.write-input{flex:1;min-width:120px}
+.write-word{text-align:center;padding:2px 0 12px;border-bottom:1px solid var(--c-steel);margin-bottom:2px}
+.write-word-pin{font-size:16px;color:var(--c-smoke);letter-spacing:0.04em;margin-bottom:3px}
+.write-word-eng{font-size:12px;color:var(--c-rune);margin-bottom:8px}
+.write-actions{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;padding-top:14px;border-top:1px solid var(--c-steel);margin-top:6px}
+.write-hint{font-size:12px;color:var(--c-rune);margin-top:10px;text-align:center}
+.rad-ref{background:var(--c-ash);border:1px solid var(--c-steel);border-radius:var(--r-md);overflow:hidden;margin-bottom:8px;box-shadow:var(--shadow-card)}
+.rad-row{display:flex;gap:16px;align-items:flex-start;padding:14px 16px;border-bottom:1px solid var(--c-steel)}
+.rad-row:last-child{border-bottom:none}
+.rad-glyph{font-family:'Noto Serif TC','Microsoft JhengHei',serif;font-size:44px;line-height:1;min-width:60px;text-align:center;color:var(--c-bone);padding:10px 6px;background:var(--c-iron);border-radius:var(--r-sm);flex-shrink:0}
+.rad-name{font-size:14px;font-weight:600;color:var(--c-bone);margin-bottom:3px}
+.rad-desc{font-size:13px;color:var(--c-smoke);line-height:1.5;margin-bottom:8px}
+.rad-examples{display:flex;gap:6px;flex-wrap:wrap}
+.rad-quiz-card{background:var(--c-ash);border:1px solid var(--c-steel);border-radius:var(--r-md);padding:28px 20px 22px;text-align:center;box-shadow:var(--shadow-card)}
+.rad-quiz-prompt{font-size:10px;letter-spacing:0.12em;text-transform:uppercase;color:var(--c-rune);margin-bottom:14px}
+.rad-quiz-hz{font-family:'Noto Serif TC','Microsoft JhengHei','PingFang TC',serif;font-size:72px;line-height:1.1;color:var(--c-bone);margin:0 0 12px}
+.wbtn-active{background:rgba(232,226,212,0.08);border-color:var(--c-smoke)}
+/* ── HUNT CHAMBER (Stage 6A) ─────────────────────── */
+.hunt-header{background:var(--c-ash);border:1px solid var(--c-steel);border-top:2px solid rgba(200,105,42,0.3);border-radius:var(--r-md);padding:20px 20px 16px;margin-bottom:10px;box-shadow:var(--shadow-card)}
+.hunt-eyebrow{font-size:10px;letter-spacing:0.15em;text-transform:uppercase;color:var(--c-rune);font-weight:600;margin-bottom:8px}
+.hunt-sub{font-size:13px;color:var(--c-smoke);line-height:1.5;margin-bottom:12px}
+.hunt-chips{display:flex;gap:4px;flex-wrap:wrap;padding-top:12px;border-top:1px solid var(--c-steel)}
+.hunt-section{background:var(--c-ash);border:1px solid var(--c-steel);border-radius:var(--r-md);overflow:hidden;margin-bottom:10px;box-shadow:var(--shadow-card)}
+.hunt-sec-head{padding:16px 18px 14px;border-bottom:1px solid var(--c-steel)}
+.hunt-sec-title{font-size:14px;font-weight:600;color:var(--c-bone);margin-bottom:4px}
+.hunt-sec-intro{font-size:12px;color:var(--c-rune);line-height:1.5}
+.hunt-lines{padding:0 18px}
+.hunt-line{padding:16px 0;border-bottom:1px solid var(--c-steel)}
+.hunt-line:last-child{border-bottom:none}
+.hunt-hz{font-family:'Noto Serif TC','Microsoft JhengHei','PingFang TC',serif;font-size:24px;line-height:1.35;color:var(--c-bone);margin-bottom:5px}
+.hunt-pin{font-size:14px;color:var(--c-smoke);letter-spacing:0.02em;margin-bottom:3px}
+.hunt-eng{font-size:12px;color:var(--c-rune);line-height:1.4;margin-bottom:8px}
+.hunt-actions{display:flex;gap:6px;align-items:center}
+.hunt-footer{padding:14px 18px;border-top:1px solid var(--c-steel);display:flex;gap:8px;align-items:center}
+/* ── CORE CHAMBER (Stage 6B) ─────────────────────── */
+.core-header{background:var(--c-ash);border:1px solid var(--c-steel);border-top:2px solid rgba(200,105,42,0.3);border-radius:var(--r-md);padding:20px 20px 16px;margin-bottom:10px;box-shadow:var(--shadow-card)}
+.core-eyebrow{font-size:10px;letter-spacing:0.15em;text-transform:uppercase;color:var(--c-rune);font-weight:600;margin-bottom:8px}
+.core-sub{font-size:13px;color:var(--c-smoke);line-height:1.5;margin-bottom:12px}
+.core-chips{display:flex;gap:4px;flex-wrap:wrap;padding-top:12px;border-top:1px solid var(--c-steel)}
+.core-list{background:var(--c-ash);border:1px solid var(--c-steel);border-radius:var(--r-md);overflow:hidden;margin-bottom:10px;box-shadow:var(--shadow-card)}
+.core-line{padding:18px 18px;border-bottom:1px solid var(--c-steel)}
+.core-line:last-child{border-bottom:none}
+.core-hz{font-family:'Noto Serif TC','Microsoft JhengHei','PingFang TC',serif;font-size:24px;line-height:1.35;color:var(--c-bone);margin-bottom:5px}
+.core-pin{font-size:13px;color:var(--c-smoke);letter-spacing:0.04em;margin-bottom:3px}
+.core-eng{font-size:12px;color:var(--c-rune);line-height:1.4;margin-bottom:10px}
+.core-meta{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.core-form{background:var(--c-iron);border:1px solid var(--c-steel);border-radius:var(--r-md);padding:16px;margin-top:10px}
+.core-empty{text-align:center;padding:32px 20px;color:var(--c-rune);font-size:13px}
+/* ── SENTENCE BUILDER ────────────────────────────────── */
+.tiles{display:flex;gap:6px;flex-wrap:wrap;justify-content:center;margin:10px 0;min-height:50px}
+.tile{background:var(--c-iron);border:1px solid var(--c-steel);border-radius:var(--r-sm);padding:9px 13px;font-size:20px;cursor:pointer;font-family:'Noto Serif TC','Microsoft JhengHei',serif;transition:border-color var(--t-fast)}
+.tile:hover{border-color:var(--c-ember)}
+.tile.ghost{opacity:.2;pointer-events:none}
+.slotline{background:var(--c-void);border:1px dashed var(--c-steel);border-radius:var(--r-md);padding:10px;min-height:54px;display:flex;gap:6px;flex-wrap:wrap;justify-content:center}
+/* ── SPEAKING ────────────────────────────────────────── */
+.spk-ch{font-size:24px;letter-spacing:2px;font-family:'Noto Serif TC',serif}
+.spk-ch .ok{color:var(--c-ok)}.spk-ch .bad{color:var(--c-fail)}
+/* ── CULTURAL NOTES ──────────────────────────────────── */
+.note{font-size:13px;color:var(--c-bone);background:var(--c-iron);border-left:2px solid var(--c-frost);border-radius:0 var(--r-sm) var(--r-sm) 0;padding:9px 12px;margin:8px auto;max-width:600px;text-align:left;line-height:1.6;opacity:0.88}
+.note.cult{border-left-color:var(--c-gold)}
+.brk{font-size:13px;background:var(--c-iron);border-left:2px solid var(--c-rune);border-radius:0 var(--r-sm) var(--r-sm) 0;padding:9px 12px;margin:8px auto;max-width:600px;text-align:left;line-height:1.6}
+.brk b{font-size:19px;color:var(--c-gold)}
+/* ── RADICALS ────────────────────────────────────────── */
 .radcard{display:flex;gap:14px;align-items:flex-start}
-.radglyph{font-size:44px;min-width:74px;text-align:center;background:#141927;border-radius:10px;padding:8px;color:var(--gold)}
-.glyph{color:var(--gold);margin-right:3px}
-.subT{font-size:10px;letter-spacing:3px;color:var(--purple);text-transform:uppercase;align-self:center}
-.modegrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px;margin-top:12px}
-.modegrid .btn{padding:14px;text-align:center}
-.modegrid small{display:block;color:var(--mut);font-size:11px;margin-top:4px;font-weight:400}
-.psbrow{border-bottom:1px solid #2a3248;padding:10px 4px}
-.psbrow .hz{font-size:20px}
-.psbrow .pp{font-size:14px}
-.psbrow .ee{font-size:13px;color:var(--mut)}
-.chip{display:inline-block;background:var(--card2);border:1px solid #34405e;color:var(--mut);border-radius:14px;padding:4px 11px;font-size:12px;cursor:pointer;margin:2px}
-.chip.on{background:var(--acc);border-color:var(--acc);color:#fff}
-.diff{color:var(--gold);font-size:12px}
-.career-it{border-bottom:1px solid #2a3248;padding:9px 4px}
-.logcard{border-left:3px solid var(--gold)}
+.radglyph{font-size:40px;min-width:64px;text-align:center;background:var(--c-iron);border-radius:var(--r-md);padding:8px;color:var(--c-gold);font-family:'Noto Serif TC',serif}
+/* ── GLYPHS / IDENTITY ───────────────────────────────── */
+.glyph{color:var(--c-ember);margin-right:3px}
+.subT{font-size:10px;letter-spacing:3px;color:var(--c-rune);text-transform:uppercase;align-self:center}
+/* ── MODE GRID (existing games/session layout) ────────── */
+.modegrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:8px;margin-top:12px}
+.modegrid .btn{padding:13px;text-align:center}
+.modegrid small{display:block;color:var(--c-smoke);font-size:11px;margin-top:4px;font-weight:400}
+/* ── PERSONAL BANK ───────────────────────────────────── */
+.psbrow{border-bottom:1px solid var(--c-steel);padding:12px 4px}
+.psbrow .hz{font-size:22px;font-family:'Noto Serif TC',serif}
+.psbrow .pp{font-size:13px;letter-spacing:0.04em;margin-top:2px}
+.psbrow .ee{font-size:12px;color:var(--c-smoke);margin-top:2px}
+/* ── CHIPS / FILTERS ─────────────────────────────────── */
+.chip{display:inline-block;background:transparent;border:1px solid var(--c-steel);color:var(--c-smoke);border-radius:var(--r-sm);padding:3px 10px;font-size:12px;cursor:pointer;margin:2px;transition:background var(--t-fast),color var(--t-fast)}
+.chip.on{background:var(--c-ember);border-color:var(--c-ember);color:var(--c-void)}
+.chip.on-m{background:rgba(232,226,212,0.08);border-color:var(--c-smoke);color:var(--c-bone)}
+/* ── MISC ────────────────────────────────────────────── */
+.diff{color:var(--c-gold);font-size:12px}
+.bopo{font-size:14px;color:var(--c-frost);letter-spacing:2px;margin:2px 0;text-align:center}
+.career-it{border-bottom:1px solid var(--c-steel);padding:10px 4px}
+.logcard{border-left:2px solid var(--c-gold)}
 .misstab td{font-size:14px}
-@media(max-width:640px){.bigh{font-size:44px}.opts{grid-template-columns:1fr}}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+@media(max-width:640px){.bigh{font-size:52px}.opts{grid-template-columns:1fr}.mode-alts{grid-template-columns:1fr}}
+/* ── CODEX / CARD CHAMBER (Stage 2) ─────────────────────── */
+.card-chamber{background:var(--c-ash);border:1px solid var(--c-steel);border-radius:var(--r-md);padding:36px 28px 28px;margin-bottom:12px;box-shadow:var(--shadow-card);text-align:center}
+.card-hz{font-family:'Noto Serif TC','Microsoft JhengHei','PingFang TC',serif;font-size:96px;line-height:1.05;color:var(--c-bone);margin:8px 0 4px;letter-spacing:-0.01em}
+.card-hz-sm{font-size:52px;letter-spacing:0}
+.card-meta{display:flex;gap:6px;justify-content:center;margin-bottom:16px;flex-wrap:wrap}
+.card-pin-lg{font-size:20px;text-align:center;color:var(--c-smoke);letter-spacing:0.05em;margin:6px 0 2px}
+.card-eng-sm{font-size:13px;text-align:center;color:var(--c-rune);margin:2px 0}
+.grade-row{display:flex;gap:8px;justify-content:center;margin-top:20px;flex-wrap:wrap}
+.grade-row .btn{min-width:88px}
+/* Lexicon word list */
+.lex-row{display:flex;align-items:center;gap:12px;padding:10px 4px;border-bottom:1px solid var(--c-steel);cursor:pointer;transition:background var(--t-fast)}
+.lex-row:hover{background:var(--c-iron)}
+.lex-hz{font-family:'Noto Serif TC','Microsoft JhengHei',serif;font-size:24px;color:var(--c-bone);min-width:44px;text-align:center;flex-shrink:0}
+.lex-body{flex:1;min-width:0}
+.lex-pin{font-size:12px;color:var(--c-smoke);letter-spacing:0.03em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.lex-eng{font-size:12px;color:var(--c-rune);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.lex-aside{display:flex;gap:5px;align-items:center;flex-shrink:0}
+@media(max-width:640px){.card-hz{font-size:72px}.card-hz-sm{font-size:40px}}
+/* ── VOICE CHAMBER (Stage 3) ─────────────────────────── */
+/* Frost chip variant — used in Voice section only */
+.chip.on-f{background:var(--c-frost);border-color:var(--c-frost);color:var(--c-void)}
+/* Container — matches .chamber-card but with frost top border */
+.voice-chamber{background:var(--c-ash);border:1px solid var(--c-steel);border-top:2px solid rgba(61,188,184,0.3);border-radius:var(--r-md);padding:28px 24px 24px;margin-bottom:12px;box-shadow:var(--shadow-card)}
+/* Target sentence display in Speak mode */
+.voice-hz{font-family:'Noto Serif TC','Microsoft JhengHei','PingFang TC',serif;font-size:clamp(24px,4.5vw,36px);line-height:1.3;color:var(--c-bone);text-align:center;margin:12px 0 6px;padding:0 8px;word-break:break-word}
+.voice-pin{font-size:17px;text-align:center;color:var(--c-smoke);letter-spacing:0.04em;margin:4px 0}
+.voice-eng{font-size:13px;text-align:center;color:var(--c-rune);margin:2px 0 12px}
+/* Controls column in Speak mode — secondary pair above primary */
+.voice-controls{display:flex;flex-direction:column;align-items:center;gap:12px;margin-top:20px}
+/* Frost mic button — primary CTA in Voice */
+.btn-mic{background:var(--c-frost);border:none;color:var(--c-void);font-weight:700;font-size:14px;font-family:'Inter',system-ui,sans-serif;letter-spacing:0.05em;padding:14px 28px;border-radius:var(--r-md);cursor:pointer;box-shadow:var(--glow-frost);transition:background var(--t-fast)}
+.btn-mic:hover{background:var(--c-frost-lo)}
+.btn-mic:active{transform:scale(0.97)}
+/* Active listening state — restrained pulse, not playful */
+.btn-mic.listening{animation:frost-pulse 1.5s ease-in-out infinite;background:rgba(61,188,184,0.12);color:var(--c-frost);box-shadow:none}
+@keyframes frost-pulse{0%,100%{opacity:1}50%{opacity:.6}}
+/* Score result layout in Speak mode */
+.score-result{text-align:center;padding:16px 0;min-height:60px}
+.score-hz{font-family:'Noto Serif TC','Microsoft JhengHei',serif;font-size:30px;letter-spacing:2px;margin-bottom:8px}
+.score-pct{font-size:24px;font-weight:700;margin-bottom:2px}
+.score-msg{font-size:13px;color:var(--c-smoke);margin-bottom:4px}
+.score-heard{font-size:12px;color:var(--c-rune)}
+/* Tone demo grid — five-tone cards */
+.tone-demo{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin:12px 0}
+.tone-demo .btn{display:flex;flex-direction:column;align-items:center;gap:3px;padding:12px 6px}
+/* Tone trainer answer grid */
+.tone-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:12px 0}
+.tone-grid .btn{padding:10px 8px;font-size:13px;text-align:center}
+/* Taiwan notes list — reference panel, not hero */
+.tone-tips{list-style:none;padding:0;margin:0;font-size:13px;line-height:1.65;color:var(--c-smoke)}
+.tone-tips li{padding:2px 0;border-bottom:1px solid var(--c-steel)}
+.tone-tips li:last-child{border-bottom:none}
+@media(max-width:600px){.tone-demo{grid-template-columns:repeat(3,1fr)}.tone-grid{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
@@ -485,7 +686,164 @@ const W=[
 ["帅","shuài","handsome; cool","T",{n:"帥哥! shuàigē — what night-market vendors call every male customer. Reply 老闆也很帥 for a discount (maybe).",ex:"帥哥，你的筆電很酷！"}],
 ["掌机","zhǎngjī","handheld console","T",{n:"掌 palm + 機 machine — your Predator Atlas 8 territory. Also 掌上型遊戲機.",ex:"這台掌機的電池可以用八小時。"}],
 ["电玩展","diànwánzhǎn","game expo","T",{n:"台北國際電玩展 Taipei Game Show every winter; Computex 電腦展 in June — your stage.",ex:"我每年都去台北國際電玩展。"}],
-["万","wàn","ten thousand","T",{n:"Chinese counts in 萬 (10,000s): 三萬五 = 35,000. A gaming 筆電 ≈ NT$30,000-60,000.",ex:"這台筆電要三萬五千塊。"}]
+["万","wàn","ten thousand","T",{n:"Chinese counts in 萬 (10,000s): 三萬五 = 35,000. A gaming 筆電 ≈ NT$30,000-60,000.",ex:"這台筆電要三萬五千塊。"}],
+/* ---- HSK 3 PACK ---- */
+["阿姨","āyí","aunt; ma'am","3",{n:"Used for any woman a generation older — shop aunties, food-stall vendors, elevator ladies. Warmer than 女士.",ex:"阿姨，這個便當多少錢？"}],
+["爱好","àihào","hobby; interest","3",{tw:["兴趣","xìngqù"],n:"Taiwan everyday speech prefers 興趣 or 嗜好 shìhào over 愛好.",ex:"你有什麼興趣愛好？"}],
+["安静","ānjìng","quiet","3",{ex:"圖書館裡要保持安靜。"}],
+["把","bǎ","(BA construction); handle","3",{n:"把 places the object before the verb: 我把作業做完了 — I finished the homework. Common in everyday Taiwan speech.",ex:"你把報告寫完了嗎？"}],
+["搬","bān","to move (house or objects)","3",{ex:"我上個月搬到新家了。"}],
+["帮忙","bāngmáng","to help","3",{ex:"你能幫忙搬一下這個箱子嗎？"}],
+["包","bāo","bag; package","3",{ex:"我的包裡有悠遊卡和手機。"}],
+["北方","běifāng","the north","3",{ex:"台灣北部的天氣比南部濕冷。"}],
+["被","bèi","(passive marker)","3",{n:"被 introduces the doer of a passive action: 我的錢包被偷了 — my wallet was stolen. Often implies something unwanted happened.",ex:"我的錢包被偷了！"}],
+["鼻子","bízi","nose","3",{ex:"台北空氣品質不好的時候，鼻子會不舒服。"}],
+["必须","bìxū","must; have to","3",{ex:"面試時必須準時到達。"}],
+["变化","biànhuà","change; variation","3",{ex:"台灣的天氣變化很大，要多帶一件外套。"}],
+["冰箱","bīngxiāng","refrigerator","3",{ex:"冰箱裡還有飲料嗎？"}],
+["不但","búdàn","not only (…but also)","3",{n:"Pattern: 不但…而且… — not only X but also Y. Useful in interviews and formal writing.",ex:"他不但聰明，而且非常認真。"}],
+["菜单","càidān","menu","3",{ex:"不好意思，可以給我菜單嗎？"}],
+["差","chà","to differ; lacking; not up to standard","3",{n:"差 has many roles: 差一點 almost, 差不多 about the same, 差五分八點 five to eight o'clock.",ex:"現在差五分八點，快去開會。"}],
+["超市","chāoshì","supermarket","3",{n:"全聯 PX Mart is Taiwan's biggest supermarket chain — cheap and everywhere. 家樂福 Carrefour and 好市多 Costco are the big-box rivals.",ex:"我去全聯超市買晚餐的食材。"}],
+["城市","chéngshì","city","3",{ex:"台北是台灣最大的城市。"}],
+["出发","chūfā","to depart; to set off","3",{ex:"我們早上八點出發去台南。"}],
+["出现","chūxiàn","to appear; to emerge","3",{ex:"畫面突然出現了錯誤訊息。"}],
+["除了","chúle","except; besides; in addition to","3",{ex:"除了中文，我還想學日語。"}],
+["词典","cídiǎn","dictionary","3",{tw:["字典","zìdiǎn"],n:"Taiwan says 字典 or 辭典; 字典 is the everyday term. 教育部重編國語辭典 is the authoritative free online dictionary.",ex:"我用手機查字典學新單字。"}],
+["聪明","cōngming","smart; clever","3",{ex:"你真聰明，這個問題解決得很快。"}],
+["打扫","dǎsǎo","to clean; to sweep","3",{ex:"週末我會打掃家裡。"}],
+["打算","dǎsuàn","to plan; to intend","3",{ex:"你打算什麼時候換工作？"}],
+["大概","dàgài","approximately; probably","3",{ex:"他大概下午三點會到。"}],
+["担心","dānxīn","to worry","3",{ex:"不用擔心，你一定找得到好工作。"}],
+["当然","dāngrán","of course; naturally","3",{ex:"當然可以，你說吧。"}],
+["地方","dìfang","place; area","3",{ex:"台北有很多好吃好玩的地方。"}],
+["地图","dìtú","map","3",{ex:"我用Google地圖找路。"}],
+["电梯","diàntī","elevator; lift","3",{ex:"電梯在大廳右邊。"}],
+["动物","dòngwù","animal","3",{n:"台北市立動物園 Taipei Zoo is in Muzha — famous for pandas 貓熊 and the Formosan black bear 台灣黑熊.",ex:"週末我帶孩子去動物園看動物。"}],
+["发现","fāxiàn","to discover; to find","3",{ex:"我發現這家店的滷肉飯超好吃。"}],
+["方便","fāngbiàn","convenient","3",{ex:"台北的交通很方便，到哪都可以搭捷運。"}],
+["放","fàng","to put; to place","3",{ex:"你把報告放在我桌上就好。"}],
+["附近","fùjìn","nearby; in the vicinity","3",{ex:"公司附近有很多餐廳可以吃午餐。"}],
+["改变","gǎibiàn","to change; to transform","3",{ex:"換工作讓我的生活改變了很多。"}],
+["感冒","gǎnmào","cold; flu; to catch a cold","3",{n:"台灣健保 NHI makes a clinic visit just NT$150 co-pay — locals go to the doctor even for mild colds.",ex:"我感冒了，今天去診所拿藥。"}],
+["感谢","gǎnxiè","to thank; to be grateful","3",{ex:"感謝你的幫忙，真的幫了我很大的忙。"}],
+["刚才","gāngcái","just now; a moment ago","3",{tw:["刚刚","gānggāng"],n:"Both work in Taiwan; 剛剛 is more common in casual speech.",ex:"你剛才說什麼？我沒有聽清楚。"}],
+["根据","gēnjù","according to; based on","3",{ex:"根據市場調查，這個產品很受歡迎。"}],
+["跟","gēn","with; and; to follow","3",{ex:"我跟同事一起去吃午餐。"}],
+["更","gèng","even more; still more","3",{ex:"這個方案比上一個更好。"}],
+["公里","gōnglǐ","kilometer","3",{ex:"從台北到台南大約三百公里。"}],
+["公园","gōngyuán","park","3",{n:"大安森林公園 Da'an Forest Park is Taipei's Central Park — free, shady, and full of squirrels and morning tai-chi crowds.",ex:"我每天早上去大安森林公園跑步。"}],
+["故事","gùshi","story; tale","3",{ex:"你有沒有有趣的面試故事可以分享？"}],
+["刮风","guāfēng","to be windy","3",{ex:"颱風來之前持續在刮風。"}],
+["关系","guānxi","relationship; connection","3",{n:"Also 沒關係 no problem. In Taiwan business culture, 人脈關係 networking is everything.",ex:"在台灣，人脈關係非常重要。"}],
+["过去","guòqù","the past; to pass by","3",{ex:"過去十年我一直在做行銷工作。"}],
+["还是","háishi","or (in questions); had better","3",{ex:"你要喝咖啡，還是奶茶？"}],
+["花","huā","flower; to spend (time or money)","3",{ex:"我花了兩個小時寫這份報告。"}],
+["画","huà","painting; to draw","3",{ex:"她工作之餘喜歡去上畫畫課。"}],
+["坏","huài","bad; broken","3",{ex:"我的手機壞了，需要送去修。"}],
+["换","huàn","to exchange; to change","3",{ex:"我想換一份新工作。"}],
+["护照","hùzhào","passport","3",{n:"中華民國護照 ROC passport has visa-free access to 140+ countries — one of Asia's strongest travel documents.",ex:"出國前要記得帶護照。"}],
+["计划","jìhuà","plan; to plan","3",{ex:"你有沒有計劃去其他國家工作？"}],
+["记得","jìde","to remember","3",{ex:"你還記得我們第一次見面的地方嗎？"}],
+["继续","jìxù","to continue","3",{ex:"我要繼續努力找工作。"}],
+["加","jiā","to add; plus","3",{ex:"珍珠奶茶要加少冰、半糖。"}],
+["简单","jiǎndān","simple; easy","3",{ex:"這道題聽起來難，其實很簡單。"}],
+["件","jiàn","(measure for clothes and matters)","3",{ex:"我面試要穿哪件衣服比較好？"}],
+["见面","jiànmiàn","to meet (someone)","3",{ex:"我們明天幾點見面？"}],
+["教","jiāo","to teach","3",{ex:"你能教我怎麼用這個軟體嗎？"}],
+["接","jiē","to receive; to pick up (call or person)","3",{ex:"我去機場接朋友。"}],
+["节目","jiémù","program; show; episode","3",{n:"台灣有豐富的電視美食和旅遊節目。Streaming 串流 platforms like Netflix TW and KKTV are now huge.",ex:"台灣有很多好看的美食節目。"}],
+["结婚","jiéhūn","to get married","3",{ex:"他們去年結婚了，婚禮很漂亮。"}],
+["解决","jiějué","to solve; to resolve","3",{ex:"這個問題要怎麼解決？"}],
+["经常","jīngcháng","often; frequently","3",{ex:"我經常在公司附近的咖啡廳工作。"}],
+["精彩","jīngcǎi","wonderful; brilliant; exciting","3",{ex:"Computex的產品發表非常精彩。"}],
+["久","jiǔ","long (time)","3",{ex:"好久不見，你還好嗎？"}],
+["觉得","juéde","to feel; to think","3",{ex:"我覺得這個設計很有創意。"}],
+["开始","kāishǐ","to start; to begin","3",{ex:"我開始學中文是三年前的事了。"}],
+["可爱","kě'ài","cute; adorable","3",{ex:"你的貓好可愛！"}],
+["空气","kōngqì","air","3",{ex:"台灣東部的空氣比台北好很多。"}],
+["哭","kū","to cry","3",{ex:"這部電影太感人了，我都哭了。"}],
+["筷子","kuàizi","chopsticks","3",{n:"Stainless steel chopsticks are standard at home in Taiwan; bamboo disposables at restaurants. Standing chopsticks upright in a rice bowl is a funeral taboo.",ex:"台灣用筷子吃飯，你會用嗎？"}],
+["蓝","lán","blue","3",{ex:"今天的天空藍得很漂亮。"}],
+["礼物","lǐwù","gift; present","3",{n:"Gift taboos in Taiwan: no clocks 時鐘 (送鐘 sounds like 送終 funeral rites), no shoes, no umbrellas (傘 sounds like 散 separation).",ex:"我買了一份禮物給同事當生日驚喜。"}],
+["联系","liánxì","to contact; to keep in touch","3",{ex:"面試後，我發了一封郵件聯繫對方。"}],
+["练习","liànxí","to practice","3",{ex:"每天練習說中文，進步會很快。"}],
+["留","liú","to stay; to leave behind","3",{ex:"面試結束後可以留下名片嗎？"}],
+["楼","lóu","floor; building","3",{ex:"我們公司在八樓。"}],
+["绿","lǜ","green","3",{ex:"台灣的山都是綠色的，非常美。"}],
+["马上","mǎshàng","right away; immediately","3",{ex:"我馬上去，等我五分鐘。"}],
+["满意","mǎnyì","satisfied; content","3",{ex:"客戶對這個提案非常滿意。"}],
+["面条","miàntiáo","noodles","3",{n:"台灣牛肉麵 beef noodle soup is the unofficial national dish. The annual 台北牛肉麵節 festival draws thousands.",ex:"台灣牛肉麵是世界知名的料理。"}],
+["明白","míngbai","to understand; to realize","3",{ex:"你明白我的意思嗎？"}],
+["拿","ná","to take; to hold; to grab","3",{ex:"你幫我拿一下這個包嗎？"}],
+["奶奶","nǎinai","paternal grandmother","3",{n:"In Taiwan 阿嬤 ā-má (Hokkien/Taiwanese) is just as common for grandma.",ex:"我奶奶住在台中，每個月我去看她一次。"}],
+["南","nán","south","3",{ex:"台南是台灣南部最有名的美食城市。"}],
+["难","nán","difficult; hard","3",{ex:"中文的聲調很難，需要多練習。"}],
+["年级","niánjí","grade; year (in school)","3",{ex:"我大學二年級開始學中文。"}],
+["爬山","páshān","to hike; to climb a mountain","3",{n:"台北周邊步道很豐富：陽明山、象山、虎山。象山 Elephant Mountain gives the famous 101 skyline view.",ex:"週末我喜歡去陽明山爬山。"}],
+["盘子","pánzi","plate; dish","3",{ex:"請把盤子放到洗碗槽裡。"}],
+["皮肤","pífū","skin","3",{ex:"台灣太陽很大，出門要記得防曬保護皮膚。"}],
+["瓶子","píngzi","bottle","3",{ex:"我自己帶水瓶，不買瓶裝水。"}],
+["其实","qíshí","actually; in fact","3",{ex:"其實這個工作沒有那麼難。"}],
+["奇怪","qíguài","strange; weird","3",{ex:"這個結果很奇怪，一定是哪裡出了問題。"}],
+["签证","qiānzhèng","visa","3",{n:"ROC passport holders enjoy visa-free entry to Japan, South Korea, Europe and more — 台灣護照很好用 is a source of national pride.",ex:"去日本不需要簽證，台灣護照很方便。"}],
+["清楚","qīngchǔ","clear; clearly","3",{ex:"你能說清楚一點嗎？我沒有聽懂。"}],
+["请假","qǐngjià","to take leave; to request a day off","3",{ex:"我身體不舒服，需要請假一天。"}],
+["然后","ránhòu","then; after that","3",{ex:"先完成報告，然後去吃飯。"}],
+["热情","rèqíng","enthusiastic; warm","3",{n:"台灣人的熱情好客 rèqíng hǎokè (warm hospitality) is world-famous — the #1 reason expats stay.",ex:"台灣人對外國人非常熱情。"}],
+["认真","rènzhēn","serious; earnest; diligent","3",{ex:"他工作非常認真，老闆很欣賞他。"}],
+["如果","rúguǒ","if; in case","3",{ex:"如果你有問題，隨時可以問我。"}],
+["伞","sǎn","umbrella","3",{n:"Taipei ranks among the rainiest capitals in Asia. An umbrella is the city's unofficial accessory.",ex:"台北常下雨，出門一定要帶傘。"}],
+["上网","shàngwǎng","to go online","3",{n:"Taiwan internet = 網路 wǎnglù (not 網絡). Free WiFi at all MRT stations, 7-11s, and most cafés.",ex:"我在咖啡廳上網工作。"}],
+["生气","shēngqì","angry; to get angry","3",{ex:"你不用生氣，我們再討論一次。"}],
+["声音","shēngyīn","sound; voice","3",{ex:"他說話的聲音很有說服力。"}],
+["世界","shìjiè","world","3",{n:"台灣在半導體、醫療、美食等領域的貢獻影響全世界 — small island, huge impact.",ex:"台灣的珍珠奶茶征服了全世界。"}],
+["叔叔","shūshu","paternal uncle","3",{ex:"我叔叔在竹科的科技公司工作。"}],
+["刷牙","shuāyá","to brush teeth","3",{ex:"每天早晚都要刷牙。"}],
+["树","shù","tree","3",{ex:"台北的公園裡有很多大樹，夏天很涼快。"}],
+["数学","shùxué","math; mathematics","3",{ex:"行銷工作也需要懂數學和數據分析。"}],
+["双","shuāng","pair; double; both","3",{ex:"我買了一雙新球鞋準備去健身房。"}],
+["虽然","suīrán","although; even though","3",{ex:"雖然找工作很辛苦，但我不放棄。"}],
+["所以","suǒyǐ","therefore; so","3",{ex:"我很喜歡台灣，所以決定繼續留在這裡。"}],
+["太阳","tàiyáng","the sun","3",{ex:"台灣的太陽很大，夏天出門要防曬。"}],
+["讨论","tǎolùn","to discuss","3",{ex:"我們開會討論新的行銷策略。"}],
+["特别","tèbié","special; especially","3",{ex:"台灣的夜市文化特別有魅力。"}],
+["体育","tǐyù","sports; physical education","3",{ex:"我大學選修了體育課，學了一年拳擊。"}],
+["甜","tián","sweet","3",{ex:"台灣的水果非常甜，好吃到不行。"}],
+["头发","tóufa","hair (on head)","3",{ex:"她的頭髮很長，非常好看。"}],
+["图书馆","túshūguǎn","library","3",{n:"台北市立圖書館 has branches citywide with free e-books. 國家圖書館 near CKS Memorial Hall is the national collection.",ex:"我在圖書館讀書，準備面試。"}],
+["突然","tūrán","suddenly; all of a sudden","3",{ex:"會議進行到一半，他突然說要離職。"}],
+["完成","wánchéng","to complete; to finish","3",{ex:"我終於完成了這個大型專案。"}],
+["温度","wēndù","temperature","3",{ex:"台北夏天的溫度常常超過三十五度。"}],
+["文化","wénhuà","culture","3",{ex:"台灣的文化融合了中華、日本和原住民的元素。"}],
+["习惯","xíguàn","habit; to be accustomed to","3",{ex:"我已經習慣了台北快節奏的生活。"}],
+["洗澡","xǐzǎo","to take a shower; to bathe","3",{n:"Showering at night before bed is the norm in Taiwan — morning showers are seen as unusual.",ex:"我每天晚上洗澡，台灣人大多也這樣。"}],
+["先","xiān","first; before (someone else)","3",{ex:"你先說，我在聽。"}],
+["相信","xiāngxìn","to believe; to trust","3",{ex:"我相信你一定可以通過面試。"}],
+["像","xiàng","to resemble; to be like","3",{ex:"這個設計風格很像蘋果的產品。"}],
+["笑话","xiàohuà","joke","3",{ex:"他很幽默，常常說笑話讓大家開心。"}],
+["选择","xuǎnzé","to choose; choice","3",{ex:"找工作要選擇適合自己文化的公司。"}],
+["牙","yá","tooth","3",{ex:"我要去看牙醫，牙齒痛了好幾天了。"}],
+["严重","yánzhòng","serious; severe","3",{ex:"這個問題很嚴重，要馬上處理。"}],
+["一共","yīgòng","altogether; in total","3",{ex:"一共多少錢？我用悠遊卡付。"}],
+["一样","yīyàng","the same; alike","3",{ex:"台灣和日本的飲食文化有些地方很一樣。"}],
+["以后","yǐhòu","after; later; in the future","3",{ex:"以後如果有機會，歡迎來台灣工作。"}],
+["以前","yǐqián","before; previously; in the past","3",{ex:"以前我不會說中文，現在進步很多了。"}],
+["音乐","yīnyuè","music","3",{n:"Taiwan is the birthplace of C-pop: 五月天 Mayday, 周杰倫 Jay Chou, and 鄧麗君 Teresa Teng all came from here.",ex:"我工作的時候喜歡聽音樂。"}],
+["银行","yínháng","bank","3",{n:"台灣銀行 Bank of Taiwan, 玉山銀行 E.Sun, 台新銀行 Taishin — and every 7-11 has an iCash ATM.",ex:"我去銀行換了一些新台幣。"}],
+["应该","yīnggāi","should; ought to","3",{ex:"求職信應該寫清楚你的工作經驗。"}],
+["邮局","yóujú","post office","3",{n:"台灣郵局 Chunghwa Post goes far beyond mail — savings accounts, insurance, and package delivery.",ex:"我去郵局寄了一個包裹給家人。"}],
+["越来越","yuèláiyuè","more and more; increasingly","3",{ex:"我的中文越來越好了！"}],
+["杂志","zázhì","magazine","3",{ex:"我在等捷運的時候看雜誌。"}],
+["照顾","zhàogù","to take care of; to look after","3",{ex:"生病的時候要好好照顧自己。"}],
+["照片","zhàopiàn","photo; photograph","3",{tw:["相片","xiāngpiàn"],n:"Taiwan uses both 照片 and 相片; 照片 dominates on social media and LINE.",ex:"我把Computex的照片放到LinkedIn上了。"}],
+["只","zhǐ","only; merely","3",{ex:"我只想找一份能讓我發揮創意的工作。"}],
+["终于","zhōngyú","finally; at last","3",{ex:"找了三個月，我終於找到新工作了！"}],
+["重要","zhòngyào","important","3",{ex:"人脈在求職過程中非常重要。"}],
+["周末","zhōumò","weekend","3",{ex:"這個週末你有什麼計劃？"}],
+["注意","zhùyì","to pay attention; to take note","3",{ex:"開車要注意安全。"}],
+["嘴","zuǐ","mouth","3",{ex:"他說話很直，嘴巴不饒人。"}],
+["最近","zuìjìn","recently; lately","3",{ex:"最近求職市場競爭很激烈。"}]
 ];
 /* ============ RADICALS [glyph, meaning, story, example-chars] ============ */
 const RAD=[
@@ -796,7 +1154,7 @@ const SB=[
 {s:["下个","礼拜","我","有","面试"],p:"Xià ge lǐbài wǒ yǒu miànshì.",e:"I have an interview next week."}
 ];
 /* ============ PERSONAL SENTENCE BANK (Core ᛟ) — {h,p,e,c,d} ============ */
-const PSBCATS=[["daily","ᚷ Daily life"],["work","ᚨ Work / job hunt"],["mkt","✒ Marketing / copy"],["tech","ᚲ Circuit · Gaming / AI PC"],["fit","♻ Pulse · Fitness"],["tw","☀ Taiwan life"],["soc","☺ Social"],["grow","↑ Personal growth"],["vargr","ᛟ VARGR / Forgebound"]];
+const PSBCATS=[["daily","Daily life"],["work","Work / job hunt"],["mkt","Marketing / copy"],["tech","Circuit · Gaming / AI PC"],["fit","Pulse · Fitness"],["tw","Taiwan life"],["soc","Social"],["grow","Personal growth"],["vargr","VARGR / Forgebound"]];
 const PSB=[
 {h:"我每天早上六点半起床。",p:"Wǒ měitiān zǎoshang liù diǎn bàn qǐchuáng.",e:"I get up at 6:30 every morning.",c:"daily",d:1},
 {h:"我先洗澡，然后吃早餐。",p:"Wǒ xiān xǐzǎo, ránhòu chī zǎocān.",e:"I shower first, then eat breakfast.",c:"daily",d:2},
@@ -899,7 +1257,7 @@ const CAREER=[
 ];
 /* ================= STATE ================= */
 const KEY="zhTrainerV4";
-const DEFAULTS={cards:{},streak:0,lastDay:"",newPerDay:8,rate:0.9,pitch:1.0,voiceName:"",plan:{},doneToday:{},script:"t",pinyinShow:"reveal",toneColors:true,frontMode:"hanzi",xp:0,proIncluded:true,taiwan:true,lessonLog:[],mistakes:{},myBank:[],sessMode:"full"};
+const DEFAULTS={cards:{},streak:0,lastDay:"",newPerDay:8,rate:0.9,pitch:1.0,voiceName:"",plan:{},doneToday:{},script:"t",pinyinShow:"reveal",toneColors:true,frontMode:"hanzi",xp:0,proIncluded:true,taiwan:true,lessonLog:[],mistakes:{},myBank:[],sessMode:"full",bopomofo:false};
 let st=JSON.parse(localStorage.getItem(KEY)||"null");
 if(!st){
 const old=JSON.parse(localStorage.getItem("zhTrainerV3")||localStorage.getItem("zhTrainerV2")||localStorage.getItem("zhTrainerV1")||"null");
@@ -933,15 +1291,52 @@ function recordMiss(kind,wi,label){
 const word=(wi!=null&&wi>=0);
 const k=word?("w"+wi):("x"+(label||kind));
 const m=st.mistakes[k]=st.mistakes[k]||{n:0,kinds:{},wi:word?wi:null,label:label||null,last:""};
-m.n++;m.kinds[kind]=(m.kinds[kind]||0)+1;m.last=today();save();
+m.n++;m.kinds[kind]=(m.kinds[kind]||0)+1;m.last=today();
+if(word){const tn=tone(syls(wPin(W[wi]))[0]||"");m.tones=m.tones||{};m.tones[tn]=(m.tones[tn]||0)+1}
+if(sess&&sess.bi!=null){m.blocks=m.blocks||{};m.blocks[sess.bi]=(m.blocks[sess.bi]||0)+1}
+save();
 if(sess&&sess.miss)sess.miss.push(word?T(wHanzi(W[wi])):(label||kind));
 }
 function weakIds(){return Object.values(st.mistakes).filter(m=>m.wi!=null).sort((a,b)=>b.n-a.n).map(m=>m.wi)}
 function missMap(){const m={};Object.values(st.mistakes).forEach(e=>{if(e.wi!=null)m[e.wi]=e.n});return m}
 function weakDueFirst(ids){const mm=missMap();const weak=ids.filter(i=>mm[i]).sort((a,b)=>mm[b]-mm[a]);return weak.concat(shuffle(ids.filter(i=>!mm[i])))}
 function weightedLPick(pool){const mm=missMap();const exp=[];pool.forEach(i=>{const n=1+(mm[i]||0);for(let k=0;k<n;k++)exp.push(i)});return exp[Math.floor(Math.random()*exp.length)]}
+/* ================= FORGE BRAIN ================= */
+function computeBrain(){
+const toneCounts={1:0,2:0,3:0,4:0};
+const typeCounts={};
+const typeMap={card:"card",listening:"listen",listen:"listen",tone:"tone",typing:"type",type:"type",writing:"speak",speak:"speak",quiz:"listen",dialogue:"listen",radical:"card",number:"type"};
+Object.values(st.mistakes).forEach(m=>{
+if(m.tones)Object.entries(m.tones).forEach(([t,n])=>{if(toneCounts[+t]!==undefined)toneCounts[+t]+=n});
+Object.entries(m.kinds||{}).forEach(([k,n])=>{const nk=typeMap[k]||k;typeCounts[nk]=(typeCounts[nk]||0)+n});
+});
+const toneTotal=Object.values(toneCounts).reduce((a,b)=>a+b,0);
+const toneAvg=toneTotal/4;
+const weakTones=Object.entries(toneCounts).filter(([,n])=>n>toneAvg).sort((a,b)=>b[1]-a[1]).map(([t])=>+t);
+const typeVals=Object.values(typeCounts);
+const typeAvg=typeVals.length?typeVals.reduce((a,b)=>a+b,0)/typeVals.length:0;
+const weakTypes=Object.entries(typeCounts).filter(([,n])=>n>typeAvg).sort((a,b)=>b[1]-a[1]).map(([t])=>t);
+const soon=now()+2*DAY;
+const mm=missMap();
+const atRiskWords=W.map((w,i)=>i).filter(i=>{const c=st.cards[i];return c&&c.reps>0&&c.due<=soon&&(mm[i]||0)>=2}).sort((a,b)=>(mm[b]||0)-(mm[a]||0)).slice(0,5);
+const log=st.lessonLog||[];
+const d7=new Date(now()-7*DAY).toISOString().slice(0,10);
+const d14=new Date(now()-14*DAY).toISOString().slice(0,10);
+const last7=log.filter(e=>e.date>=d7);
+const prior7=log.filter(e=>e.date>=d14&&e.date<d7);
+const avgW=arr=>arr.length?arr.reduce((a,e)=>a+(e.weak?e.weak.length:0),0)/arr.length:0;
+const lw=avgW(last7),pw=avgW(prior7);
+let trend="stable";
+if(last7.length>=2&&prior7.length>=2){if(lw<pw*0.8)trend="improving";else if(lw>pw*1.2)trend="declining"}
+return {weakTones,weakTypes,atRiskWords,trend};
+}
+function sessionConfusedIds(){
+if(!sess||!sess.miss||!sess.miss.length)return [];
+const missSet=new Set(sess.miss);
+return W.map((w,i)=>i).filter(i=>missSet.has(T(wHanzi(W[i]))));
+}
 let weakQueue=null;
-function reviewWeak(){const ids=weakIds().slice(0,20);if(!ids.length){alert("No weak words logged yet — go make some mistakes first!");return}weakQueue=ids;go("cards")}
+function reviewWeak(){const ids=weakIds().slice(0,20);if(!ids.length){alert("No weak words logged yet — go make some mistakes first!");return}weakQueue=ids;codexMode="train";go("codex")}
 function level(){return Math.floor(Math.sqrt((st.xp||0)/50))+1}
 function lvlInfo(){const l=level();const cur=(l-1)*(l-1)*50,next=l*l*50;return{l,pct:Math.min(100,Math.round((st.xp-cur)/(next-cur)*100)),need:next-st.xp}}
 /* ===== Taiwan-aware accessors ===== */
@@ -1007,6 +1402,38 @@ return esc(chunk);
 }).join("");
 }
 function numPinyin(p,keepNeutral){return syls(p).map(s=>{const t=tone(s);return plainPinyin(s)+(t===5?(keepNeutral?"5":""):t)}).join("")}
+/* ================= BOPOMOFO (注音) ENGINE ================= */
+function pinToBopo(pStr){
+const BT=['','','ˊ','ˇ','ˋ','˙'];
+const BF={'zhi':'ㄓ','chi':'ㄔ','shi':'ㄕ','ri':'ㄖ','zi':'ㄗ','ci':'ㄘ','si':'ㄙ',
+'yi':'ㄧ','ya':'ㄧㄚ','ye':'ㄧㄝ','yao':'ㄧㄠ','you':'ㄧㄡ','yan':'ㄧㄢ','yin':'ㄧㄣ','yang':'ㄧㄤ','ying':'ㄧㄥ','yong':'ㄩㄥ',
+'wu':'ㄨ','wa':'ㄨㄚ','wo':'ㄨㄛ','wai':'ㄨㄞ','wei':'ㄨㄟ','wan':'ㄨㄢ','wen':'ㄨㄣ','wang':'ㄨㄤ','weng':'ㄨㄥ',
+'yu':'ㄩ','yue':'ㄩㄝ','yuan':'ㄩㄢ','yun':'ㄩㄣ','yo':'ㄧㄛ'};
+const BI=[['zh','ㄓ'],['ch','ㄔ'],['sh','ㄕ'],['b','ㄅ'],['p','ㄆ'],['m','ㄇ'],['f','ㄈ'],
+['d','ㄉ'],['t','ㄊ'],['n','ㄋ'],['l','ㄌ'],['g','ㄍ'],['k','ㄎ'],['h','ㄏ'],
+['j','ㄐ'],['q','ㄑ'],['x','ㄒ'],['r','ㄖ'],['z','ㄗ'],['c','ㄘ'],['s','ㄙ']];
+const BN=[['iang','ㄧㄤ'],['uang','ㄨㄤ'],['iong','ㄩㄥ'],['ian','ㄧㄢ'],['iao','ㄧㄠ'],['ing','ㄧㄥ'],
+['uan','ㄨㄢ'],['uai','ㄨㄞ'],['ang','ㄤ'],['eng','ㄥ'],['ong','ㄨㄥ'],
+['ia','ㄧㄚ'],['ie','ㄧㄝ'],['iu','ㄧㄡ'],['in','ㄧㄣ'],
+['ua','ㄨㄚ'],['uo','ㄨㄛ'],['ui','ㄨㄟ'],['un','ㄨㄣ'],
+['ve','ㄩㄝ'],['van','ㄩㄢ'],['vn','ㄩㄣ'],['v','ㄩ'],
+['ai','ㄞ'],['ei','ㄟ'],['ao','ㄠ'],['ou','ㄡ'],['an','ㄢ'],['en','ㄣ'],['er','ㄦ'],
+['a','ㄚ'],['o','ㄛ'],['e','ㄜ'],['i','ㄧ'],['u','ㄨ']];
+return syls(pStr).map(s=>{
+const t=tone(s),pl=plainPinyin(s);
+let bstr;
+if(BF[pl]){bstr=BF[pl]+BT[t]}else{
+let ini='',fin=pl;
+for(const[k,v]of BI){if(pl.startsWith(k)){ini=v;fin=pl.slice(k.length);break}}
+if(['ㄐ','ㄑ','ㄒ'].includes(ini))fin=fin.replace(/^u/,'v');
+let sym='';for(const[k,v]of BN){if(fin===k){sym=v;break}}
+bstr=ini+(sym||fin)+BT[t];
+}
+return st.toneColors?'<span class="t'+t+'">'+bstr+'</span>':bstr;
+}).join(' ');
+}
+function bopoHTML(p){return st.bopomofo?'<div class="bopo">'+pinToBopo(p)+'</div>':'';}
+/* ================================================ */
 function cleanHanzi(h){return h.replace(/[。，！？、：；·…—\s!?,.'’0-9a-zA-Z]/g,"")}
 function lcs(a,b){const m=a.length,n=b.length;const dp=Array.from({length:m+1},()=>new Array(n+1).fill(0));for(let i=1;i<=m;i++)for(let j=1;j<=n;j++)dp[i][j]=a[i-1]===b[j-1]?dp[i-1][j-1]+1:Math.max(dp[i-1][j],dp[i][j-1]);return dp[m][n]}
 /* ===== notes & radical breakdown HTML ===== */
@@ -1016,7 +1443,7 @@ let h="";
 if(x.tw&&st.taiwan)h+='<div class="note">🇹🇼 Taiwan usage shown. Mainland: <span class="hanzi">'+T(w[0])+'</span> '+esc(w[1])+'</div>';
 else if(x.tw&&!st.taiwan)h+='<div class="note">🇹🇼 In Taiwan: <span class="hanzi">'+T(x.tw[0])+'</span> '+esc(x.tw[1])+'</div>';
 if(x.n)h+='<div class="note cult">💡 '+esc(x.n)+'</div>';
-if(x.ex)h+='<div class="note" style="border-left:3px solid var(--acc);padding-left:8px">📝 <span class="hanzi">'+esc(x.ex)+'</span> <button class="btn sm" onclick="speak(this.previousElementSibling.textContent)">🔊</button></div>';
+if(x.ex)h+='<div class="note" style="border-left:3px solid var(--acc);padding-left:8px;font-size:15px">📝 <span class="hanzi">'+T(x.ex)+'</span> <button class="btn sm" onclick="speak(this.previousElementSibling.textContent)">🔊</button></div>';
 return h;
 }
 function breakHTML(hz){
@@ -1044,26 +1471,27 @@ started=true;
 return s;
 }
 /* ================= NAV / HUD ================= */
-const TABS=[["home","⌂ Home"],["cards","<i class='glyph'>ᛊ</i>Script"],["listen","<i class='glyph'>ᛖ</i>Echo"],["speak","<i class='glyph'>ᚹ</i>Voice"],["pinyin","<i class='glyph'>ᛁ</i>Tones"],["dlg","<i class='glyph'>ᚷ</i>Gate"],["games","<i class='glyph'>ᚠ</i>Forge"],["write","<i class='glyph'>ᚺ</i>Hand"],["type","<i class='glyph'>ᛏ</i>Keys"],["rad","<i class='glyph'>ᚱ</i>Runes"],["hunt","<i class='glyph'>ᚨ</i>Hunt"],["core","<i class='glyph'>ᛟ</i>Core"],["quiz","<i class='glyph'>ᚦ</i>Boss"],["words","<i class='glyph'>ᛚ</i>Lexicon"],["archive","<i class='glyph'>ᛞ</i>Archive"]];
-const TABTITLE={home:"Dashboard & start a session",cards:"Reading & flashcards (spaced repetition)",listen:"Listening comprehension",speak:"Speaking & pronunciation (mic)",pinyin:"Tones & pinyin lab",dlg:"Dialogues — real Taiwan scenes",games:"Sentence builder & number games",write:"Handwriting — stroke order",type:"Typing practice (漢字 / pinyin)",rad:"Radicals & character components",hunt:"Career Mandarin — interviews, products",core:"Your personal sentence bank",quiz:"Mixed boss quiz",words:"Vocabulary list",archive:"Logs, mistakes & review history"};
-let tab="home";
+let codexMode="train",voiceMode="speak",drillMode="sent",marksMode="hand",settingsOpen=false;
+const TABS=[["forge","⌂ Forge"],["codex","<i class='glyph'>ᛊ</i>Codex"],["voice","<i class='glyph'>ᚹ</i>Voice"],["gate","<i class='glyph'>ᚷ</i>Gate"],["drill","<i class='glyph'>ᚠ</i>Drill"],["marks","<i class='glyph'>ᚺ</i>Marks"],["hunt","<i class='glyph'>ᚨ</i>Hunt"],["core","<i class='glyph'>ᛟ</i>Core"],["archive","<i class='glyph'>ᛞ</i>Archive"]];
+const TABTITLE={forge:"Dashboard — session launcher & Forge Report",codex:"Codex — flashcards & vocabulary reference",voice:"Voice — speaking, listening & tones",gate:"Gate — Taiwan life dialogues",drill:"Drill — sentence builder, numbers & typing",marks:"Marks — handwriting & radicals",hunt:"Hunt — career Mandarin",core:"Core — personal sentence bank",archive:"Archive — logs, mistakes & backups"};
+let tab="forge";
 function renderNav(){$("#nav").innerHTML=TABS.map(([id,l])=>'<button class="'+(tab===id?"on":"")+'" title="'+(TABTITLE[id]||"")+'" onclick="go(\''+id+'\')">'+l+'</button>').join("")}
 function go(t){tab=t;renderNav();render()}
 function renderHud(){
 const li=lvlInfo();
 $("#hud").innerHTML=(st.streak>0?"🔥 "+st.streak+" &nbsp;":"")+"⭐ Lv "+li.l+" · "+(st.xp||0)+" XP";
 }
-function render(){stopAudio();({home:rHome,cards:rCards,listen:rListen,speak:rSpeak,dlg:rDlg,games:rGames,write:rWrite,type:rType,pinyin:rPinyin,rad:rRad,quiz:rQuiz,words:rWords,hunt:rHunt,core:rCore,archive:rArchive})[tab]()}
+function render(){stopAudio();({forge:rForge,codex:rCodex,voice:rVoice,gate:rDlg,drill:rDrill,marks:rMarks,hunt:rHunt,core:rCore,archive:rArchive,quiz:rQuiz,home:rForge})[tab]()}
 /* ================= SESSION ENGINE ================= */
 const SBLOCKS=[
-{id:"warm",label:"Warm-up · flashcard reviews",min:8,tab:"cards"},
-{id:"new",label:"New words",min:6,tab:"cards"},
-{id:"listen",label:"Listening quiz",min:7,tab:"listen"},
-{id:"dlg",label:"Dialogue of the day",min:8,tab:"dlg"},
-{id:"game",label:"Games · sentences & numbers",min:6,tab:"games"},
-{id:"speak",label:"Speaking studio",min:7,tab:"speak"},
-{id:"write",label:"Handwriting",min:6,tab:"write"},
-{id:"rad",label:"Radical recognition",min:5,tab:"rad"},
+{id:"warm",label:"Warm-up · flashcard reviews",min:8,tab:"codex"},
+{id:"new",label:"New words",min:6,tab:"codex"},
+{id:"listen",label:"Listening quiz",min:7,tab:"voice"},
+{id:"dlg",label:"Dialogue of the day",min:8,tab:"gate"},
+{id:"game",label:"Games · sentences & numbers",min:6,tab:"drill"},
+{id:"speak",label:"Speaking studio",min:7,tab:"voice"},
+{id:"write",label:"Handwriting",min:6,tab:"marks"},
+{id:"rad",label:"Radical recognition",min:5,tab:"marks"},
 {id:"quiz",label:"Boss quiz",min:7,tab:"quiz"}
 ];
 const MODES={
@@ -1076,14 +1504,31 @@ let sess=null,sessTimer=null;
 function startSession(mode){
 mode=MODES[mode]?mode:(MODES[st.sessMode]?st.sessMode:"full");
 st.sessMode=mode;save();
-sess={bi:0,xp0:st.xp||0,t0:now(),mode,blocks:modeBlocks(mode),miss:[],newW:[],chars:[],dlgT:null};
+const md=MODES[mode];
+const brain=computeBrain();
+const blocks=modeBlocks(mode);
+const boostedIds=new Set();
+if(brain.weakTypes.includes("tone")){const b=blocks.find(x=>x.id==="quiz");if(b){b.min+=2;boostedIds.add(b.id)}}
+if(brain.weakTypes.includes("listen")){const b=blocks.find(x=>x.id==="listen");if(b){b.min+=2;boostedIds.add(b.id)}}
+let total=blocks.reduce((a,b)=>a+b.min,0);
+if(total>md.mins){
+let over=total-md.mins;
+for(let i=blocks.length-1;i>=0&&over>0;i--){if(!boostedIds.has(blocks[i].id)){const trim=Math.min(over,blocks[i].min-1);if(trim>0){blocks[i].min-=trim;over-=trim}}}
+for(let i=blocks.length-1;i>=0&&over>0;i--){const trim=Math.min(over,blocks[i].min-1);if(trim>0){blocks[i].min-=trim;over-=trim}}
+}
+sess={bi:0,xp0:st.xp||0,t0:now(),mode,blocks,miss:[],newW:[],chars:[],dlgT:null};
 startBlock();
 }
 function startBlock(){
 const b=sess.blocks[sess.bi];
 sess.endAt=now()+b.min*60*1000;
 if(b.id==="dlg"){dlgOpen=Math.floor(Math.random()*D.length);sess.dlgT=T(D[dlgOpen].t)}
-if(b.id==="rad")radMode="quiz";
+if(b.id==="rad"){radMode="quiz";marksMode="runes"}
+if(b.id==="write")marksMode="hand";
+if(b.id==="listen")voiceMode="echo";
+if(b.id==="speak")voiceMode="speak";
+if(b.id==="warm"||b.id==="new")codexMode="train";
+if(b.id==="game"){drillMode="sent";gMode="sb"}
 tab=b.tab;renderNav();render();
 renderSessBar();
 if(sessTimer)clearInterval(sessTimer);
@@ -1116,7 +1561,7 @@ newWords:[...new Set(sess.newW)],chars:[...new Set(sess.chars)],dialogue:sess.dl
 weak:weak.slice(0,12),review:weak.slice(0,6),aborted:!!aborted};
 st.lessonLog.unshift(entry);st.lessonLog=st.lessonLog.slice(0,90);save();
 sess=null;renderSessBar();touchStreak();
-tab="home";renderNav();
+tab="forge";renderNav();
 $("#main").innerHTML='<div class="box center">'+
 '<h2>'+(aborted?"Session ended":"🏆 Session complete!")+'</h2>'+
 '<div class="row" style="justify-content:center;margin-top:14px">'+
@@ -1131,10 +1576,49 @@ $("#main").innerHTML='<div class="box center">'+
 (entry.weak.length?'<p style="margin-top:8px;font-size:14px" class="mut">Weak points: <span class="hanzi red-t" style="font-size:16px">'+entry.weak.join("、")+'</span></p>':"")+
 (entry.review.length?'<p style="margin-top:8px;font-size:14px" class="gold">📌 Review tomorrow: <span class="hanzi" style="font-size:16px">'+entry.review.join("、")+'</span></p>':"")+
 '<p class="mut" style="margin-top:12px">'+(aborted?"Every minute counts — logged anyway. See you tomorrow.":"Logged to your Archive. Consistency beats intensity. 加油！")+'</p>'+
-'<div class="row" style="margin-top:14px;justify-content:center"><button class="btn" onclick="go(\'archive\')">▤ View log</button><button class="btn" onclick="go(\'home\')">Home</button></div>'+
+'<div class="row" style="margin-top:14px;justify-content:center"><button class="btn" onclick="go(\'archive\')">▤ View log</button><button class="btn" onclick="go(\'forge\')">Home</button></div>'+
 '</div>';
 }
 /* ================= HOME ================= */
+function forgeReportHTML(){
+if(!Object.keys(st.mistakes).length)return "";
+const brain=computeBrain();
+const mm=missMap();
+const top3=weakIds().slice(0,3);
+if(!top3.length&&!brain.weakTypes.length&&brain.trend==="stable")return "";
+const trendColor={"improving":"var(--green)","stable":"var(--mut)","declining":"var(--red)"}[brain.trend]||"var(--mut)";
+const trendArrow={"improving":"▲","stable":"→","declining":"▼"}[brain.trend]||"→";
+const typeLabel={card:"Flashcard recall",listen:"Listening",tone:"Tone ID",type:"Typed input",speak:"Voice output"};
+const focusSkill=brain.weakTypes.length?(typeLabel[brain.weakTypes[0]]||brain.weakTypes[0]):"none detected";
+const focusReason=brain.weakTypes.length?"highest miss-rate in training log":brain.weakTones.length?"tone errors dominate":"all systems nominal";
+return '<div class="box" style="border-color:var(--teal)">'+
+'<div class="row" style="align-items:center;margin-bottom:10px">'+
+'<b style="color:var(--teal);letter-spacing:1px;font-size:14px">ᚠ FORGE REPORT</b>'+
+'<span style="margin-left:auto;font-weight:700;font-size:12px;color:'+trendColor+'">'+trendArrow+' FORGE STATUS: '+esc(brain.trend.toUpperCase())+'</span>'+
+'</div>'+
+'<div class="row" style="gap:8px;flex-wrap:wrap;margin-bottom:10px">'+
+'<div class="stat" style="background:var(--c-iron);border:1px solid var(--c-frost)">'+
+'<b style="font-size:13px;color:var(--teal)">'+esc(focusSkill)+'</b>'+
+'<span>priority drill</span>'+
+'<div style="font-size:10px;color:var(--mut);margin-top:2px">'+esc(focusReason)+'</div>'+
+'</div>'+
+'<div class="stat" style="background:var(--c-iron);border:1px solid var(--c-steel)">'+
+'<b>'+(brain.weakTones.length?brain.weakTones.map(t=>'<span class="t'+t+'">'+t+'</span>').join(' '):'—')+'</b>'+
+'<span>weak signals</span>'+
+'<div style="font-size:10px;color:var(--mut);margin-top:2px">'+(brain.weakTones.length?'tone'+(brain.weakTones.length>1?"s":"")+" need reforging":"tone read nominal")+'</div>'+
+'</div>'+
+'</div>'+
+(top3.length?
+'<div style="font-size:10px;color:var(--mut);letter-spacing:2px;margin-bottom:6px;text-transform:uppercase">Reforge targets</div>'+
+'<div class="row" style="gap:8px;flex-wrap:wrap">'+
+top3.map(i=>'<div class="stat" style="background:var(--c-iron);border:1px solid var(--c-frost)">'+
+'<b class="hanzi" style="font-size:22px;color:var(--teal)">'+T(wHanzi(W[i]))+'</b>'+
+'<b style="font-size:13px;color:var(--red)">'+(mm[i]||0)+'\xd7</b>'+
+'<span>'+esc(W[i][2].split(";")[0].trim().slice(0,14))+'</span>'+
+'</div>').join("")+
+'</div>':"")
++'</div>';
+}
 function weakPanelHTML(){
 const ids=weakIds().slice(0,5);if(!ids.length)return "";
 const mm=missMap();
@@ -1171,7 +1655,7 @@ function seCardHTML(){const i=seIdxToday(),s=SELFEXPR[i];return '<div class="box
 '<div class="eng mut">'+esc(s.e)+'</div>'+
 '<div class="row" style="justify-content:center;margin-top:10px">'+
 '<button class="btn" onclick="speak(SELFEXPR['+i+'].h)">🔊 Listen</button>'+
-'<button class="btn acc" onclick="sePractice('+i+')">🎤 Practice aloud</button>'+
+'<button class="btn" style="border-color:var(--c-frost);color:var(--c-frost)" onclick="sePractice('+i+')">🎤 Practice aloud</button>'+
 '</div></div>';}
 function heatHTML(){
 let cells="";
@@ -1217,6 +1701,7 @@ $("#main").innerHTML=
 '</div>'+
 weakPanelHTML()+
 seCardHTML()+
+forgeReportHTML()+
 '<div class="box"><h3 style="margin-bottom:10px">Settings</h3>'+
 '<div class="row" style="gap:16px">'+
 '<span class="set">New words/day <input type="number" min="0" max="30" value="'+st.newPerDay+'" style="width:64px" onchange="st.newPerDay=+this.value;save();rHome()"></span>'+
@@ -1234,6 +1719,7 @@ seCardHTML()+
 '<option value="always"'+(st.pinyinShow==="always"?" selected":"")+'>Always</option></select></span>'+
 '<label class="set"><input type="checkbox"'+(st.toneColors?" checked":"")+' onchange="st.toneColors=this.checked;save();rHome()" style="accent-color:var(--acc)"> Tone colors</label>'+
 '<label class="set"><input type="checkbox"'+(st.proIncluded?" checked":"")+' onchange="st.proIncluded=this.checked;save();rHome()" style="accent-color:var(--purple)"> <span style="color:var(--purple)">Work vocab</span></label>'+
+'<label class="set"><input type="checkbox"'+(st.bopomofo?" checked":"")+' onchange="st.bopomofo=this.checked;save();rHome()" style="accent-color:var(--teal)"> <span style="color:var(--teal)">ㄅㄆㄇ 注音 Bopomofo</span></label>'+
 '</div>'+
 '<div class="row" style="gap:20px;margin-top:10px;align-items:center;flex-wrap:wrap">'+
 '<span class="set">Voice <select id="voiceSel" style="max-width:220px" onchange="st.voiceName=this.value;save();pickVoice()"><option>Loading…</option></select>'+
@@ -1244,6 +1730,125 @@ seCardHTML()+
 '<p style="margin-top:10px;font-size:13px" class="mut">Tones: <span class="t1">1 flat</span> · <span class="t2">2 rising</span> · <span class="t3">3 dip</span> · <span class="t4">4 falling</span> · <span class="t5">neutral</span> &nbsp;|&nbsp; Speak tab needs Chrome/Edge + mic. For 漢字 typing add the Microsoft Bopomofo or Pinyin (Traditional) keyboard, Win+Space to switch.</p>'+
 '</div>';
 populateVoiceSelect();
+}
+/* ================= FORGE (new home) ================= */
+function rForge(){
+const due=dueIds().length,nw=newIds().length,learned=Object.keys(st.cards).filter(isLearned).length;
+const proLearned=Object.keys(st.cards).filter(i=>isLearned(i)&&W[i][3]==="P").length;
+const li=lvlInfo();
+const hasReview=st.lessonLog&&st.lessonLog[0]&&st.lessonLog[0].review&&st.lessonLog[0].review.length;
+$("#main").innerHTML=
+/* ── Forge Report (brain intel) — only when data exists ── */
+forgeReportHTML()+
+/* ── TIER 1: Today's Protocol — the only hero card ── */
+'<div class="chamber-card">'+
+'<div class="rune-wm" aria-hidden="true">⌂</div>'+
+'<span class="label-caps">今日修練 · Today\'s Protocol</span>'+
+'<div class="mode-stack">'+
+'<button class="btn-session-primary" onclick="startSession(\'full\')">▶ Full Session — 60 min<small>'+MODES.full.desc+'</small></button>'+
+'<div class="mode-alts">'+
+'<button class="btn" onclick="startSession(\'min\')" style="text-align:left;padding:12px 14px">▶ Minimum · 30 min<br><span style="font-size:11px;color:var(--c-smoke)">'+MODES.min.desc+'</span></button>'+
+'<button class="btn" onclick="startSession(\'survival\')" style="text-align:left;padding:12px 14px">▶ Survival · 10 min<br><span style="font-size:11px;color:var(--c-smoke)">'+MODES.survival.desc+'</span></button>'+
+'</div>'+
+'</div>'+
+'<div class="forge-tools">'+
+(weakIds().length?'<button class="btn-ghost" onclick="reviewWeak()">🎯 Weak points ('+Math.min(20,weakIds().length)+')</button>':"")+
+'<button class="btn sm" style="border-color:var(--c-frost);color:var(--c-frost);margin-left:auto" onclick="go(\'quiz\')">⚔ Boss Trial</button>'+
+(hasReview?'<span class="tag" style="color:var(--c-gold);border:1px solid rgba(184,150,46,0.35)">📌 <span class="hanzi">'+st.lessonLog[0].review.slice(0,4).join("、")+'</span></span>':"")+
+'</div>'+
+'</div>'+
+/* ── Stats strip — data reported, not celebrated ── */
+'<div class="stats-strip">'+
+'<span class="stat-item"><span class="stat-val">'+due+'</span><span class="stat-lbl">reviews</span></span>'+
+'<span class="stat-item"><span class="stat-val">'+nw+'</span><span class="stat-lbl">new today</span></span>'+
+'<span class="stat-item"><span class="stat-val">'+learned+'</span><span class="stat-lbl">learned</span></span>'+
+'<span class="stat-item"><span class="stat-val">'+proLearned+'</span><span class="stat-lbl">work words</span></span>'+
+'<span class="stat-item"><span class="stat-val">'+W.length+'</span><span class="stat-lbl">in deck</span></span>'+
+'</div>'+
+/* ── Level + heat map — compact, quiet ── */
+'<div class="box" style="padding:14px 16px">'+
+'<div style="display:flex;align-items:center;gap:12px;margin-bottom:6px">'+
+'<span style="font-size:10px;color:var(--c-smoke);letter-spacing:0.1em;text-transform:uppercase;white-space:nowrap">Lv '+li.l+'</span>'+
+'<div class="xpbar" style="flex:1"><i style="width:'+li.pct+'%"></i></div>'+
+'<span style="font-size:10px;color:var(--c-rune);white-space:nowrap">'+li.need+' XP → Lv '+(li.l+1)+'</span>'+
+'</div>'+
+heatHTML()+
+'</div>'+
+/* ── Self-expression — daily kata ── */
+seCardHTML()+
+/* ── Settings — collapsed by default ── */
+'<div class="forge-footer">'+
+'<button class="btn-ghost" onclick="settingsOpen=!settingsOpen;rForge()">'+(settingsOpen?'▲ Close settings':'⚙ Settings')+'</button>'+
+'</div>'+
+(settingsOpen?
+'<div class="box" style="margin-top:0">'+
+'<div class="row" style="gap:16px">'+
+'<span class="set">Words/day <input type="number" min="0" max="30" value="'+st.newPerDay+'" style="width:52px" onchange="st.newPerDay=+this.value;save();rForge()"></span>'+
+'<span class="set">Script <select onchange="st.script=this.value;save();renderScriptBtn();rForge()">'+
+'<option value="t"'+(st.script==="t"?" selected":"")+'>繁體 (Taiwan)</option>'+
+'<option value="s"'+(st.script==="s"?" selected":"")+'>简体</option></select></span>'+
+'<label class="set"><input type="checkbox"'+(st.taiwan?" checked":"")+' onchange="st.taiwan=this.checked;save();rForge()" style="accent-color:var(--c-frost)"> <span style="color:var(--c-frost)">台灣用語</span></label>'+
+'</div>'+
+'<div class="row" style="gap:14px;margin-top:10px">'+
+'<span class="set">Card front <select onchange="st.frontMode=this.value;save()">'+
+'<option value="hanzi"'+(st.frontMode==="hanzi"?" selected":"")+'>漢字 → meaning</option>'+
+'<option value="audio"'+(st.frontMode==="audio"?" selected":"")+'>Audio → meaning</option>'+
+'<option value="english"'+(st.frontMode==="english"?" selected":"")+'>English → 漢字</option></select></span>'+
+'<span class="set">Pinyin <select onchange="st.pinyinShow=this.value;save()">'+
+'<option value="reveal"'+(st.pinyinShow==="reveal"?" selected":"")+'>After reveal</option>'+
+'<option value="always"'+(st.pinyinShow==="always"?" selected":"")+'>Always</option></select></span>'+
+'<label class="set"><input type="checkbox"'+(st.toneColors?" checked":"")+' onchange="st.toneColors=this.checked;save();rForge()"> Tone colors</label>'+
+'<label class="set"><input type="checkbox"'+(st.proIncluded?" checked":"")+' onchange="st.proIncluded=this.checked;save();rForge()"> <span style="color:var(--purple)">Work vocab</span></label>'+
+'<label class="set"><input type="checkbox"'+(st.bopomofo?" checked":"")+' onchange="st.bopomofo=this.checked;save();rForge()" style="accent-color:var(--c-frost)"> <span style="color:var(--c-frost)">注音 Bopomofo</span></label>'+
+'</div>'+
+'<div class="row" style="gap:14px;margin-top:10px;align-items:center;flex-wrap:wrap">'+
+'<span class="set">Voice <select id="voiceSel" style="max-width:200px" onchange="st.voiceName=this.value;save();pickVoice()"><option>Loading…</option></select>'+
+' <button class="btn sm" onclick="speak(\'你好，我在學中文\')">🔊</button></span>'+
+'<span class="set">Pitch <input type="range" min="0.8" max="1.2" step="0.05" value="'+(+(st.pitch!=null?st.pitch:1)).toFixed(2)+'" style="width:70px" oninput="st.pitch=+this.value;save();document.getElementById(\'pitchVal\').textContent=(+this.value).toFixed(2)"> <span id="pitchVal" class="mut" style="font-size:12px;min-width:24px;display:inline-block">'+(+(st.pitch!=null?st.pitch:1)).toFixed(2)+'</span></span>'+
+'<span class="set">Rate <input type="range" min="0.7" max="1.2" step="0.05" value="'+(+(st.rate||0.9)).toFixed(2)+'" style="width:70px" oninput="st.rate=+this.value;save();document.getElementById(\'rateVal\').textContent=(+this.value).toFixed(2)"> <span id="rateVal" class="mut" style="font-size:12px;min-width:24px;display:inline-block">'+(+(st.rate||0.9)).toFixed(2)+'</span></span>'+
+'</div>'+
+'<p class="mut" style="margin-top:10px;font-size:12px">Tones: <span class="t1">1</span> · <span class="t2">2</span> · <span class="t3">3</span> · <span class="t4">4</span> · <span class="t5">5</span> &nbsp;|&nbsp; Voice tab needs Chrome/Edge + mic.</p>'+
+'</div>':"");
+if(settingsOpen)populateVoiceSelect();
+}
+/* ===== sub-mode wrappers ===== */
+function rCodex(){
+const bar='<div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;padding-bottom:10px;border-bottom:1px solid var(--c-steel)">'+
+'<span style="font-size:10px;letter-spacing:0.15em;text-transform:uppercase;color:var(--c-rune);font-weight:600;white-space:nowrap">CODEX</span>'+
+'<span class="chip'+(codexMode==="train"?" on":"")+'" onclick="codexMode=\'train\';rCodex()">Train</span>'+
+'<span class="chip'+(codexMode==="ref"?" on":"")+'" onclick="codexMode=\'ref\';rCodex()">Reference</span>'+
+'</div>';
+if(codexMode==="train")rCards();else rWords();
+const m=$("#main");m.innerHTML=bar+m.innerHTML;
+}
+function rVoice(){
+const bar='<div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;padding-bottom:10px;border-bottom:1px solid var(--c-steel)">'+
+'<span style="font-size:10px;letter-spacing:0.15em;text-transform:uppercase;color:var(--c-frost);font-weight:600;white-space:nowrap">VOICE</span>'+
+'<span class="chip'+(voiceMode==="speak"?" on-f":"")+'" onclick="voiceMode=\'speak\';rVoice()">Speak</span>'+
+'<span class="chip'+(voiceMode==="echo"?" on-f":"")+'" onclick="voiceMode=\'echo\';rVoice()">Echo</span>'+
+'<span class="chip'+(voiceMode==="tones"?" on-f":"")+'" onclick="voiceMode=\'tones\';rVoice()">Tones</span>'+
+'</div>';
+if(voiceMode==="speak")rSpeak();else if(voiceMode==="echo")rListen();else rPinyin();
+const m=$("#main");m.innerHTML=bar+m.innerHTML;
+}
+function rDrill(){
+const bar='<div class="row" style="margin-bottom:8px"><b style="font-size:12px;color:var(--mut);letter-spacing:1px;margin-right:8px">DRILL</b>'+
+'<button class="btn sm '+(drillMode==="sent"?"acc":"")+'" onclick="drillMode=\'sent\';gMode=\'sb\';rDrill()">Sentences</button>'+
+'<button class="btn sm '+(drillMode==="num"?"acc":"")+'" onclick="drillMode=\'num\';gMode=\'nd\';rDrill()">Numbers</button>'+
+'<button class="btn sm '+(drillMode==="type"?"acc":"")+'" onclick="drillMode=\'type\';rDrill()">Typing</button>'+
+'</div>';
+if(drillMode==="type")rType();else{gMode=drillMode==="num"?"nd":"sb";rGames();}
+const m=$("#main");m.innerHTML=bar+m.innerHTML;
+}
+function rMarks(){
+const bar='<div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;padding-bottom:10px;border-bottom:1px solid var(--c-steel)">'+
+'<span style="font-size:10px;letter-spacing:0.15em;text-transform:uppercase;color:var(--c-rune);font-weight:600;white-space:nowrap">MARKS</span>'+
+'<span class="chip'+(marksMode==="hand"?" on-m":"")+'" onclick="marksMode=\'hand\';rMarks()">Hand</span>'+
+'<span class="chip'+(marksMode==="runes"?" on-m":"")+'" onclick="marksMode=\'runes\';rMarks()">Runes</span>'+
+'</div>';
+if(marksMode==="hand")rWrite();else rRad();
+const m=$("#main");m.innerHTML=bar+m.innerHTML;
+if(marksMode==="hand")(wWord?loadW(wWord):randW());
 }
 /* ================= FLASHCARDS ================= */
 let queue=[],cur=null,revealed=false;
@@ -1257,35 +1862,35 @@ nextCard();
 }
 function frontHTML(w,isNew){
 if(isNew||st.frontMode==="hanzi")
-return '<div class="bigh hanzi">'+T(wHanzi(w))+'</div>'+((st.pinyinShow==="always"&&!isNew)?'<div class="pin">'+pinHTML(wPin(w))+'</div>':"");
-if(st.frontMode==="audio")return '<div class="bigh">🔊</div><div class="center"><button class="btn" onclick="speak(wHanzi(W[cur]))">Play again</button> <button class="btn" onclick="speak(wHanzi(W[cur]),0.6)">🐢</button></div>';
-return '<div class="bigh" style="font-size:32px">“'+esc(w[2])+'”</div>';
+return '<div class="card-hz hanzi">'+T(wHanzi(w))+'</div>'+((st.pinyinShow==="always"&&!isNew)?'<div class="card-pin-lg">'+pinHTML(wPin(w))+'</div>':"");
+if(st.frontMode==="audio")return '<div class="bigh" style="opacity:0.55">🔊</div><div class="center" style="margin-top:8px"><button class="btn" onclick="speak(wHanzi(W[cur]))">Play again</button> <button class="btn" onclick="speak(wHanzi(W[cur]),0.6)">🐢</button></div>';
+return '<div class="card-hz card-hz-sm" style="font-family:\'Inter\',system-ui,sans-serif;font-weight:500">"'+esc(w[2])+'"</div>';
 }
 function answerHTML(w){
 let h="";
-if(st.frontMode!=="hanzi")h+='<div class="center hanzi" style="font-size:40px">'+T(wHanzi(w))+'</div>';
-h+='<div class="pin">'+pinHTML(wPin(w))+'</div>';
-if(st.frontMode!=="english")h+='<div class="eng">'+esc(w[2])+'</div>';
-h+='<button class="btn sm" onclick="speak(wHanzi(W[cur]))">🔊</button> <button class="btn sm" onclick="speak(wHanzi(W[cur]),0.6)">🐢</button>';
+if(st.frontMode!=="hanzi")h+='<div class="card-hz card-hz-sm hanzi">'+T(wHanzi(w))+'</div>';
+h+='<div class="card-pin-lg">'+pinHTML(wPin(w))+'</div>'+bopoHTML(wPin(w));
+if(st.frontMode!=="english")h+='<div class="card-eng-sm">'+esc(w[2])+'</div>';
+h+='<div style="margin-top:10px"><button class="btn sm" onclick="speak(wHanzi(W[cur]))">🔊</button> <button class="btn sm" onclick="speak(wHanzi(W[cur]),0.6)">🐢</button></div>';
 h+=noteHTML(w)+breakHTML(wHanzi(w));
 return h;
 }
 function nextCard(){
 revealed=false;
 if(!queue.length){
-$("#main").innerHTML='<div class="box center"><h2>✅ All done!</h2><p class="mut" style="margin-top:8px">'+(sess?"Hit Next block up top to continue your session.":"No cards due. Try Listening, Dialogues or Games.")+'</p><div style="margin-top:14px"><button class="btn" onclick="go(\'home\')">Home</button></div></div>';
+$("#main").innerHTML='<div class="box center"><h2>✅ All done!</h2><p class="mut" style="margin-top:8px">'+(sess?"Hit Next block up top to continue your session.":"No cards due. Try Listening, Dialogues or Games.")+'</p><div style="margin-top:14px"><button class="btn" onclick="go(\'forge\')">Home</button></div></div>';
 cur=null;return;
 }
 cur=queue[0];
 const w=W[cur],isNew=!isLearned(cur);
 const lvlTag=w[3]==="P"?'<span class="tag p">WORK</span>':(w[3]==="T"?'<span class="tag tw">TAIWAN</span>':'<span class="tag">HSK '+w[3]+'</span>');
-$("#main").innerHTML='<div class="box">'+
-'<div class="row"><span class="tag">'+queue.length+' left</span>'+(isNew?'<span class="tag" style="color:var(--gold)">NEW</span>':"")+lvlTag+'</div>'+
+$("#main").innerHTML='<div class="card-chamber">'+
+'<div class="card-meta"><span class="tag">'+queue.length+' left</span>'+(isNew?'<span class="tag" style="color:var(--c-gold)">NEW</span>':"")+lvlTag+'</div>'+
 frontHTML(w,isNew)+
-'<div id="ans" class="center" style="min-height:110px">'+
-(isNew?'<div class="pin">'+pinHTML(wPin(w))+'</div><div class="eng">'+esc(w[2])+'</div><button class="btn sm" onclick="speak(wHanzi(W[cur]))">🔊</button>'+noteHTML(w)+breakHTML(wHanzi(w)):'<button class="btn" style="margin-top:18px" onclick="reveal()">Show answer (Space)</button>')+
+'<div id="ans" style="min-height:100px;margin-top:6px">'+
+(isNew?'<div class="card-pin-lg">'+pinHTML(wPin(w))+'</div>'+bopoHTML(wPin(w))+'<div class="card-eng-sm">'+esc(w[2])+'</div><div style="margin-top:8px"><button class="btn sm" onclick="speak(wHanzi(W[cur]))">🔊</button></div>'+noteHTML(w)+breakHTML(wHanzi(w)):'<div style="margin-top:20px"><button class="btn" style="min-width:160px" onclick="reveal()">Reveal (Space)</button></div>')+
 '</div>'+
-'<div id="grades" class="row" style="justify-content:center;margin-top:16px;visibility:'+(isNew?"visible":"hidden")+'">'+
+'<div id="grades" class="grade-row" style="visibility:'+(isNew?"visible":"hidden")+'">'+
 '<button class="btn red" onclick="grade(0)">Again (1)</button>'+
 '<button class="btn" onclick="grade(1)">Hard (2)</button>'+
 '<button class="btn grn" onclick="grade(2)">Good (3)</button>'+
@@ -1307,7 +1912,7 @@ bumpDone("review");touchStreak();save();
 queue.shift();nextCard();
 }
 document.addEventListener("keydown",e=>{
-if(tab!=="cards"||cur===null)return;
+if(tab!=="codex"||codexMode!=="train"||cur===null)return;
 if(e.code==="Space"){e.preventDefault();reveal()}
 if(revealed&&["1","2","3","4"].includes(e.key))grade(+e.key-1)
 });
@@ -1315,25 +1920,31 @@ if(revealed&&["1","2","3","4"].includes(e.key))grade(+e.key-1)
 let lq=null,lScore={ok:0,n:0},lMode="word";
 function lPool(){const learned=W.map((w,i)=>i).filter(isLearned);return learned.length>=8?learned:W.map((w,i)=>i).filter(i=>W[i][3]===1)}
 function rListen(){
-$("#main").innerHTML='<div class="box">'+
-'<div class="row">'+
-'<button class="btn sm '+(lMode==="word"?"acc":"")+'" onclick="lMode=\'word\';newListen()">Words</button>'+
-'<button class="btn sm '+(lMode==="sent"?"acc":"")+'" onclick="lMode=\'sent\';newListen()">Sentences</button>'+
-'<span class="tag" style="margin-left:auto">Score: <span id="lsc">'+lScore.ok+'/'+lScore.n+'</span></span></div>'+
-'<div class="center" style="margin:22px 0">'+
-'<button class="btn acc big" onclick="playL()">🔊 Play</button> '+
-'<button class="btn" onclick="playL(0.6)">🐢 Slow</button></div>'+
+$("#main").innerHTML=
+'<div class="voice-chamber">'+
+'<div style="display:flex;align-items:center;gap:10px;margin-bottom:16px">'+
+'<span class="chip'+(lMode==="word"?" on-f":"")+'" onclick="lMode=\'word\';newListen()">Words</span>'+
+'<span class="chip'+(lMode==="sent"?" on-f":"")+'" onclick="lMode=\'sent\';newListen()">Sentences</span>'+
+'<span class="tag" style="margin-left:auto">Score: <span id="lsc">'+lScore.ok+'/'+lScore.n+'</span></span>'+
+'</div>'+
+'<div style="text-align:center;margin:24px 0 20px">'+
+'<button class="btn-mic" onclick="playL()">🔊 Play</button>'+
+'<div style="margin-top:10px"><button class="btn sm" onclick="playL(0.6)">🐢 Slow</button></div>'+
+'</div>'+
 '<div id="lopts" class="opts"></div>'+
 '<div id="lfb" class="fb"></div>'+
-'<div class="center" style="margin-top:10px"><button class="btn" id="lnext" style="display:none" onclick="newListen()">Next →</button></div>'+
-'<p class="mut center" style="margin-top:8px;font-size:13px">After answering: replay and repeat aloud (shadowing).</p></div>';
+'<div style="text-align:center;margin-top:10px"><button class="btn" id="lnext" style="display:none" onclick="newListen()">Next →</button></div>'+
+'<p class="mut" style="text-align:center;margin-top:12px;font-size:12px">After answering: replay and repeat aloud.</p>'+
+'</div>';
 newListen();
 }
 function newListen(){
 $("#lfb").textContent="";$("#lnext").style.display="none";
 if(lMode==="word"){
 const pool=lPool();const qi=weightedLPick(pool);
-const dis=shuffle(pool.filter(i=>i!==qi&&W[i][2]!==W[qi][2])).slice(0,3);
+const confused=sessionConfusedIds().filter(i=>i!==qi&&W[i][2]!==W[qi][2]);
+const fallback=shuffle(pool.filter(i=>i!==qi&&W[i][2]!==W[qi][2]&&!confused.includes(i)));
+const dis=shuffle(confused.concat(fallback)).slice(0,3);
 const opts=shuffle([{e:W[qi][2],ok:1},...dis.map(i=>({e:W[i][2],ok:0}))]);
 lq={text:wHanzi(W[qi]),pin:wPin(W[qi]),opts,wi:qi};
 }else{
@@ -1350,14 +1961,14 @@ function ansL(i){
 const ok=!!lq.opts[i].ok;lScore.n++;if(ok)lScore.ok++;
 if(!ok)recordMiss("listening",lq.wi,lq.wi==null?T(lq.text):null);
 document.querySelectorAll("#lopts .btn").forEach((b,j)=>{b.disabled=true;if(lq.opts[j].ok)b.classList.add("hit");else if(j===i)b.classList.add("miss")});
-$("#lfb").innerHTML='<span class="hanzi" style="font-size:23px">'+T(lq.text)+'</span> &nbsp;'+pinHTML(lq.pin);
+$("#lfb").innerHTML='<span class="hanzi" style="font-size:23px">'+T(lq.text)+'</span><br>'+pinHTML(lq.pin)+bopoHTML(lq.pin);
 $("#lsc").textContent=lScore.ok+"/"+lScore.n;
 $("#lnext").style.display="inline-block";
 bumpDone("listen");touchStreak();
 }
 /* ================= SPEAKING ================= */
 let spT=null,spHide=false,spBusy=false,spKeep=false;
-function practiceItem(h,p,e){spT={h,p,e};spKeep=true;spHide=false;go("speak")}
+function practiceItem(h,p,e){spT={h,p,e};spKeep=true;spHide=false;voiceMode="speak";go("voice")}
 function spItems(){
 const items=S.map(s=>({h:s[0],p:s[1],e:s[2]}));
 D.forEach(d=>d.L.forEach(l=>items.push({h:l[1],p:l[2],e:l[3]})));
@@ -1365,29 +1976,34 @@ return items;
 }
 function rSpeak(){
 const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
-$("#main").innerHTML='<div class="box">'+
-'<h3>🎤 Speaking studio</h3>'+
-'<p class="mut" style="font-size:13px;margin-top:4px">Listen, then say the sentence. The app transcribes you and scores how close you got. '+(SR?"":"<b class='red-t'>Speech recognition not available in this browser — use Edge or Chrome (online).</b>")+'</p>'+
-'<div id="sptgt" style="margin-top:14px"></div>'+
-'<div class="row" style="justify-content:center;margin-top:14px">'+
+$("#main").innerHTML=
+'<div class="voice-chamber">'+
+(!SR?'<p style="text-align:center;font-size:13px;color:var(--c-fail);margin-bottom:16px">Speech recognition requires Chrome or Edge (online).</p>':"")+
+'<div id="sptgt" style="margin-bottom:4px"></div>'+
+'<div class="voice-controls">'+
+'<div style="display:flex;gap:8px">'+
 '<button class="btn" onclick="spPlay(0.85)">🔊 Listen</button>'+
 '<button class="btn" onclick="spPlay(0.6)">🐢 Slow</button>'+
-(SR?'<button class="btn acc big" id="spmic" onclick="spListen()">🎤 Speak</button>':"")+
-'<button class="btn" onclick="spToggle()">'+(spHide?"Show text":"Hide text")+'</button>'+
-'<button class="btn" onclick="newSp()">Next →</button>'+
 '</div>'+
-'<div id="spres" class="center" style="margin-top:16px;min-height:60px"></div>'+
+(SR?'<button class="btn-mic" id="spmic" onclick="spListen()">🎤 Speak</button>':"")+
+'</div>'+
+'<div style="display:flex;gap:10px;justify-content:center;margin-top:10px">'+
+'<button class="btn-ghost" onclick="spToggle()">'+(spHide?"Show text":"Hide text")+'</button>'+
+'<button class="btn-ghost" onclick="newSp()">Next →</button>'+
+'</div>'+
+'<div id="spres" class="score-result"></div>'+
 '</div>';
 if(spKeep&&spT){spKeep=false;spRender()}else newSp();
 }
 function newSp(){spT=rnd(spItems());spRender();const r=$("#spres");if(r)r.innerHTML=""}
 function spRender(){
 const el=$("#sptgt");if(!el||!spT)return;
-el.innerHTML='<div class="center hanzi" style="font-size:30px;'+(spHide?"filter:blur(9px);":"")+'">'+T(spT.h)+'</div>'+
-'<div class="pin" style="'+(spHide?"filter:blur(9px);":"")+'">'+pinHTML(spT.p)+'</div>'+
-'<div class="eng mut">'+esc(spT.e)+'</div>';
+el.innerHTML=
+'<div class="voice-hz hanzi" style="'+(spHide?"filter:blur(9px);":"")+'">'+T(spT.h)+'</div>'+
+'<div class="voice-pin" style="'+(spHide?"filter:blur(9px);":"")+'">'+pinHTML(spT.p)+'</div>'+
+'<div class="voice-eng">'+esc(spT.e)+'</div>';
 }
-function spToggle(){spHide=!spHide;rSpeak()}
+function spToggle(){spHide=!spHide;spKeep=true;rSpeak()}
 function spPlay(r){if(spT)speak(spT.h,r)}
 function spListen(){
 if(spBusy)return;
@@ -1397,10 +2013,10 @@ stopAudio();
 const r=new SR();
 r.lang=st.script==="t"?"zh-TW":"zh-CN";
 r.interimResults=false;r.maxAlternatives=1;
-spBusy=true;$("#spmic").textContent="🎙 Listening…";
+spBusy=true;const sm=$("#spmic");if(sm){sm.textContent="🎙 Listening…";sm.classList.add("listening")}
 r.onresult=ev=>{spScore(ev.results[0][0].transcript||"")};
 r.onerror=ev=>{$("#spres").innerHTML='<span class="red-t">Mic error: '+esc(ev.error)+'</span>'};
-r.onend=()=>{spBusy=false;const m=$("#spmic");if(m)m.textContent="🎤 Speak"};
+r.onend=()=>{spBusy=false;const m=$("#spmic");if(m){m.textContent="🎤 Speak";m.classList.remove("listening")}};
 r.start();
 }
 function spScore(heard){
@@ -1409,48 +2025,76 @@ const l=lcs([...tgt],[...got]);
 const pct=tgt.length?Math.round(l/tgt.length*100):0;
 const gset=new Set([...got]);
 const marked=[...tgt].map(c=>'<span class="'+(gset.has(c)?"ok":"bad")+'">'+c+'</span>').join("");
-const msg=pct>=85?"🌟 Excellent!":pct>=60?"👍 Good — almost there.":"💪 Keep trying — listen again and copy the rhythm.";
-$("#spres").innerHTML='<div class="spk-ch hanzi">'+marked+'</div>'+
-'<div style="margin-top:6px">Heard: <span class="hanzi">'+esc(heard||"–")+'</span></div>'+
-'<div style="margin-top:6px;font-size:20px"><b>'+pct+'%</b> — '+msg+'</div>';
+const msg=pct>=85?"Recognized cleanly":pct>=60?"Mostly recognized":"Keep trying — listen again";
+const scoreColor=pct>=85?"var(--c-ok)":pct>=60?"var(--c-gold)":"var(--c-smoke)";
+$("#spres").innerHTML=
+'<div class="spk-ch score-hz hanzi">'+marked+'</div>'+
+'<div class="score-pct" style="color:'+scoreColor+'">'+pct+'% <span style="font-size:13px;font-weight:400;color:var(--c-smoke)">character match</span></div>'+
+'<div class="score-msg">'+esc(msg)+'</div>'+
+'<div class="score-heard">Heard: <span class="hanzi">'+esc(heard||"–")+'</span></div>'+
+'<p style="font-size:11px;color:var(--c-rune);margin-top:10px">Tone accuracy is not measured here — use Tones mode to train tone recognition.</p>';
 if(pct>=60){bumpDone("speak");touchStreak()}
 }
 /* ================= DIALOGUES ================= */
 let dlgOpen=null,dlgPin=true,dlgEng=true,dlgStep=-1,dq=null;
 function rDlg(){
 if(dlgOpen===null){
-$("#main").innerHTML='<div class="box"><h3>📖 Dialogues</h3><p class="mut" style="font-size:13px;margin-top:4px">Real scenarios from your Taipei life — launches, the expo floor, your interview, the night market.</p></div>'+
-D.map((d,i)=>'<div class="box dlgcard" onclick="openDlg('+i+')"><b class="hanzi">'+T(d.t)+'</b><br><span class="mut" style="font-size:14px">'+esc(d.scene)+' · '+d.L.length+' lines</span></div>').join("");
+$("#main").innerHTML=
+'<div style="padding:2px 0 16px">'+
+'<span style="font-size:10px;letter-spacing:0.15em;text-transform:uppercase;color:var(--c-frost);font-weight:600">GATE · Taiwan Life</span>'+
+'<p class="mut" style="font-size:13px;margin-top:6px">Real scenarios from your Taipei life. Select a scene to practice.</p>'+
+'</div>'+
+D.map((d,i)=>'<div class="gate-card" onclick="openDlg('+i+')">'+
+'<div class="gate-card-hz">'+T(d.t)+'</div>'+
+'<div class="gate-card-scene">'+esc(d.scene)+'</div>'+
+'<span class="gate-card-tag">'+d.L.length+' lines</span>'+
+'</div>').join("");
 return;
 }
 const d=D[dlgOpen];
 dq=dq&&dq.di===dlgOpen?dq:{di:dlgOpen,qi:0,ok:0,done:false,answered:false};
-$("#main").innerHTML='<div class="box">'+
-'<div class="row"><button class="btn sm" onclick="closeDlg()">← All dialogues</button><b style="margin-left:6px" class="hanzi">'+T(d.t)+'</b></div>'+
-'<p class="mut" style="font-size:13px;margin-top:4px">'+esc(d.scene)+'</p>'+
-'<div class="row" style="margin-top:10px">'+
-'<button class="btn sm acc" onclick="playDlg()">▶ Play all</button>'+
+$("#main").innerHTML=
+'<div class="scene-header">'+
+'<div class="scene-eyebrow">Gate · Scene</div>'+
+'<div class="scene-title-hz hanzi">'+T(d.t)+'</div>'+
+'<div class="scene-desc">'+esc(d.scene)+'</div>'+
+'<div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">'+
+'<button class="btn sm" onclick="closeDlg()">← Scenes</button>'+
+'<button class="btn sm" style="color:var(--c-frost);border-color:var(--c-frost-lo)" onclick="playDlg()">▶ Play all</button>'+
 '<button class="btn sm" onclick="stopAudio()">⏹ Stop</button>'+
 '<button class="btn sm" onclick="dlgStepFwd()">Step ▸</button>'+
-'<label class="set" style="font-size:13px"><input type="checkbox"'+(dlgPin?" checked":"")+' onchange="dlgPin=this.checked;rDlg()"> pinyin</label>'+
+'<label class="set" style="font-size:13px;margin-left:auto"><input type="checkbox"'+(dlgPin?" checked":"")+' onchange="dlgPin=this.checked;rDlg()"> pinyin</label>'+
 '<label class="set" style="font-size:13px"><input type="checkbox"'+(dlgEng?" checked":"")+' onchange="dlgEng=this.checked;rDlg()"> english</label>'+
 '</div>'+
-'<div style="margin-top:14px;display:flex;flex-direction:column">'+
+'</div>'+
+'<div style="background:var(--c-ash);border:1px solid var(--c-steel);border-radius:var(--r-md);overflow:hidden;margin-bottom:10px;box-shadow:var(--shadow-card)">'+
 d.L.map((l,i)=>'<div class="bub '+(l[0]===0?"a":"b")+(dlgStep===i?" cur":"")+'" onclick="speak(D['+dlgOpen+'].L['+i+'][1]);dlgStep='+i+';rDlg()">'+
 '<span class="hanzi">'+T(l[1])+'</span>'+
 (dlgPin?'<span class="bp">'+pinHTML(l[2])+'</span>':"")+
 (dlgEng?'<span class="be">'+esc(l[3])+'</span>':"")+
 '</div>').join("")+
 '</div>'+
-'<p class="mut" style="font-size:12px;margin-top:8px">Tip: click any bubble to hear it. For role-play, hide english, play A lines and say B lines aloud before clicking them.</p>'+
-'</div>'+dlgQuizHTML(d);
+dlgQuizHTML(d);
 }
 function dlgQuizHTML(d){
-if(dq.done)return '<div class="box center"><b>Comprehension: '+dq.ok+'/'+d.Q.length+'</b> '+(dq.ok===d.Q.length?"🌟":"")+' <button class="btn sm" style="margin-left:10px" onclick="dq={di:dlgOpen,qi:0,ok:0,done:false,answered:false};rDlg()">Retry</button></div>';
+if(dq.done){
+const all=dq.ok===d.Q.length;
+return '<div class="box" style="text-align:center;padding:16px 20px">'+
+'<span style="font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:var(--c-smoke)">Comprehension</span>'+
+'<div style="font-size:28px;font-weight:700;color:'+(all?"var(--c-ok)":"var(--c-bone)")+';margin:8px 0">'+dq.ok+'/'+d.Q.length+'</div>'+
+'<button class="btn sm" onclick="dq={di:dlgOpen,qi:0,ok:0,done:false,answered:false};rDlg()">Retry</button>'+
+'</div>';
+}
 const q=d.Q[dq.qi];
-return '<div class="box"><b>Q'+(dq.qi+1)+'/'+d.Q.length+':</b> <span class="hanzi" style="font-size:19px">'+T(q[0])+'</span> <button class="btn sm" onclick="speak(D['+dlgOpen+'].Q['+dq.qi+'][0])">🔊</button>'+
+return '<div class="box">'+
+'<div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">'+
+'<span style="font-size:10px;color:var(--c-smoke);letter-spacing:0.05em;text-transform:uppercase;white-space:nowrap">Q '+(dq.qi+1)+' / '+d.Q.length+'</span>'+
+'<button class="btn sm" onclick="speak(D['+dlgOpen+'].Q['+dq.qi+'][0])">🔊</button>'+
+'</div>'+
+'<div class="hanzi" style="font-size:20px;color:var(--c-bone);line-height:1.4;margin-bottom:14px">'+T(q[0])+'</div>'+
 '<div class="opts" id="dqopts">'+q[1].map((o,i)=>'<button class="btn hanzi" onclick="ansDq('+i+')">'+T(o)+'</button>').join("")+'</div>'+
-'<div id="dqfb" class="fb"></div></div>';
+'<div id="dqfb" class="fb"></div>'+
+'</div>';
 }
 function ansDq(i){
 if(dq.answered)return;dq.answered=true;
@@ -1469,8 +2113,8 @@ function dlgStepFwd(){dlgStep=(dlgStep+1)%D[dlgOpen].L.length;speak(D[dlgOpen].L
 let gMode="sb",sb=null,sbScore={ok:0,n:0},nd=null,ndScore={ok:0,n:0},ndMode="number";
 function rGames(){
 $("#main").innerHTML='<div class="box"><div class="row">'+
-'<button class="btn sm '+(gMode==="sb"?"acc":"")+'" onclick="gMode=\'sb\';rGames()">🧩 Sentence builder</button>'+
-'<button class="btn sm '+(gMode==="nd"?"acc":"")+'" onclick="gMode=\'nd\';rGames()">🔢 Number dojo (NT$)</button>'+
+'<button class="btn sm '+(gMode==="sb"?"acc":"")+'" onclick="drillMode=\'sent\';gMode=\'sb\';rGames()">🧩 Sentence builder</button>'+
+'<button class="btn sm '+(gMode==="nd"?"acc":"")+'" onclick="drillMode=\'num\';gMode=\'nd\';rGames()">🔢 Number dojo (NT$)</button>'+
 '</div></div><div id="game"></div>';
 if(gMode==="sb")newSb();else newNd();
 }
@@ -1483,7 +2127,7 @@ function drawSb(){
 const q=sb.q;
 $("#game").innerHTML='<div class="box">'+
 '<div class="row"><span class="tag">Arrange the sentence</span><span class="tag" style="margin-left:auto">Score: '+sbScore.ok+'/'+sbScore.n+'</span></div>'+
-'<p class="eng" style="margin-top:12px">“'+esc(q.e)+'”</p>'+
+'<p class="eng" style="margin-top:12px">“'+esc(q.e)+'"</p>'+
 '<div class="slotline" id="sbline">'+sb.placed.map((ti,k)=>'<span class="tile hanzi" onclick="sbRemove('+k+')">'+T(q.s[ti])+'</span>').join("")+'</div>'+
 '<div class="tiles">'+sb.order.map(ti=>'<span class="tile hanzi'+(sb.used[ti]?" ghost":"")+'" onclick="sbTap('+ti+')">'+T(q.s[ti])+'</span>').join("")+'</div>'+
 '<div class="row" style="justify-content:center">'+
@@ -1538,23 +2182,26 @@ $("#ndfb").innerHTML=(ok?'<span class="grn-t">✓ 對了！</span> ':'<span clas
 bumpDone("num");touchStreak();
 }
 /* ================= WRITING ================= */
-let writers=[],wWord=null,wIdx=-1;
+let writers=[],wWord=null,wIdx=-1,wMode="idle";
 function rWrite(){
-$("#main").innerHTML='<div class="box">'+
-'<div class="row">'+
-'<input type="text" id="winput" class="hanzi" placeholder="Type or pick a word… e.g. 學習" style="flex:1;min-width:160px">'+
-'<button class="btn" onclick="loadW($(\'#winput\').value)">Load</button>'+
-'<button class="btn acc" onclick="randW()">🎲 Random</button>'+
+$("#main").innerHTML=
+'<div class="write-chamber">'+
+'<div class="write-controls">'+
+'<input type="text" id="winput" class="write-input" placeholder="character or word…">'+
+'<button class="btn sm" onclick="loadW($(\'#winput\').value)">Load</button>'+
+'<button class="btn sm" style="color:var(--c-rune)" onclick="randW()">Random</button>'+
 '</div>'+
-'<div id="winfo" class="center" style="margin-top:10px"></div>'+
+'<div style="font-size:11px;color:var(--c-rune);text-align:right;margin:-6px 0 10px">Script: '+(st.script==="t"?"繁體":"简体")+'</div>'+
+'<div id="winfo"></div>'+
 '<div class="wchars" id="wchars"></div>'+
-'<div class="row" style="justify-content:center">'+
-'<button class="btn" onclick="animW()">▶ Watch strokes</button>'+
-'<button class="btn grn" onclick="quizW(false)">✍ Trace</button>'+
-'<button class="btn acc" onclick="quizW(true)">🧠 From memory</button>'+
+'<div class="write-actions">'+
+'<button id="btnWatch" class="btn" onclick="animW()">Watch strokes</button>'+
+'<button id="btnTrace" class="btn" onclick="quizW(false)">Trace</button>'+
+'<button id="btnMem" class="btn" onclick="quizW(true)">From memory</button>'+
 '</div>'+
-'<p class="mut center" style="margin-top:12px;font-size:13px">Draw with mouse/finger. Traditional forms follow your script setting. Needs internet for stroke data.</p></div>';
-randW();
+'<div id="wstatus" style="min-height:18px;margin-top:8px;text-align:center"></div>'+
+'<p class="write-hint">Draw with mouse or finger. Needs internet for stroke data.</p>'+
+'</div>';
 }
 function randW(){
 const pool=W.map((w,i)=>i).filter(isLearned);
@@ -1567,26 +2214,67 @@ const wd=W.find(w=>w[0]===txt||T(w[0])===txt||(w[4]&&w[4].tw&&(w[4].tw[0]===txt|
 wWord=wd?wHanzi(wd):txt;
 wIdx=wd?W.indexOf(wd):-1;
 const disp=T(wWord);
-$("#winfo").innerHTML=(wd?'<span class="pin">'+pinHTML(wPin(wd))+'</span> <span class="eng mut">'+esc(wd[2])+'</span> ':"")+'<button class="btn sm" onclick="speak(wWord)">🔊</button>'+(wd?breakHTML(wHanzi(wd)):"");
+$("#winfo").innerHTML=wd?
+'<div class="write-word">'+
+'<div class="write-word-pin">'+pinHTML(wPin(wd))+'</div>'+
+'<div class="write-word-eng">'+esc(wd[2])+'</div>'+
+'<button class="btn sm" onclick="speak(wWord)">🔊</button>'+
+'</div>'+
+breakHTML(wHanzi(wd))
+:
+'<div style="text-align:center;padding:8px 0"><button class="btn sm" onclick="speak(wWord)">🔊</button></div>';
+const ws=$("#wstatus");if(ws)ws.innerHTML="";
 const box=$("#wchars");box.innerHTML="";writers=[];
 const size=Math.min(150,Math.floor((box.clientWidth||600)/disp.length)-16)||150;
 [...disp].forEach(ch=>{
 const d=document.createElement("div");d.className="wbox";box.appendChild(d);
 try{writers.push(HanziWriter.create(d,ch,{width:size,height:size,padding:6,strokeColor:"#1a2030",outlineColor:"#c9c2b4",drawingColor:"#e4593b",showCharacter:true,delayBetweenStrokes:120}))}catch(e){d.innerHTML="<p style='color:#333;padding:20px'>offline?</p>"}
 });
+setWMode("idle","");
 }
-function animW(){let i=0;const step=()=>{if(i<writers.length)writers[i].animateCharacter({onComplete:()=>{i++;step()}})};writers.forEach(w=>w.showCharacter());step()}
+function setWMode(mode,msg){
+wMode=mode;
+["btnWatch","btnTrace","btnMem"].forEach(function(id){const b=document.getElementById(id);if(b)b.classList.remove("wbtn-active");});
+const bmap={watch:"btnWatch",trace:"btnTrace",memory:"btnMem"};
+if(bmap[mode]){const b=document.getElementById(bmap[mode]);if(b)b.classList.add("wbtn-active")}
+const ws=$("#wstatus");
+if(ws)ws.innerHTML=msg?'<span style="font-size:13px;color:var(--c-smoke)">'+msg+'</span>':"";
+}
+function animW(){
+if(!writers.length){const ws=$("#wstatus");if(ws)ws.innerHTML='<span style="font-size:13px;color:var(--c-rune)">Load a character first.</span>';return}
+writers.forEach(function(w){try{w.cancelQuiz()}catch(e){}});
+setWMode("watch","");
+const ws=$("#wstatus");
+let i=0;
+const step=()=>{
+if(i<writers.length){
+const msg=writers.length>1?"Character "+(i+1)+" of "+writers.length+".":"Watching stroke order.";
+if(ws)ws.innerHTML='<span style="font-size:13px;color:var(--c-smoke)">'+msg+'</span>';
+writers[i].animateCharacter({onComplete:()=>{i++;step()}});
+}else{setWMode("idle","")}
+};
+writers.forEach(function(w){w.showCharacter()});step();
+}
 function quizW(hard){
+const ws=$("#wstatus");
+if(!writers.length){if(ws)ws.innerHTML='<span style="font-size:13px;color:var(--c-rune)">Load a character first.</span>';return}
+setWMode(hard?"memory":"trace","");
+writers.forEach(function(w){try{w.cancelQuiz()}catch(e){}});
 let i=0,misses=0;
 const step=()=>{
 if(i>=writers.length){
 bumpDone("write");touchStreak();speak(wWord);
 if(sess)sess.chars.push(T(wWord));
 if(misses>2&&wIdx>=0)recordMiss("writing",wIdx);
+setWMode("idle","");
+if(ws)ws.innerHTML='<span style="font-size:13px;color:var(--c-smoke)">'+T(wWord)+' — complete.</span>';
 return}
+writers.forEach(function(w){w.hideCharacter();w.hideOutline();});
+const prog=writers.length>1?" · "+(i+1)+"/"+writers.length:"";
+const modeMsg=hard?" — draw from memory.":" — follow the guide.";
+if(ws)ws.innerHTML='<span style="font-size:13px;color:var(--c-smoke)">'+(hard?"Memory":"Trace")+prog+modeMsg+'</span>';
 writers[i].quiz({showOutline:!hard,showHintAfterMisses:2,onMistake:()=>{misses++},onComplete:()=>{i++;step()}});
 };
-writers.forEach(w=>w.hideCharacter());
 step();
 }
 /* ================= TYPING ================= */
@@ -1612,7 +2300,7 @@ $("#tfb").textContent="";$("#tnext").style.display="none";
 const i=rnd(lPool());
 const w=W[i];
 tq={h:wHanzi(w),p:wPin(w),hAlt:w[0],pAlt:w[1],e:w[2],wi:i};
-$("#tprompt").innerHTML='<div class="eng" style="font-size:24px">“'+esc(tq.e)+'”</div>';
+$("#tprompt").innerHTML='<div class="eng" style="font-size:24px">“'+esc(tq.e)+'"</div>';
 const inp=$("#tinput");inp.value="";inp.placeholder=tMode==="pinyin"?"type pinyin (tones optional)":"輸入漢字…";inp.focus();
 speak(tq.h);
 }
@@ -1646,26 +2334,41 @@ bumpDone("type");touchStreak();
 const TONE_DEMO=[["妈","mā","tone 1: high &amp; flat",1],["麻","má","tone 2: rising ↗",2],["马","mǎ","tone 3: dip ↘↗",3],["骂","mà","tone 4: falling ↘",4],["吗","ma","neutral: light",5]];
 let pq=null,pScore={ok:0,n:0},pAns=false;
 function rPinyin(){
-$("#main").innerHTML='<div class="box"><h3 style="margin-bottom:10px">The four tones</h3><div class="row" style="gap:8px">'+
-TONE_DEMO.map(d=>'<button class="btn" style="flex:1;min-width:105px" onclick="speak(\''+d[0]+'\')"><span class="hanzi" style="font-size:25px">'+T(d[0])+'</span><br><span class="t'+d[3]+'" style="font-size:19px">'+d[1]+'</span><br><span class="mut" style="font-size:11px">'+d[2]+'</span></button>').join("")+
+$("#main").innerHTML=
+'<div class="box" style="border-top:2px solid rgba(61,188,184,0.3)">'+
+'<span style="font-size:10px;letter-spacing:0.15em;text-transform:uppercase;color:var(--c-frost);font-weight:600;display:block;margin-bottom:10px">The four tones · 四聲</span>'+
+'<div class="tone-demo">'+
+TONE_DEMO.map(d=>'<button class="btn" onclick="speak(\''+d[0]+'\')"><span class="hanzi" style="font-size:26px">'+T(d[0])+'</span><span class="t'+d[3]+'" style="font-size:16px">'+d[1]+'</span>'+(st.bopomofo?'<span class="bopo t'+d[3]+'" style="font-size:12px">'+pinToBopo(d[1])+'</span>':'')+'<span class="mut" style="font-size:10px">'+d[2]+'</span></button>').join("")+
 '</div></div>'+
-'<div class="box"><h3>Tone-ear trainer</h3>'+
-'<p class="mut" style="font-size:14px;margin:6px 0">What is the tone of the <b>first</b> syllable? <span class="tag" style="margin-left:8px">Score: <span id="psc">'+pScore.ok+'/'+pScore.n+'</span></span></p>'+
-'<div class="center" style="margin:14px 0"><button class="btn acc big" onclick="playP()">🔊 Play</button> <button class="btn" onclick="playP(0.6)">🐢</button></div>'+
-'<div class="tonegrid">'+
-'<button class="btn" onclick="ansP(1)"><span class="t1">Tone 1 ¯</span></button>'+
-'<button class="btn" onclick="ansP(2)"><span class="t2">Tone 2 ´</span></button>'+
-'<button class="btn" onclick="ansP(3)"><span class="t3">Tone 3 ˇ</span></button>'+
-'<button class="btn" onclick="ansP(4)"><span class="t4">Tone 4 ˋ</span></button>'+
-'<button class="btn" onclick="ansP(5)"><span class="t5">Neutral</span></button>'+
-'</div><div id="pfb" class="fb"></div>'+
-'<div class="center" style="margin-top:8px"><button class="btn" id="pnext" style="display:none" onclick="newP()">Next →</button></div></div>'+
-'<div class="box"><h3 style="margin-bottom:8px">Quick tips (Taiwan flavor)</h3><p style="font-size:15px;line-height:1.7">'+
-'• <b>ü</b> after j/q/x/y is written <b>u</b> but sounds like ü (去 qù).<br>'+
-'• <b>Tone-3 sandhi</b>: 3rd + 3rd → say 2nd + 3rd: 你好 nǐ hǎo → <i>ní hǎo</i>.<br>'+
-'• <b>不 bù</b> → <i>bú</i> before 4th tone; <b>一 yī</b> → <i>yí</i> before 4th, <i>yì</i> elsewhere.<br>'+
-'• Taiwan accent: zh/ch/sh soften toward z/c/s, no -r endings (哪裡 not 哪兒), 和 often <i>hàn</i>, 誰 = <i>shuí</i>.<br>'+
-'• Taiwan schools use 注音 Bopomofo (ㄅㄆㄇㄈ) instead of pinyin — you will see it on keyboards everywhere.</p></div>';
+'<div class="voice-chamber">'+
+'<span style="font-size:10px;letter-spacing:0.15em;text-transform:uppercase;color:var(--c-smoke);font-weight:600;display:block;margin-bottom:12px">Tone trainer</span>'+
+'<div style="display:flex;align-items:center;gap:12px;margin-bottom:14px">'+
+'<p class="mut" style="font-size:13px;flex:1">What is the tone of the <b>first</b> syllable?</p>'+
+'<span class="tag">Score: <span id="psc">'+pScore.ok+'/'+pScore.n+'</span></span>'+
+'</div>'+
+'<div style="text-align:center;margin:14px 0 18px">'+
+'<button class="btn-mic" onclick="playP()">🔊 Play</button>'+
+'<div style="margin-top:10px"><button class="btn sm" onclick="playP(0.6)">🐢 Slow</button></div>'+
+'</div>'+
+'<div class="tone-grid">'+
+'<button class="btn" onclick="ansP(1)"><span class="t1">1 — flat ¯</span></button>'+
+'<button class="btn" onclick="ansP(2)"><span class="t2">2 — rise ´</span></button>'+
+'<button class="btn" onclick="ansP(3)"><span class="t3">3 — dip ˇ</span></button>'+
+'<button class="btn" onclick="ansP(4)"><span class="t4">4 — fall ˋ</span></button>'+
+'<button class="btn" style="grid-column:span 2" onclick="ansP(5)"><span class="t5">Neutral</span></button>'+
+'</div>'+
+'<div id="pfb" class="fb"></div>'+
+'<div style="text-align:center;margin-top:8px"><button class="btn" id="pnext" style="display:none" onclick="newP()">Next →</button></div>'+
+'</div>'+
+'<div class="box">'+
+'<span style="font-size:10px;letter-spacing:0.15em;text-transform:uppercase;color:var(--c-smoke);font-weight:600;display:block;margin-bottom:10px">Taiwan pronunciation notes</span>'+
+'<ul class="tone-tips">'+
+'<li><b>ü after j/q/x/y</b> is written <b>u</b> but sounds like ü — example: 去 qù.</li>'+
+'<li><b>Tone-3 sandhi</b>: third + third → say second + third. 你好 nǐ hǎo sounds like <i>ní hǎo</i>.</li>'+
+'<li><b>不 bù</b> → <i>bú</i> before 4th tone. <b>一 yī</b> → <i>yí</i> before 4th, <i>yì</i> elsewhere.</li>'+
+'<li>Taiwan accent: zh/ch/sh soften toward z/c/s, no -r endings (哪裡 not 哪兒), 和 often <i>hàn</i>, 誰 = <i>shuí</i>.</li>'+
+'<li>Taiwan schools use 注音 Bopomofo (ㄅㄆㄇㄈ) — you will see it on keyboards everywhere.</li>'+
+'</ul></div>';
 newP();
 }
 function newP(){
@@ -1681,7 +2384,7 @@ if(!pq||pAns)return;pAns=true;
 const ok=t===pq.t;pScore.n++;if(ok)pScore.ok++;
 if(!ok)recordMiss("tone",pq.wi);
 $("#psc").textContent=pScore.ok+"/"+pScore.n;
-$("#pfb").innerHTML=(ok?'<span class="grn-t">✓ Yes!</span> ':'<span class="red-t">✗ It was '+(pq.t===5?"neutral":"tone "+pq.t)+'.</span> ')+'<span class="hanzi" style="font-size:22px">'+T(pq.h)+'</span> '+pinHTML(pq.p);
+$("#pfb").innerHTML=(ok?'<span class="grn-t">✓ Yes!</span> ':'<span class="red-t">✗ It was '+(pq.t===5?"neutral":"tone "+pq.t)+'.</span> ')+'<span class="hanzi" style="font-size:22px">'+T(pq.h)+'</span> '+pinHTML(pq.p)+bopoHTML(pq.p);
 $("#pnext").style.display="inline-block";
 bumpDone("listen");touchStreak();
 }
@@ -1689,20 +2392,31 @@ bumpDone("listen");touchStreak();
 let radMode="learn",rq=null,rqAns=false,rScore={ok:0,n:0};
 function radParts(g){return g.split(" / ").map(s=>s.trim())}
 function rRad(){
-$("#main").innerHTML='<div class="box"><div class="row">'+
-'<button class="btn sm '+(radMode==="learn"?"acc":"")+'" onclick="radMode=\'learn\';rRad()">📚 Learn radicals</button>'+
-'<button class="btn sm '+(radMode==="quiz"?"acc":"")+'" onclick="radMode=\'quiz\';rRad()">🎯 Radical quiz</button>'+
-(radMode==="quiz"?'<span class="tag" style="margin-left:auto">Score: <span id="rsc">'+rScore.ok+'/'+rScore.n+'</span></span>':"")+
-'</div></div><div id="radbody"></div>';
+$("#main").innerHTML=
+'<div style="display:flex;align-items:center;gap:8px;margin-bottom:12px">'+
+'<span class="chip'+(radMode==="learn"?" on-m":"")+'" onclick="radMode=\'learn\';rRad()">Reference</span>'+
+'<span class="chip'+(radMode==="quiz"?" on-m":"")+'" onclick="radMode=\'quiz\';rRad()">Quiz</span>'+
+(radMode==="quiz"?'<span style="font-size:12px;color:var(--c-smoke);margin-left:auto">Score: <span id="rsc">'+rScore.ok+'/'+rScore.n+'</span></span>':"")+
+'</div>'+
+'<div id="radbody"></div>';
 if(radMode==="learn")radLearn();else newRadQ();
 }
 function radLearn(){
-$("#radbody").innerHTML='<div class="box"><p class="mut" style="font-size:14px">Radicals are the building blocks — spot them and unfamiliar characters start telling you their story. Click any example to hear it.</p></div>'+
-RAD.map(r=>'<div class="box radcard">'+
-'<div class="radglyph hanzi">'+r[0]+'</div>'+
-'<div><b>'+esc(r[1])+'</b><p style="font-size:14px;margin:4px 0" class="mut">'+esc(r[2])+'</p>'+
-'<div class="row" style="gap:6px">'+[...r[3]].map(c=>'<button class="btn sm hanzi" style="font-size:19px" onclick="speak(\''+c+'\')">'+T(c)+'</button>').join("")+'</div>'+
-'</div></div>').join("");
+$("#radbody").innerHTML=
+'<div class="rad-ref">'+
+RAD.map(r=>
+'<div class="rad-row">'+
+'<div class="rad-glyph">'+r[0]+'</div>'+
+'<div style="flex:1">'+
+'<div class="rad-name">'+esc(r[1])+'</div>'+
+'<div class="rad-desc">'+esc(r[2])+'</div>'+
+'<div class="rad-examples">'+
+[...r[3]].map(c=>'<button class="btn sm hanzi" style="font-size:18px" onclick="speak(\''+c+'\')">'+T(c)+'</button>').join("")+
+'</div>'+
+'</div>'+
+'</div>'
+).join("")+
+'</div>';
 }
 function newRadQ(){
 rqAns=false;
@@ -1715,13 +2429,16 @@ return !radParts(RAD[i][0]).some(p=>T(ch).includes(p)||ch.includes(p));
 })).slice(0,3);
 const opts=shuffle([{i:ri,ok:1},...dis.map(i=>({i,ok:0}))]);
 rq={ri,ch,opts};
-$("#radbody").innerHTML='<div class="box center">'+
-'<p class="mut" style="font-size:14px">Which radical is hiding inside this character?</p>'+
-'<div class="bigh hanzi" style="margin:10px 0">'+T(ch)+'</div>'+
+$("#radbody").innerHTML=
+'<div class="rad-quiz-card">'+
+'<div class="rad-quiz-prompt">Which radical is in this character?</div>'+
+'<div class="rad-quiz-hz">'+T(ch)+'</div>'+
 '<button class="btn sm" onclick="speak(rq.ch)">🔊</button>'+
-'<div class="opts" style="margin-top:14px" id="ropts">'+opts.map((o,k)=>'<button class="btn" onclick="ansR('+k+')"><span class="hanzi" style="font-size:22px;color:var(--gold)">'+RAD[o.i][0]+'</span> &nbsp;'+esc(RAD[o.i][1])+'</button>').join("")+'</div>'+
+'<div class="opts" style="margin-top:16px" id="ropts">'+
+opts.map((o,k)=>'<button class="btn" onclick="ansR('+k+')"><span class="hanzi" style="font-size:20px">'+RAD[o.i][0]+'</span> '+esc(RAD[o.i][1])+'</button>').join("")+
+'</div>'+
 '<div id="rfb" class="fb"></div>'+
-'<div style="margin-top:8px"><button class="btn" id="rnext" style="display:none" onclick="newRadQ()">Next →</button></div>'+
+'<div style="margin-top:12px"><button class="btn" id="rnext" style="display:none" onclick="newRadQ()">Next →</button></div>'+
 '</div>';
 }
 function ansR(k){
@@ -1741,12 +2458,18 @@ function genBoss(n){
 const qs=[];const pool=lPool();
 for(let k=0;k<n;k++){
 const ty=rnd(["aw","eh","tn","as"]);
-if(ty==="aw"){const qi=rnd(pool);const dis=shuffle(pool.filter(i=>i!==qi&&W[i][2]!==W[qi][2])).slice(0,3);
+if(ty==="aw"){const qi=rnd(pool);
+const confused=sessionConfusedIds().filter(i=>i!==qi&&W[i][2]!==W[qi][2]);
+const fallback=shuffle(pool.filter(i=>i!==qi&&W[i][2]!==W[qi][2]&&!confused.includes(i)));
+const dis=shuffle(confused.concat(fallback)).slice(0,3);
 const opts=shuffle([{l:W[qi][2],ok:1},...dis.map(i=>({l:W[i][2],ok:0}))]);
 qs.push({ty,prompt:"🔊 Listen — what does it mean?",audio:wHanzi(W[qi]),hz:wHanzi(W[qi]),pin:wPin(W[qi]),opts,qi});}
-else if(ty==="eh"){const qi=rnd(pool);const dis=shuffle(pool.filter(i=>i!==qi&&wHanzi(W[i])!==wHanzi(W[qi]))).slice(0,3);
+else if(ty==="eh"){const qi=rnd(pool);
+const confused2=sessionConfusedIds().filter(i=>i!==qi&&wHanzi(W[i])!==wHanzi(W[qi]));
+const fallback2=shuffle(pool.filter(i=>i!==qi&&wHanzi(W[i])!==wHanzi(W[qi])&&!confused2.includes(i)));
+const dis=shuffle(confused2.concat(fallback2)).slice(0,3);
 const opts=shuffle([{l:wHanzi(W[qi]),ok:1,hz:1},...dis.map(i=>({l:wHanzi(W[i]),ok:0,hz:1}))]);
-qs.push({ty,prompt:'Which is “'+W[qi][2]+'”?',audio:null,hz:wHanzi(W[qi]),pin:wPin(W[qi]),opts,qi});}
+qs.push({ty,prompt:'Which is “'+W[qi][2]+'"?',audio:null,hz:wHanzi(W[qi]),pin:wPin(W[qi]),opts,qi});}
 else if(ty==="tn"){const qi=rnd(pool);const t=tone(syls(wPin(W[qi]))[0]||"");
 const opts=[1,2,3,4,5].map(x=>({l:x===5?"neutral":"tone "+x,ok:x===t?1:0}));
 qs.push({ty,prompt:"🔊 Tone of the first syllable?",audio:wHanzi(W[qi]),hz:wHanzi(W[qi]),pin:wPin(W[qi]),opts,qi});}
@@ -1763,7 +2486,7 @@ const pct=Math.round(bq.ok/bq.qs.length*100);
 const bonus=bq.ok*5;st.xp+=bonus;save();renderHud();
 $("#main").innerHTML='<div class="box center"><h2>'+(pct>=80?"🏆":pct>=50?"👍":"💪")+' '+bq.ok+'/'+bq.qs.length+'</h2>'+
 '<p style="margin-top:8px">Bonus: <b class="gold">+'+bonus+' XP</b></p>'+
-'<div class="row" style="justify-content:center;margin-top:14px"><button class="btn acc" onclick="rQuiz()">Again</button><button class="btn" onclick="go(\'home\')">Home</button></div></div>';
+'<div class="row" style="justify-content:center;margin-top:14px"><button class="btn acc" onclick="rQuiz()">Again</button><button class="btn" onclick="go(\'forge\')">Home</button></div></div>';
 return;
 }
 const q=bq.qs[bq.i];
@@ -1792,85 +2515,131 @@ $("#main").innerHTML='<div class="box">'+
 '<div class="row"><input type="text" id="wsearch" placeholder="Search hanzi / pinyin / english…" oninput="wSel=null;filterWords()" style="flex:1">'+
 '<select id="wfilt" onchange="wSel=null;filterWords()"><option value="">All</option><option value="1">HSK 1</option><option value="2">HSK 2</option><option value="P">Work pack</option><option value="T">Taiwan pack</option></select></div>'+
 '<div id="wdetail"></div>'+
-'<div style="max-height:58vh;overflow:auto;margin-top:12px">'+
-'<table><thead><tr><th></th><th>'+(st.script==="t"?"漢字":"汉字")+'</th><th>Pinyin</th><th>English</th><th>Set</th><th></th></tr></thead><tbody id="wtbody"></tbody></table>'+
-'</div><p class="mut" style="font-size:12px;margin-top:6px">Click a row for radical breakdown &amp; cultural notes.</p></div>';
+'<p style="font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:var(--c-rune);margin:12px 0 2px">'+W.length+' entries — tap for breakdown &amp; notes</p>'+
+'<div style="max-height:58vh;overflow-y:auto" id="wtbody"></div>'+
+'</div>';
 filterWords();
 }
 function wInfo(i){wSel=i;
 const w=W[i];
-$("#wdetail").innerHTML='<div class="box" style="margin:10px 0 0;background:#141927">'+
-'<div class="row"><span class="hanzi" style="font-size:30px">'+T(wHanzi(w))+'</span><span style="font-size:18px">'+pinHTML(wPin(w))+'</span><span class="mut">'+esc(w[2])+'</span>'+
+$("#wdetail").innerHTML='<div class="box" style="margin:10px 0 0;background:var(--c-iron);border-color:var(--c-forge)">'+
+'<div class="row" style="align-items:flex-start"><span class="hanzi" style="font-size:38px;line-height:1;color:var(--c-bone)">'+T(wHanzi(w))+'</span>'+
+'<div style="flex:1;min-width:0"><div style="font-size:17px;margin-bottom:2px">'+pinHTML(wPin(w))+'</div><div class="mut" style="font-size:13px">'+esc(w[2])+'</div></div>'+
 '<button class="btn sm" onclick="speak(wHanzi(W['+i+']))">🔊</button>'+
-'<button class="btn sm" style="margin-left:auto" onclick="wSel=null;$(\'#wdetail\').innerHTML=\'\'">✕</button></div>'+
-noteHTML(w)+breakHTML(wHanzi(w))+
+'<button class="btn sm" onclick="wSel=null;$(\'#wdetail\').innerHTML=\'\'">✕</button></div>'+
+bopoHTML(wPin(w))+noteHTML(w)+breakHTML(wHanzi(w))+
 '</div>';
 }
 function filterWords(){
 const q=($("#wsearch").value||"").toLowerCase();
 const f=$("#wfilt").value;
-$("#wtbody").innerHTML=W.map((w,i)=>({w,i}))
-.filter(({w})=>(!f||String(w[3])===f)&&(!q||wHanzi(w).includes(q)||T(wHanzi(w)).includes(q)||w[0].includes(q)||wPin(w).toLowerCase().includes(q)||plainPinyin(wPin(w)).includes(q)||w[2].toLowerCase().includes(q)))
-.map(({w,i})=>'<tr class="wrow" onclick="wInfo('+i+')"><td>'+(isLearned(i)?"✅":"")+(w[4]&&(w[4].n||w[4].tw)?" 💡":"")+'</td><td class="hanzi" style="font-size:20px">'+T(wHanzi(w))+'</td><td>'+pinHTML(wPin(w))+'</td><td>'+esc(w[2])+'</td><td>'+(w[3]==="P"?'<span class="tag p">WORK</span>':(w[3]==="T"?'<span class="tag tw">TW</span>':'<span class="mut">'+w[3]+'</span>'))+'</td><td><button class="btn sm" onclick="event.stopPropagation();speak(wHanzi(W['+i+']))">🔊</button></td></tr>').join("");
+const rows=W.map((w,i)=>({w,i}))
+.filter(({w})=>(!f||String(w[3])===f)&&(!q||wHanzi(w).includes(q)||T(wHanzi(w)).includes(q)||w[0].includes(q)||wPin(w).toLowerCase().includes(q)||plainPinyin(wPin(w)).includes(q)||w[2].toLowerCase().includes(q)));
+$("#wtbody").innerHTML=rows.map(({w,i})=>'<div class="lex-row" onclick="wInfo('+i+')">'+
+'<div class="lex-hz hanzi">'+T(wHanzi(w))+'</div>'+
+'<div class="lex-body"><div class="lex-pin">'+pinHTML(wPin(w))+'</div><div class="lex-eng">'+esc(w[2])+'</div></div>'+
+'<div class="lex-aside">'+
+(w[3]==="P"?'<span class="tag p">WORK</span>':(w[3]==="T"?'<span class="tag tw">TW</span>':''))+
+(isLearned(i)?'<span style="font-size:13px" title="Learned">✅</span>':'')+
+(w[4]&&(w[4].n||w[4].tw)?'<span style="font-size:12px" title="Has notes">💡</span>':'')+
+'<button class="btn sm" onclick="event.stopPropagation();speak(wHanzi(W['+i+']))">🔊</button>'+
+'</div></div>').join("");
 }
 /* ================= HUNT — CAREER MANDARIN ================= */
 let huntOpen=0;
 function rHunt(){
-$("#main").innerHTML='<div class="box"><h3><i class="glyph">ᚨ</i>Hunt — Career Mandarin</h3>'+
-'<p class="mut" style="font-size:13px;margin-top:4px">Interview season ammo: your story, your products, your specs — in natural Taiwan Mandarin. 🎤 sends any line to the Voice studio for mic practice.</p>'+
-'<div class="row" style="margin-top:10px">'+CAREER.map((s,i)=>'<button class="chip'+(huntOpen===i?" on":"")+'" onclick="huntOpen='+i+';rHunt()">'+s.g+' '+esc(s.t)+'</button>').join("")+'</div></div>'+
-huntSecHTML(CAREER[huntOpen],huntOpen);
+const s=CAREER[huntOpen];
+$("#main").innerHTML=
+'<div class="hunt-header">'+
+'<div class="hunt-eyebrow"><i class="glyph">ᚨ</i>Hunt · Career Mandarin</div>'+
+'<div class="hunt-sub">Your story, your products, your specs — ready for Taiwan\'s job market. 🎤 sends any line to the Voice studio for mic practice.</div>'+
+'<div class="hunt-chips">'+
+CAREER.map(function(c,i){return '<span class="chip'+(huntOpen===i?' on-m':'')+'" onclick="huntOpen='+i+';rHunt()">'+esc(c.t)+'</span>'}).join("")+
+'</div>'+
+'</div>'+
+huntSecHTML(s,huntOpen);
 }
 function huntSecHTML(s,si){
-return '<div class="box"><b><i class="glyph">'+s.g+'</i>'+esc(s.t)+'</b><p class="mut" style="font-size:13px;margin:4px 0 8px">'+esc(s.intro)+'</p>'+
-s.items.map((it,ii)=>'<div class="career-it">'+
-'<div class="hanzi" style="font-size:19px">'+T(it.h)+'</div>'+
-'<div style="font-size:14px">'+pinHTML(it.p)+'</div>'+
-'<div class="mut" style="font-size:13px">'+esc(it.e)+'</div>'+
-'<div class="row" style="margin-top:5px;gap:6px">'+
+return '<div class="hunt-section">'+
+'<div class="hunt-sec-head">'+
+'<div class="hunt-sec-title"><i class="glyph">'+esc(s.g)+'</i>'+esc(s.t)+'</div>'+
+'<div class="hunt-sec-intro">'+esc(s.intro)+'</div>'+
+'</div>'+
+'<div class="hunt-lines">'+
+s.items.map(function(it,ii){return '<div class="hunt-line">'+
+'<div class="hunt-hz">'+T(it.h)+'</div>'+
+'<div class="hunt-pin">'+huntPinHTML(it.p)+'</div>'+
+'<div class="hunt-eng">'+esc(it.e)+'</div>'+
+'<div class="hunt-actions">'+
 '<button class="btn sm" onclick="speak(CAREER['+si+'].items['+ii+'].h)">🔊</button>'+
 '<button class="btn sm" onclick="speak(CAREER['+si+'].items['+ii+'].h,0.6)">🐢</button>'+
-'<button class="btn sm acc" onclick="practiceItem(CAREER['+si+'].items['+ii+'].h,CAREER['+si+'].items['+ii+'].p,CAREER['+si+'].items['+ii+'].e)">🎤 Practice</button>'+
-'</div></div>').join("")+
-'<div class="center" style="margin-top:10px"><button class="btn" onclick="speakSeq(CAREER['+si+'].items.map(x=>x.h))">▶ Play section</button> <button class="btn sm" onclick="stopAudio()">⏹</button></div>'+
+'<button class="btn sm" style="border-color:var(--c-bone)" title="Send this line to Voice for speaking practice." onclick="practiceItem(CAREER['+si+'].items['+ii+'].h,CAREER['+si+'].items['+ii+'].p,CAREER['+si+'].items['+ii+'].e)">🎤 Practice in Voice</button>'+
+'</div>'+
+'</div>'}).join("")+
+'</div>'+
+'<div class="hunt-footer">'+
+'<button class="btn" style="border-color:var(--c-bone)" onclick="speakSeq(CAREER['+si+'].items.map(x=>x.h))">▶ Play section</button>'+
+'<button class="btn sm" onclick="stopAudio()">⏹</button>'+
+'</div>'+
 '</div>';
+}
+function huntPinHTML(p){
+if(!st.toneColors)return esc(p);
+return p.split(/([^a-zA-Zāáǎàēéěèīíǐìōóǒòūúǔùǖǘǚǜüv‘’]+)/).map(function(chunk){
+if(!chunk)return "";
+if(/^[A-Z][A-Za-z]+$/.test(chunk))return esc(chunk);
+if(/[a-zāáǎàēéěèīíǐìōóǒòūúǔùǖǘǚǜü]/i.test(chunk)){
+const m=chunk.match(SYL);
+if(m)return m.map(function(s){return '<span class="t'+tone(s)+'">'+esc(s)+'</span>'}).join("");
+}
+return esc(chunk);
+}).join("");
 }
 /* ================= CORE — PERSONAL SENTENCE BANK ================= */
 let coreCat="",coreAdd=false;
 function bankAll(){return PSB.concat(st.myBank||[])}
 function rCore(){
 const list=bankAll().filter(x=>!coreCat||x.c===coreCat);
-$("#main").innerHTML='<div class="box"><h3><i class="glyph">ᛟ</i>Core — Personal sentence bank</h3>'+
-'<p class="mut" style="font-size:13px;margin-top:4px">Sentences that are actually about YOUR life. Say one out loud every time you visit.</p>'+
-'<div style="margin-top:8px"><span class="chip'+(coreCat===""?" on":"")+'" onclick="coreCat=\'\';rCore()">All ('+bankAll().length+')</span>'+
-PSBCATS.map(c=>'<span class="chip'+(coreCat===c[0]?" on":"")+'" onclick="coreCat=\''+c[0]+'\';rCore()">'+c[1]+'</span>').join("")+'</div>'+
-'<div class="row" style="margin-top:8px"><button class="btn sm '+(coreAdd?"acc":"")+'" onclick="coreAdd=!coreAdd;rCore()">＋ Add your own</button></div>'+
+$("#main").innerHTML=
+'<div class="core-header">'+
+'<div class="core-eyebrow"><i class="glyph">ᛟ</i>Core · Personal Sentence Bank</div>'+
+'<div class="core-sub">The sentences you actually want to say — your life, your voice, in Mandarin.</div>'+
+'<div class="core-chips">'+
+'<span class="chip'+(coreCat===""?" on-m":"")+'" onclick="coreCat=\'\';rCore()">All ('+bankAll().length+')</span>'+
+PSBCATS.map(c=>'<span class="chip'+(coreCat===c[0]?" on-m":"")+'" onclick="coreCat=\''+c[0]+'\';rCore()">'+c[1]+'</span>').join("")+
+'</div>'+
+'<div style="margin-top:12px">'+
+'<button class="btn sm" style="'+(coreAdd?"border-color:var(--c-bone)":"")+'" onclick="coreAdd=!coreAdd;rCore()">＋ Add your own</button>'+
+'</div>'+
 (coreAdd?coreFormHTML():"")+
 '</div>'+
-'<div class="box">'+(list.length?list.map((x,k)=>coreRowHTML(x)).join(""):'<p class="mut center">Nothing in this category yet.</p>')+'</div>';
+'<div class="core-list">'+(list.length?list.map(x=>coreRowHTML(x)).join(""):'<div class="core-empty">Add the sentences you actually want to be able to say.</div>')+'</div>';
 }
 function coreRowHTML(x){
 const gi=bankAll().indexOf(x);
 const cat=PSBCATS.find(c=>c[0]===x.c);
-return '<div class="psbrow">'+
-'<div class="hz hanzi">'+T(x.h)+'</div>'+
-'<div class="pp">'+pinHTML(x.p)+'</div>'+
-'<div class="ee">'+esc(x.e)+'</div>'+
-'<div class="row" style="margin-top:5px;gap:6px">'+
-'<span class="tag">'+(cat?cat[1]:x.c)+'</span><span class="diff">'+"★".repeat(x.d||1)+'</span>'+
+return '<div class="core-line">'+
+'<div class="core-hz">'+T(x.h)+'</div>'+
+'<div class="core-pin">'+pinHTML(x.p)+'</div>'+
+'<div class="core-eng">'+esc(x.e)+'</div>'+
+'<div class="core-meta">'+
+'<span class="tag">'+(cat?cat[1]:x.c)+'</span>'+
+'<span class="diff">'+"★".repeat(x.d||1)+'</span>'+
 '<button class="btn sm" onclick="speak(bankAll()['+gi+'].h)">🔊</button>'+
 '<button class="btn sm" onclick="speak(bankAll()['+gi+'].h,0.6)">🐢</button>'+
-'<button class="btn sm acc" onclick="practiceItem(bankAll()['+gi+'].h,bankAll()['+gi+'].p,bankAll()['+gi+'].e)">🎤</button>'+
+'<button class="btn sm" style="border-color:var(--c-bone)" title="Send this line to Voice for speaking practice." onclick="practiceItem(bankAll()['+gi+'].h,bankAll()['+gi+'].p,bankAll()['+gi+'].e)">🎤 Practice in Voice</button>'+
 (x.mine?'<button class="btn sm red" onclick="delMine('+(gi-PSB.length)+')">🗑</button>':"")+
-'</div></div>';
+'</div>'+
+'</div>';
 }
 function coreFormHTML(){
-return '<div class="box" style="background:#141927;margin-top:10px">'+
+return '<div class="core-form">'+
 '<div class="row"><input type="text" id="nbH" class="hanzi" placeholder="漢字 sentence" style="flex:2;min-width:150px"><input type="text" id="nbP" placeholder="pinyin" style="flex:2;min-width:120px"></div>'+
 '<div class="row" style="margin-top:8px"><input type="text" id="nbE" placeholder="English" style="flex:2;min-width:150px">'+
 '<select id="nbC">'+PSBCATS.map(c=>'<option value="'+c[0]+'">'+c[1]+'</option>').join("")+'</select>'+
 '<select id="nbD"><option value="1">★</option><option value="2">★★</option><option value="3">★★★</option></select>'+
-'<button class="btn grn sm" onclick="addMine()">Save</button></div></div>';
+'<button class="btn grn sm" onclick="addMine()">Save</button></div>'+
+'</div>';
 }
 function addMine(){
 const h=$("#nbH").value.trim(),p=$("#nbP").value.trim(),e=$("#nbE").value.trim();
