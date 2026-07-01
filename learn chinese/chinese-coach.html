@@ -214,6 +214,46 @@ tr.wrow:hover td{background:var(--c-iron)}
 .core-meta{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
 .core-form{background:var(--c-iron);border:1px solid var(--c-steel);border-radius:var(--r-md);padding:16px;margin-top:10px}
 .core-empty{text-align:center;padding:32px 20px;color:var(--c-rune);font-size:13px}
+/* ── ARCHIVE CHAMBER (Stage 7) ─────────────────────── */
+.arc-header{background:var(--c-ash);border:1px solid var(--c-steel);border-top:2px solid rgba(184,150,46,0.3);border-radius:var(--r-md);padding:20px 20px 16px;margin-bottom:10px;box-shadow:var(--shadow-card)}
+.arc-eyebrow{font-size:10px;letter-spacing:0.15em;text-transform:uppercase;color:var(--c-rune);font-weight:600;margin-bottom:8px}
+.arc-sub{font-size:13px;color:var(--c-smoke);line-height:1.5;margin-bottom:14px}
+.arc-tools{display:flex;gap:6px;flex-wrap:wrap;padding-top:12px;border-top:1px solid var(--c-steel)}
+.arc-section{background:var(--c-ash);border:1px solid var(--c-steel);border-radius:var(--r-md);overflow:hidden;margin-bottom:10px;box-shadow:var(--shadow-card)}
+.arc-sec-head{padding:14px 18px;border-bottom:1px solid var(--c-steel);display:flex;align-items:center;gap:8px}
+.arc-sec-title{font-size:13px;font-weight:600;color:var(--c-bone)}
+.arc-sec-count{font-size:11px;color:var(--c-rune);padding:2px 8px;border:1px solid var(--c-steel);border-radius:10px}
+.arc-miss-row{padding:13px 18px;border-bottom:1px solid var(--c-steel);display:flex;align-items:center;gap:12px}
+.arc-miss-row:last-child{border-bottom:none}
+.arc-miss-hz{font-family:'Noto Serif TC','Microsoft JhengHei','PingFang TC',serif;font-size:20px;color:var(--c-bone);min-width:36px}
+.arc-miss-eng{font-size:12px;color:var(--c-rune);flex:1}
+.arc-miss-count{font-size:13px;font-weight:700;color:var(--c-fail);white-space:nowrap}
+.arc-miss-kinds{font-size:11px;color:var(--c-rune)}
+.arc-miss-last{font-size:11px;color:var(--c-rune)}
+.arc-log-item{padding:16px 18px;border-bottom:1px solid var(--c-steel)}
+.arc-log-item:last-child{border-bottom:none}
+.arc-log-top{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:6px}
+.arc-log-date{font-size:12px;font-weight:600;color:var(--c-bone);letter-spacing:0.04em}
+.arc-log-body{font-size:13px;color:var(--c-smoke)}
+.arc-log-body p{margin-top:4px;line-height:1.5}
+.arc-empty{text-align:center;padding:28px 20px;color:var(--c-rune);font-size:13px;line-height:1.6}
+/* ── FORGE REPORT (Stage 7) ─────────────────────────── */
+.frep{background:var(--c-ash);border:1px solid var(--c-steel);border-top:2px solid rgba(61,188,184,0.25);border-radius:var(--r-md);padding:18px 20px;margin-bottom:10px;box-shadow:var(--shadow-card)}
+.frep-head{display:flex;align-items:center;margin-bottom:14px;padding-bottom:12px;border-bottom:1px solid var(--c-steel)}
+.frep-eyebrow{font-size:10px;letter-spacing:0.15em;text-transform:uppercase;color:var(--c-frost);font-weight:600}
+.frep-trend{margin-left:auto;font-size:11px;font-weight:600;letter-spacing:0.06em;text-transform:uppercase}
+.frep-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:8px;margin-bottom:14px}
+.frep-cell{background:var(--c-iron);border:1px solid var(--c-steel);border-radius:var(--r-md);padding:12px 14px}
+.frep-cell-lbl{font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:var(--c-rune);margin-bottom:5px}
+.frep-cell-val{font-size:13px;color:var(--c-bone)}
+.frep-cell-note{font-size:11px;color:var(--c-rune);margin-top:3px}
+.frep-at-label{font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:var(--c-rune);margin-bottom:8px}
+.frep-at-row{display:flex;gap:8px;flex-wrap:wrap}
+.frep-at-item{background:var(--c-iron);border:1px solid var(--c-steel);border-radius:var(--r-md);padding:10px 14px;text-align:center;min-width:72px}
+.frep-at-hz{font-family:'Noto Serif TC','Microsoft JhengHei','PingFang TC',serif;font-size:20px;color:var(--c-bone);display:block}
+.frep-at-miss{font-size:11px;color:var(--c-fail);font-weight:600;display:block;margin-top:2px}
+.frep-at-eng{font-size:10px;color:var(--c-rune);display:block;margin-top:1px}
+.frep-assess{font-size:13px;color:var(--c-bone);line-height:1.55;padding-bottom:14px;margin-bottom:14px;border-bottom:1px solid var(--c-steel)}
 /* ── SENTENCE BUILDER ────────────────────────────────── */
 .tiles{display:flex;gap:6px;flex-wrap:wrap;justify-content:center;margin:10px 0;min-height:50px}
 .tile{background:var(--c-iron);border:1px solid var(--c-steel);border-radius:var(--r-sm);padding:9px 13px;font-size:20px;cursor:pointer;font-family:'Noto Serif TC','Microsoft JhengHei',serif;transition:border-color var(--t-fast)}
@@ -1586,36 +1626,82 @@ const brain=computeBrain();
 const mm=missMap();
 const top3=weakIds().slice(0,3);
 if(!top3.length&&!brain.weakTypes.length&&brain.trend==="stable")return "";
-const trendColor={"improving":"var(--green)","stable":"var(--mut)","declining":"var(--red)"}[brain.trend]||"var(--mut)";
-const trendArrow={"improving":"▲","stable":"→","declining":"▼"}[brain.trend]||"→";
+const trendColor={"improving":"var(--c-ok)","stable":"var(--c-smoke)","declining":"var(--c-fail)"}[brain.trend]||"var(--c-smoke)";
+const trendLabel={"improving":"▲ Improving","stable":"→ Stable","declining":"▼ Declining"}[brain.trend]||"→ Stable";
+const trendNote={"improving":"Fewer weak points than last week","stable":"Consistent with prior week","declining":"More weak points than last week"}[brain.trend]||"";
 const typeLabel={card:"Flashcard recall",listen:"Listening",tone:"Tone ID",type:"Typed input",speak:"Voice output"};
-const focusSkill=brain.weakTypes.length?(typeLabel[brain.weakTypes[0]]||brain.weakTypes[0]):"none detected";
-const focusReason=brain.weakTypes.length?"highest miss-rate in training log":brain.weakTones.length?"tone errors dominate":"all systems nominal";
-return '<div class="box" style="border-color:var(--teal)">'+
-'<div class="row" style="align-items:center;margin-bottom:10px">'+
-'<b style="color:var(--teal);letter-spacing:1px;font-size:14px">ᚠ FORGE REPORT</b>'+
-'<span style="margin-left:auto;font-weight:700;font-size:12px;color:'+trendColor+'">'+trendArrow+' FORGE STATUS: '+esc(brain.trend.toUpperCase())+'</span>'+
+const focusSkill=brain.weakTypes.length?(typeLabel[brain.weakTypes[0]]||brain.weakTypes[0]):"No clear pattern yet";
+const focusNote=brain.weakTypes.length?"Highest error rate in training log":brain.weakTones.length?"Tone errors are most frequent":"All practice types within range";
+const toneNames={1:"1st (flat)",2:"2nd (rising)",3:"3rd (dip)",4:"4th (falling)"};
+const weakToneVal=brain.weakTones.length?brain.weakTones.map(function(t){return '<span class="t'+t+'" style="font-weight:500">'+toneNames[t]+'</span>';}).join(', '):'<span style="color:var(--c-rune)">None above threshold</span>';
+const wt=brain.weakTypes[0];
+const multiTone=brain.weakTones.length>=2;
+const hasTone3=brain.weakTones.indexOf(3)!==-1;
+const hasTone2=brain.weakTones.indexOf(2)!==-1;
+let assess="";
+if(brain.trend==="declining"&&top3.length){
+assess="Accuracy dropped this week and your weakest words are due. Stabilize before adding anything new.";
+}else if(brain.trend==="declining"){
+assess="Accuracy dropped this week. Do not add new words yet — work through what is already slipping.";
+}else if(multiTone){
+assess="Multiple tones are flagged. Drill contrast pairs and hold off on new vocabulary.";
+}else if(hasTone3){
+assess="Tone 3 is your most unstable. Drill it in contrast with Tone 2 before moving on.";
+}else if(hasTone2){
+assess="Tone 2 needs more ear time. Prioritize listening over output in your next session.";
+}else if(brain.weakTones.length===1&&brain.weakTones[0]===4){
+assess="Tone 4 keeps dropping. Short, emphatic repetition — do not add more material.";
+}else if(brain.weakTones.length===1&&brain.weakTones[0]===1){
+assess="Tone 1 is flagged. It should be flat and held — check your pitch against recordings.";
+}else if(wt==="listen"){
+assess="Recognition is behind recall. More Echo time before you add new cards.";
+}else if(wt==="card"){
+assess="Card recall is your weakest channel. Shorter reviews, higher repetition frequency.";
+}else if(wt==="type"){
+assess="Typed input keeps failing. Slow down and spell deliberately — do not guess.";
+}else if(wt==="speak"){
+assess="Output accuracy is low. More Voice practice before your next session.";
+}else if(wt==="tone"){
+assess="Tone identification is flagged. Use Echo with slow audio.";
+}else if(top3.length){
+assess="These words have missed before and are due. Review them before anything else today.";
+}else if(brain.trend==="improving"){
+assess="Accuracy improved this week. Keep this pace — you are ready for harder sentences.";
+}else{
+assess="Pattern is stable. Push into Gate scenarios or harder vocabulary.";
+}
+return '<div class="frep">'+
+'<div class="frep-head">'+
+'<span class="frep-eyebrow"><span style="color:'+trendColor+';margin-right:5px">●</span>Brain \xb7 <i class="glyph">ᚠ</i>Forge Report</span>'+
+'<span class="frep-trend" style="color:'+trendColor+'">'+trendLabel+'</span>'+
 '</div>'+
-'<div class="row" style="gap:8px;flex-wrap:wrap;margin-bottom:10px">'+
-'<div class="stat" style="background:var(--c-iron);border:1px solid var(--c-frost)">'+
-'<b style="font-size:13px;color:var(--teal)">'+esc(focusSkill)+'</b>'+
-'<span>priority drill</span>'+
-'<div style="font-size:10px;color:var(--mut);margin-top:2px">'+esc(focusReason)+'</div>'+
+'<div class="frep-assess">'+esc(assess)+'</div>'+
+'<div class="frep-grid">'+
+'<div class="frep-cell">'+
+'<div class="frep-cell-lbl">Weak tones</div>'+
+'<div class="frep-cell-val">'+weakToneVal+'</div>'+
 '</div>'+
-'<div class="stat" style="background:var(--c-iron);border:1px solid var(--c-steel)">'+
-'<b>'+(brain.weakTones.length?brain.weakTones.map(t=>'<span class="t'+t+'">'+t+'</span>').join(' '):'—')+'</b>'+
-'<span>weak signals</span>'+
-'<div style="font-size:10px;color:var(--mut);margin-top:2px">'+(brain.weakTones.length?'tone'+(brain.weakTones.length>1?"s":"")+" need reforging":"tone read nominal")+'</div>'+
+'<div class="frep-cell">'+
+'<div class="frep-cell-lbl">Weak practice types</div>'+
+'<div class="frep-cell-val" style="color:var(--c-frost)">'+esc(focusSkill)+'</div>'+
+'<div class="frep-cell-note">'+esc(focusNote)+'</div>'+
+'</div>'+
+'<div class="frep-cell">'+
+'<div class="frep-cell-lbl">Current trend</div>'+
+'<div class="frep-cell-val" style="color:'+trendColor+'">'+trendLabel+'</div>'+
+'<div class="frep-cell-note">'+esc(trendNote)+'</div>'+
 '</div>'+
 '</div>'+
 (top3.length?
-'<div style="font-size:10px;color:var(--mut);letter-spacing:2px;margin-bottom:6px;text-transform:uppercase">Reforge targets</div>'+
-'<div class="row" style="gap:8px;flex-wrap:wrap">'+
-top3.map(i=>'<div class="stat" style="background:var(--c-iron);border:1px solid var(--c-frost)">'+
-'<b class="hanzi" style="font-size:22px;color:var(--teal)">'+T(wHanzi(W[i]))+'</b>'+
-'<b style="font-size:13px;color:var(--red)">'+(mm[i]||0)+'\xd7</b>'+
-'<span>'+esc(W[i][2].split(";")[0].trim().slice(0,14))+'</span>'+
-'</div>').join("")+
+'<div class="frep-at-label">At-risk words</div>'+
+'<div class="frep-at-row">'+
+top3.map(function(i){
+return '<div class="frep-at-item">'+
+'<span class="frep-at-hz">'+T(wHanzi(W[i]))+'</span>'+
+'<span class="frep-at-miss">'+(mm[i]||0)+'\xd7</span>'+
+'<span class="frep-at-eng">'+esc(W[i][2].split(";")[0].trim().slice(0,16))+'</span>'+
+'</div>';
+}).join("")+
 '</div>':"")
 +'</div>';
 }
@@ -2127,7 +2213,7 @@ function drawSb(){
 const q=sb.q;
 $("#game").innerHTML='<div class="box">'+
 '<div class="row"><span class="tag">Arrange the sentence</span><span class="tag" style="margin-left:auto">Score: '+sbScore.ok+'/'+sbScore.n+'</span></div>'+
-'<p class="eng" style="margin-top:12px">“'+esc(q.e)+'"</p>'+
+'<p class="eng" style="margin-top:12px">"'+esc(q.e)+'"</p>'+
 '<div class="slotline" id="sbline">'+sb.placed.map((ti,k)=>'<span class="tile hanzi" onclick="sbRemove('+k+')">'+T(q.s[ti])+'</span>').join("")+'</div>'+
 '<div class="tiles">'+sb.order.map(ti=>'<span class="tile hanzi'+(sb.used[ti]?" ghost":"")+'" onclick="sbTap('+ti+')">'+T(q.s[ti])+'</span>').join("")+'</div>'+
 '<div class="row" style="justify-content:center">'+
@@ -2300,7 +2386,7 @@ $("#tfb").textContent="";$("#tnext").style.display="none";
 const i=rnd(lPool());
 const w=W[i];
 tq={h:wHanzi(w),p:wPin(w),hAlt:w[0],pAlt:w[1],e:w[2],wi:i};
-$("#tprompt").innerHTML='<div class="eng" style="font-size:24px">“'+esc(tq.e)+'"</div>';
+$("#tprompt").innerHTML='<div class="eng" style="font-size:24px">"'+esc(tq.e)+'"</div>';
 const inp=$("#tinput");inp.value="";inp.placeholder=tMode==="pinyin"?"type pinyin (tones optional)":"輸入漢字…";inp.focus();
 speak(tq.h);
 }
@@ -2469,7 +2555,7 @@ const confused2=sessionConfusedIds().filter(i=>i!==qi&&wHanzi(W[i])!==wHanzi(W[q
 const fallback2=shuffle(pool.filter(i=>i!==qi&&wHanzi(W[i])!==wHanzi(W[qi])&&!confused2.includes(i)));
 const dis=shuffle(confused2.concat(fallback2)).slice(0,3);
 const opts=shuffle([{l:wHanzi(W[qi]),ok:1,hz:1},...dis.map(i=>({l:wHanzi(W[i]),ok:0,hz:1}))]);
-qs.push({ty,prompt:'Which is “'+W[qi][2]+'"?',audio:null,hz:wHanzi(W[qi]),pin:wPin(W[qi]),opts,qi});}
+qs.push({ty,prompt:'Which is "'+W[qi][2]+'"?',audio:null,hz:wHanzi(W[qi]),pin:wPin(W[qi]),opts,qi});}
 else if(ty==="tn"){const qi=rnd(pool);const t=tone(syls(wPin(W[qi]))[0]||"");
 const opts=[1,2,3,4,5].map(x=>({l:x===5?"neutral":"tone "+x,ok:x===t?1:0}));
 qs.push({ty,prompt:"🔊 Tone of the first syllable?",audio:wHanzi(W[qi]),hz:wHanzi(W[qi]),pin:wPin(W[qi]),opts,qi});}
@@ -2688,35 +2774,67 @@ if(btn){btn.textContent="Synced ✓";btn.className="btn sm grn";setTimeout(rst,2
 }
 function rArchive(){
 const log=st.lessonLog||[];
-const misses=Object.values(st.mistakes).sort((a,b)=>b.n-a.n).slice(0,30);
+const misses=Object.values(st.mistakes).sort(function(a,b){return b.n-a.n;}).slice(0,30);
+const missCount=Object.keys(st.mistakes).length;
+const typeLabel={card:"flashcard",listen:"listening",tone:"tone ID",type:"typed input",speak:"voice",writing:"writing",dialogue:"dialogue",number:"number",radical:"radical",quiz:"listening"};
 $("#main").innerHTML=
-'<div class="box"><h3><i class="glyph">ᛞ</i>Archive</h3>'+
-'<p class="mut" style="font-size:13px;margin-top:4px">Lesson log · mistake log · backups. The record of the work.</p>'+
-'<div class="row" style="margin-top:10px">'+
-'<button class="btn sm acc" onclick="reviewWeak()">🎯 Review weak points</button>'+
-'<button class="btn sm" id="syncBtn" onclick="syncProgress()">☁ Sync progress</button>'+
-'<button class="btn sm" onclick="exportJSON()">⬇ Export progress (JSON)</button>'+
+'<div class="arc-header">'+
+'<div class="arc-eyebrow"><i class="glyph">ᛞ</i>Archive \xb7 Training Records</div>'+
+'<div class="arc-sub">Your practice logs, mistake history, and session data — the permanent record of the work.</div>'+
+'<div class="arc-tools">'+
+'<button class="btn sm" style="border-color:var(--c-bone)" onclick="reviewWeak()">🎯 Review weak points</button>'+
+'<button class="btn sm" id="syncBtn" onclick="syncProgress()">☁ Sync</button>'+
+'<button class="btn sm" onclick="exportJSON()">⬇ Export JSON</button>'+
 '<label class="btn sm" style="cursor:pointer">⬆ Import JSON<input type="file" accept=".json" style="display:none" onchange="importJSON(event)"></label>'+
 '<button class="btn sm" onclick="exportVocabCSV()">⬇ Vocab CSV</button>'+
-'<button class="btn sm" onclick="exportBankCSV()">⬇ Sentence bank CSV</button>'+
-'</div></div>'+
-'<div class="box"><h3>🎯 Mistake log <span class="tag" style="margin-left:6px">'+Object.keys(st.mistakes).length+' items</span>'+(Object.keys(st.mistakes).length?'<button class="btn sm red" style="float:right" onclick="clearMistakes()">Clear</button>':"")+'</h3>'+
-(misses.length?'<div style="max-height:40vh;overflow:auto;margin-top:8px"><table class="misstab"><thead><tr><th>Item</th><th>Missed</th><th>Where</th><th>Last</th></tr></thead><tbody>'+
-misses.map(m=>'<tr><td class="hanzi" style="font-size:18px">'+(m.wi!=null?T(wHanzi(W[m.wi]))+' <span class="mut" style="font-size:12px">'+esc(W[m.wi][2])+'</span>':esc(m.label||"?"))+'</td><td><b class="red-t">'+m.n+'×</b></td><td class="mut" style="font-size:12px">'+esc(Object.entries(m.kinds).map(([k,v])=>k+" "+v).join(", "))+'</td><td class="mut" style="font-size:12px">'+m.last+'</td></tr>').join("")+
-'</tbody></table></div>':'<p class="mut" style="margin-top:8px">No mistakes logged yet. They will appear here as you train — mistakes are the curriculum.</p>')+
+'<button class="btn sm" onclick="exportBankCSV()">⬇ Sentences CSV</button>'+
 '</div>'+
-'<div class="box"><h3>📔 Lesson log <span class="tag" style="margin-left:6px">'+log.length+' sessions</span></h3>'+
-(log.length?log.slice(0,20).map(e=>'<div class="box logcard" style="margin:10px 0 0;background:#141927">'+
-'<div class="row"><b>'+e.date+'</b><span class="tag">'+esc((MODES[e.mode]||{}).label||e.mode)+' · '+e.mins+' min</span><span class="tag gold">+'+e.xp+' XP</span>'+(e.aborted?'<span class="tag">ended early</span>':"")+'</div>'+
-'<p style="font-size:14px;margin-top:6px">Topic: <span class="hanzi">'+esc(e.topic||"—")+'</span></p>'+
-(e.newWords&&e.newWords.length?'<p style="font-size:13px;margin-top:4px">New words: <span class="hanzi">'+e.newWords.map(T).join("、")+'</span></p>':"")+
-(e.chars&&e.chars.length?'<p style="font-size:13px;margin-top:4px">Handwriting: <span class="hanzi">'+e.chars.join("、")+'</span></p>':"")+
-(e.weak&&e.weak.length?'<p style="font-size:13px;margin-top:4px" class="mut">Weak: <span class="hanzi red-t">'+e.weak.join("、")+'</span></p>':"")+
-(e.review&&e.review.length?'<p style="font-size:13px;margin-top:4px" class="gold">📌 Review: <span class="hanzi">'+e.review.join("、")+'</span></p>':"")+
-'</div>').join(""):'<p class="mut" style="margin-top:8px">Finish a session and it will be logged here automatically.</p>')+
 '</div>'+
-'<div class="box"><h3>ᚠ Forgebound legend</h3><p style="font-size:14px;line-height:1.9" class="mut">'+
-'<i class="glyph">ᚹ</i>Voice — speaking &amp; tones · <i class="glyph">ᛖ</i>Echo — listening · <i class="glyph">ᛊ</i>Script — reading/cards · <i class="glyph">ᚺ</i>Hand — handwriting · <i class="glyph">ᚠ</i>Forge — sentence building &amp; correction · <i class="glyph">ᛟ</i>Core — personal expression · <i class="glyph">ᚨ</i>Hunt — career Mandarin · <i class="glyph">ᚲ</i>Circuit — tech Mandarin (inside Hunt &amp; Core) · <i class="glyph">♻</i>Pulse — fitness Mandarin (inside Core) · <i class="glyph">ᚷ</i>Gate — Taiwan daily life · <i class="glyph">ᛞ</i>Archive — logs &amp; banks</p></div>';
+forgeReportHTML()+
+'<div class="arc-section">'+
+'<div class="arc-sec-head">'+
+'<span class="arc-sec-title">Mistake log</span>'+
+'<span class="arc-sec-count">'+missCount+' items</span>'+
+(missCount?'<button class="btn sm red" style="margin-left:auto" onclick="clearMistakes()">Clear log</button>':"")+
+'</div>'+
+(misses.length?
+misses.map(function(m){
+var kindsStr=Object.entries(m.kinds).map(function(kv){return (typeLabel[kv[0]]||kv[0])+" \xd7"+kv[1];}).join(", ");
+return '<div class="arc-miss-row">'+
+'<span class="arc-miss-hz">'+(m.wi!=null?T(wHanzi(W[m.wi])):esc(m.label||"?"))+'</span>'+
+'<span class="arc-miss-eng">'+(m.wi!=null?esc(W[m.wi][2]):"")+'</span>'+
+'<span class="arc-miss-kinds">'+esc(kindsStr)+'</span>'+
+'<span class="arc-miss-count">'+m.n+'\xd7</span>'+
+'<span class="arc-miss-last">'+m.last+'</span>'+
+'</div>';
+}).join(""):
+'<div class="arc-empty">No mistakes recorded yet.<br>They appear here as you train — mistakes are the curriculum.</div>')+
+'</div>'+
+'<div class="arc-section">'+
+'<div class="arc-sec-head">'+
+'<span class="arc-sec-title">Session log</span>'+
+'<span class="arc-sec-count">'+log.length+' sessions</span>'+
+'</div>'+
+(log.length?
+log.slice(0,20).map(function(e){
+return '<div class="arc-log-item">'+
+'<div class="arc-log-top">'+
+'<span class="arc-log-date">'+e.date+'</span>'+
+'<span class="tag">'+esc((MODES[e.mode]||{}).label||e.mode)+' \xb7 '+e.mins+' min</span>'+
+'<span class="tag gold">+'+e.xp+' XP</span>'+
+(e.aborted?'<span class="tag">ended early</span>':"")+
+'</div>'+
+'<div class="arc-log-body">'+
+(e.topic?'<p>Topic: <span class="hanzi">'+esc(e.topic)+'</span></p>':"")+
+(e.newWords&&e.newWords.length?'<p>New words: <span class="hanzi">'+e.newWords.map(T).join("、")+'</span></p>':"")+
+(e.chars&&e.chars.length?'<p>Handwriting: <span class="hanzi">'+e.chars.join("、")+'</span></p>':"")+
+(e.weak&&e.weak.length?'<p class="mut">Weak: <span class="hanzi red-t">'+e.weak.join("、")+'</span></p>':"")+
+(e.review&&e.review.length?'<p class="gold">Review: <span class="hanzi">'+e.review.join("、")+'</span></p>':"")+
+'</div>'+
+'</div>';
+}).join(""):
+'<div class="arc-empty">Your records will appear here after you complete sessions.<br>Logs accumulate automatically as you train.</div>')+
+'</div>';
 }
 /* ================= INIT ================= */
 renderNav();renderScriptBtn();renderHud();render();
