@@ -41,7 +41,7 @@
 body{background:var(--c-void);color:var(--c-bone);font-family:'Inter',system-ui,sans-serif;font-size:15px;line-height:1.5;min-height:100vh}
 .hanzi{font-family:'Noto Serif TC','Microsoft JhengHei','PingFang TC',serif}
 /* ── HEADER ─────────────────────────────────────────── */
-header{display:flex;align-items:center;gap:10px;padding:9px 20px;border-bottom:1px solid var(--c-steel);flex-wrap:wrap;background:var(--c-ash)}
+header{position:sticky;top:0;z-index:100;display:flex;align-items:center;gap:10px;padding:9px 20px;border-bottom:1px solid var(--c-steel);flex-wrap:wrap;background:var(--c-ash)}
 header h1{font-size:14px;font-weight:500;white-space:nowrap;letter-spacing:0.03em;color:var(--c-bone)}
 header h1 span{color:var(--c-ember)}
 /* ── NAV ─────────────────────────────────────────────── */
@@ -53,7 +53,7 @@ nav button.on{color:var(--c-bone);border-bottom-color:var(--c-ember)}
 #scriptBtn{background:var(--c-iron);border:1px solid var(--c-steel);color:var(--c-gold);padding:4px 9px;border-radius:var(--r-sm);cursor:pointer;font-size:13px}
 #hud{margin-left:auto;display:flex;gap:10px;align-items:center;font-size:13px;color:var(--c-gold);font-weight:600;white-space:nowrap}
 /* ── SESSION BAR ──────────────────────────────────────── */
-#sessbar{display:none;position:sticky;top:0;z-index:50;background:var(--c-iron);border-bottom:2px solid var(--c-ember);padding:10px 20px}
+#sessbar{display:none;position:sticky;top:48px;z-index:50;background:var(--c-iron);border-bottom:2px solid var(--c-ember);padding:10px 20px}
 #sessbar b{color:var(--c-gold)}
 #sessleft{font-variant-numeric:tabular-nums;font-size:18px;font-weight:700}
 #sessleft.over{color:var(--c-fail);animation:blink 1s infinite}
@@ -359,7 +359,6 @@ tr.wrow:hover td{background:var(--c-iron)}
 .bn-btn.bn-advisory{border-color:rgba(184,150,46,0.45)}.bn-btn.bn-advisory .bn-rune{color:var(--c-gold)}.bn-btn.bn-advisory .bn-dot{background:var(--c-gold);box-shadow:0 0 4px rgba(184,150,46,0.5)}
 .bn-btn.bn-pressure{border-color:rgba(200,105,42,0.5)}.bn-btn.bn-pressure .bn-rune{color:var(--c-ember)}.bn-btn.bn-pressure .bn-dot{background:var(--c-ember);box-shadow:0 0 5px rgba(200,105,42,0.55);animation:bn-flicker 1.6s ease-in-out infinite}
 .bn-btn.bn-idle{border-color:var(--c-rune)}
-#vantaBtn{position:fixed;top:10px;right:16px;z-index:100}
 @keyframes bn-pulse{0%,100%{opacity:1}50%{opacity:.35}}
 @keyframes bn-flicker{0%,100%{opacity:1}35%{opacity:.5}70%{opacity:.8}}
 #bnPanel{position:fixed;top:48px;right:16px;width:214px;background:var(--c-ash);border:1px solid var(--c-steel);border-radius:var(--r-md);padding:14px 16px;box-shadow:var(--shadow-card);display:none;z-index:199}
